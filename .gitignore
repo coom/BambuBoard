@@ -1,5 +1,4 @@
 # ── Secrets / config locale ───────────────────────────────────────────────
-backend/config.py
 .env
 .env.*
 
