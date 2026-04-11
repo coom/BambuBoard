@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.3 — 2026-04-11
+
+### Documentation
+
+- **Plugin Flipper** : promotion du chemin qFlipper comme installation
+  par défaut grâce au `.fap` pré-compilé désormais versionné dans
+  `flipper/bambu_scanner/dist/` (plus besoin d'installer Python/ufbt
+  pour la plupart des utilisateurs). Le chemin ufbt est réorienté vers
+  les cas avancés (dev, firmware custom).
+- **DOCS.md** : nouvelle section *Enregistrer une bobine inconnue
+  depuis l'AMS* qui documente le pré-remplissage complet du modal avec
+  le nom de couleur deviné depuis le hex (feature 1.0.2).
+- **README racine** : lien direct vers le `.fap` pré-compilé.
+
 ## 1.0.2 — 2026-04-11
 
 ### Améliorations
