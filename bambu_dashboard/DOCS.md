@@ -214,3 +214,11 @@ rebuild de l'image Docker** :
 - 📦 **Dépôt** : https://code.e-odyssey.net/coom/bambuboard
 - 🛰️ **Plugin Flipper** : [`flipper/bambu_scanner/`](../flipper/bambu_scanner/)
 - 📜 **Changelog** : [`CHANGELOG.md`](./CHANGELOG.md)
+
+---
+
+## 👥 Crédits
+
+Développé par **Erti**, avec l'aide de **coom** sur le module Flipper
+Zero *(app `bambu_scanner`)*. Voir les contributions upstream dans le
+[README du plugin Flipper](../flipper/bambu_scanner/README.md#-attribution-et-licences).

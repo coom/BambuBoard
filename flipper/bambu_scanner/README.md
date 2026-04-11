@@ -258,6 +258,16 @@ l'inventaire 🎉
 
 ## 📜 Attribution et licences
 
+### 👥 Auteurs
+
+| Rôle | Personne |
+|---|---|
+| 🧑‍💻 **Développement principal du projet** *(add-on HA, backend, frontend, inventaire, KPIs)* | **Erti** |
+| 🛰️ **Co-développement de l'app Flipper `bambu_scanner`** *(routage CDC stdout, packaging ufbt, intégration série)* | **coom** |
+
+> Le reste des crédits *(code upstream importé)* est détaillé dans les
+> sous-sections ci-dessous.
+
 ### 🔐 Dérivation de clés *(KDF)*
 
 Les fichiers `bambu_crypto.c` / `bambu_crypto.h` *(dérivation

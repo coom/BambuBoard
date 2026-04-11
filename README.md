@@ -111,6 +111,19 @@ Les détails (build custom, firmware alternatif, troubleshooting) sont dans le
 
 ---
 
+## 👥 Crédits
+
+| Rôle | Personne |
+|---|---|
+| 🧑‍💻 **Développement principal** | **Erti** *(add-on HA : backend FastAPI, frontend SPA, inventaire, KPIs, scan NFC côté dashboard)* |
+| 🛰️ **Co-développement module Flipper Zero** | **coom** *(assistance sur l'app `bambu_scanner` : routage CDC stdout, packaging ufbt, intégration série)* |
+
+> 💡 Contributions upstream *(KDF BambuTagger, parser dérivé de
+> `flipper-bambu`)* détaillées dans le
+> [README du plugin Flipper](./flipper/bambu_scanner/README.md#-attribution-et-licences).
+
+---
+
 ## 📜 Licence
 
 Le code du dashboard est sous **MIT**.
@@ -118,12 +131,12 @@ Le code du dashboard est sous **MIT**.
 ⚠️ L'app Flipper Zero utilise une KDF (`bambu_crypto.c/h`) importée de
 [ductai199x/BambuTagger](https://github.com/ductai199x/BambuTagger) sous
 licence *"educational and personal use"*. Voir le
-[README du plugin](./flipper/bambu_scanner/README.md#attribution-et-licences).
+[README du plugin](./flipper/bambu_scanner/README.md#-attribution-et-licences).
 
 ---
 
 <div align="center">
 
-*Fait avec ❤️ et beaucoup de filament PLA*
+*Fait avec ❤️ et beaucoup de filament PLA par **Erti** (avec l'aide de **coom** sur le Flipper)*
 
 </div>

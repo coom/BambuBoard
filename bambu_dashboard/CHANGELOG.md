@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.5 — 2026-04-11
+
+### 👥 Crédits
+
+- Ajout des crédits d'auteurs dans les docs : **Erti** (développement
+  principal de l'add-on) et **coom** (co-développement du module
+  Flipper Zero `bambu_scanner`). Sections ajoutées au `README.md`
+  racine, `bambu_dashboard/README.md`, `bambu_dashboard/DOCS.md`, et
+  `flipper/bambu_scanner/README.md` *(nouvelle sous-section « Auteurs »
+  dans l'attribution)*.
+
 ## 1.0.4 — 2026-04-11
 
 ### ✨ Documentation

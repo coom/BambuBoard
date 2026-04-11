@@ -63,6 +63,13 @@ printer_access_code: "12345678"
 
 ---
 
+## 👥 Crédits
+
+Développé par **Erti**, avec l'aide de **coom** sur le module Flipper
+Zero *(app `bambu_scanner`)*.
+
+---
+
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
