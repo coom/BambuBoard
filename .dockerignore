@@ -1,0 +1,9 @@
+bambu.db
+*.db-wal
+*.db-shm
+start.bat
+docs/
+.git/
+.gitignore
+__pycache__/
+*.pyc

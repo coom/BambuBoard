@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bambu Dashboard</title>
+  <style>
+    :root {
+      --bb-bg-primary: #0b0c0d;
+      --bb-bg-secondary: #1c1e20;
+      --bb-bg-tertiary: #252729;
+      --bb-bg-card: #1c1e20;
+      --bb-orange: #ff6d00;
+      --bb-orange-light: #ff8533;
+      --bb-blue: #00b0ff;
+      --bb-green: #4caf50;
+      --bb-red: #ff3d00;
+      --bb-yellow: #ffc400;
+      --bb-text-primary: #ffffff;
+      --bb-text-secondary: rgba(255,255,255,0.7);
+      --bb-text-muted: rgba(255,255,255,0.5);
+      --bb-border-subtle: rgba(255,255,255,0.05);
+      --bb-border-light: rgba(255,255,255,0.1);
+      --bb-shadow-md: 0 4px 20px rgba(0,0,0,0.5);
+      --bb-shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
+      --bb-radius-lg: 20px;
+      --bb-radius-sm: 12px;
+      --bb-transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bb-bg-primary);
+      color: var(--bb-text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 0;
+    }
+    .header-title { font-size: 20px; font-weight: 700; }
+    .header-title span { color: var(--bb-orange); }
+    .header-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--bb-text-muted); }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex; gap: 2px; padding: 14px 20px 0;
+      border-bottom: 1px solid var(--bb-border-subtle);
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .tab {
+      padding: 10px 16px; border-radius: 12px 12px 0 0; font-size: 13px; font-weight: 500;
+      color: var(--bb-text-muted); cursor: pointer; transition: var(--bb-transition);
+      border: 1px solid transparent; border-bottom: none; position: relative;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .tab:hover { color: var(--bb-text-primary); background: rgba(255,255,255,0.04); }
+    .tab.active {
+      color: var(--bb-orange); background: var(--bb-bg-secondary);
+      border-color: var(--bb-border-subtle);
+    }
+    .tab-alert {
+      position: absolute; top: 6px; right: 6px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--bb-red); border: 2px solid var(--bb-bg-primary);
+      display: none;
+    }
+
+    /* ── Content ── */
+    .tab-content { padding: 20px; display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Status badge ── */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    }
+    .status-badge.connected { background: rgba(76,175,80,0.15); color: var(--bb-green); border: 1px solid rgba(76,175,80,0.3); }
+    .status-badge.disconnected { background: rgba(255,61,0,0.15); color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .status-badge.connected .status-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+    /* ── AMS Grid ── */
+    .ams-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    @media(max-width:900px){.ams-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:500px){.ams-grid{grid-template-columns:1fr}}
+
+    /* ── Cards ── */
+    .slot-card {
+      background: var(--bb-bg-card); border-radius: var(--bb-radius-lg);
+      border: 1px solid var(--bb-border-subtle); box-shadow: var(--bb-shadow-md);
+      padding: 18px; transition: var(--bb-transition); position: relative;
+    }
+    .slot-card:hover { border-color: var(--bb-border-light); box-shadow: var(--bb-shadow-lg); transform: translateY(-2px); }
+    .slot-card.active { border-color: rgba(255,109,0,0.25); }
+    .slot-card.empty { opacity: 0.4; }
+    .slot-label {
+      position: absolute; top: 12px; right: 12px; font-size: 11px; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px;
+      background: rgba(255,109,0,0.15); color: var(--bb-orange); border: 1px solid rgba(255,109,0,0.3);
+    }
+    .color-swatch { width: 44px; height: 44px; border-radius: var(--bb-radius-sm); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); background: #2a2a2a; }
+    .filament-type { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+    .filament-brand { font-size: 12px; color: var(--bb-text-muted); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .temp-badge {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+      border-radius: 20px; font-size: 11px; font-weight: 500;
+      background: rgba(0,176,255,0.1); color: var(--bb-blue); border: 1px solid rgba(0,176,255,0.25);
+    }
+    .remain-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+    .remain-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .remain-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+    .remain-label { font-size: 12px; font-weight: 600; min-width: 36px; text-align: right; }
+
+    /* Stock badges */
+    .stock-badge {
+      display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
+      padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+    .stock-badge.known { background: rgba(76,175,80,0.15); color: var(--bb-green); border: 1px solid rgba(76,175,80,0.3); }
+    .stock-badge.unknown { background: rgba(255,196,0,0.15); color: var(--bb-yellow); border: 1px solid rgba(255,196,0,0.3); cursor: pointer; }
+    .stock-badge.unknown:hover { background: rgba(255,196,0,0.25); }
+
+    /* ── Spool status badges ── */
+    .spool-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.3px; text-transform: uppercase;
+    }
+    .spool-status.st-active { background: rgba(76,175,80,0.15); color: var(--bb-green); border: 1px solid rgba(76,175,80,0.3); }
+    .spool-status.st-idle { background: rgba(0,176,255,0.15); color: var(--bb-blue); border: 1px solid rgba(0,176,255,0.3); }
+    .spool-status.st-empty { background: rgba(255,61,0,0.15); color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); }
+    .spool-status.st-archived { background: rgba(255,255,255,0.06); color: var(--bb-text-muted); border: 1px solid var(--bb-border-light); }
+
+    /* ── Inventory filter chips ── */
+    .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-chip {
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: var(--bb-transition);
+      background: rgba(255,255,255,0.06); color: var(--bb-text-muted);
+      border: 1px solid var(--bb-border-light);
+    }
+    .filter-chip:hover { background: rgba(255,255,255,0.1); color: var(--bb-text-primary); }
+    .filter-chip.active { background: rgba(255,109,0,0.15); color: var(--bb-orange); border-color: rgba(255,109,0,0.3); }
+    .filter-chip .chip-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; border-radius: 9px; font-size: 10px; font-weight: 700;
+      background: rgba(255,255,255,0.1); margin-left: 4px; padding: 0 5px;
+    }
+    .filter-chip.active .chip-count { background: rgba(255,109,0,0.3); }
+
+    /* ── Error banner ── */
+    .error-banner {
+      background: rgba(255,61,0,0.1); border: 1px solid rgba(255,61,0,0.3);
+      color: var(--bb-red); padding: 12px 16px; border-radius: var(--bb-radius-sm);
+      margin-bottom: 16px; font-size: 13px; display: none;
+    }
+
+    /* ── Skeleton ── */
+    .skeleton { background: linear-gradient(90deg,var(--bb-bg-secondary) 25%,var(--bb-bg-tertiary) 50%,var(--bb-bg-secondary) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    @keyframes shimmer { 0%{background-position:200% center}100%{background-position:-200% center} }
+
+    /* ── Section ── */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+    .section-title { font-size: 13px; font-weight: 600; color: var(--bb-text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── Btn ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px;
+      border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+      border: none; transition: var(--bb-transition);
+    }
+    .btn-primary { background: var(--bb-orange); color: #fff; }
+    .btn-primary:hover { background: var(--bb-orange-light); }
+    .btn-ghost { background: rgba(255,255,255,0.06); color: var(--bb-text-secondary); border: 1px solid var(--bb-border-light); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: var(--bb-text-primary); }
+    .btn-danger { background: rgba(255,61,0,0.15); color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); }
+    .btn-danger:hover { background: rgba(255,61,0,0.25); }
+    .btn-success { background: rgba(76,175,80,0.15); color: var(--bb-green); border: 1px solid rgba(76,175,80,0.3); }
+    .btn-success:hover { background: rgba(76,175,80,0.25); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+
+    /* ── Filter ── */
+    .filter-input {
+      background: var(--bb-bg-secondary); border: 1px solid var(--bb-border-light);
+      color: var(--bb-text-primary); padding: 8px 14px; border-radius: 10px;
+      font-size: 13px; outline: none; width: 100%; max-width: 220px;
+    }
+    .filter-input:focus { border-color: var(--bb-orange); }
+    .filter-input::placeholder { color: var(--bb-text-muted); }
+
+    /* ── Table ── */
+    .bb-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .bb-table th {
+      text-align: left; padding: 10px 14px; color: var(--bb-text-muted);
+      font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;
+      border-bottom: 1px solid var(--bb-border-subtle);
+    }
+    .bb-table td { padding: 12px 14px; border-bottom: 1px solid var(--bb-border-subtle); vertical-align: middle; }
+    .bb-table tr:last-child td { border-bottom: none; }
+    .bb-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .bb-table-wrap { background: var(--bb-bg-card); border-radius: var(--bb-radius-lg); border: 1px solid var(--bb-border-subtle); overflow: hidden; box-shadow: var(--bb-shadow-md); }
+
+    .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); vertical-align: middle; margin-right: 6px; }
+    .ams-slot-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; background: rgba(255,109,0,0.15); color: var(--bb-orange); border: 1px solid rgba(255,109,0,0.3); }
+    .remain-mini { display: flex; align-items: center; gap: 6px; }
+    .remain-bar-mini { width: 60px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .remain-fill-mini { height: 100%; border-radius: 2px; }
+
+    /* ── KPI cards ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .kpi-card { background: var(--bb-bg-card); border-radius: var(--bb-radius-lg); border: 1px solid var(--bb-border-subtle); padding: 18px; box-shadow: var(--bb-shadow-md); }
+    .kpi-label { font-size: 11px; font-weight: 600; color: var(--bb-text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .kpi-value { font-size: 26px; font-weight: 700; color: var(--bb-orange); }
+    .kpi-sub { font-size: 12px; color: var(--bb-text-muted); margin-top: 4px; }
+    .low-stock-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: rgba(255,61,0,0.15); color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); }
+
+    /* ── Session card ── */
+    .session-card {
+      background: var(--bb-bg-card); border-radius: var(--bb-radius-sm);
+      border: 1px solid var(--bb-border-subtle); padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .session-swatch { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
+    .session-info { flex: 1; min-width: 0; }
+    .session-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .session-detail { font-size: 12px; color: var(--bb-text-muted); margin-top: 2px; }
+    .session-consumed {
+      text-align: right; flex-shrink: 0;
+    }
+    .session-consumed-value { font-size: 16px; font-weight: 700; color: var(--bb-orange); }
+    .session-consumed-sub { font-size: 11px; color: var(--bb-text-muted); }
+
+    /* ── KPI two-col ── */
+    .kpi-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    @media(max-width:700px){ .kpi-two-col { grid-template-columns: 1fr; } }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+      display: none; align-items: center; justify-content: center; padding: 12px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bb-bg-secondary); border-radius: var(--bb-radius-lg);
+      border: 1px solid var(--bb-border-light); padding: 24px; width: 520px; max-width: 100%;
+      max-height: 90vh; overflow-y: auto; box-shadow: var(--bb-shadow-lg);
+    }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+    .modal-title span { color: var(--bb-orange); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 12px; font-weight: 600; color: var(--bb-text-muted); letter-spacing: 0.3px; }
+    .form-input {
+      background: var(--bb-bg-tertiary); border: 1px solid var(--bb-border-light);
+      color: var(--bb-text-primary); padding: 10px 13px; border-radius: 10px;
+      font-size: 14px; outline: none; transition: var(--bb-transition);
+    }
+    .form-input:focus { border-color: var(--bb-orange); }
+    .form-input::placeholder { color: var(--bb-text-muted); }
+    .form-input[readonly] { opacity: 0.6; cursor: not-allowed; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 40px 16px; color: var(--bb-text-muted); }
+    .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
+    .empty-state-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--bb-text-secondary); }
+    .empty-state-sub { font-size: 13px; }
+
+    /* ── Responsive ── */
+    @media(max-width:600px){
+      .header { padding: 12px 14px 0; }
+      .header-title { font-size: 18px; }
+      .tabs { padding: 10px 14px 0; gap: 0; }
+      .tab { padding: 8px 12px; font-size: 12px; }
+      .tab-content { padding: 14px; }
+      .slot-card { padding: 14px; }
+      .color-swatch { width: 36px; height: 36px; }
+      .filament-type { font-size: 15px; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .modal { padding: 18px; }
+      .btn { padding: 10px 16px; }
+      .kpi-value { font-size: 22px; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Inventory en cartes sur mobile */
+      .inv-desktop { display: none; }
+      .inv-mobile { display: flex !important; }
+    }
+    @media(min-width:601px){
+      .inv-mobile { display: none !important; }
+    }
+
+    /* ── Inventory mobile cards ── */
+    .inv-mobile { flex-direction: column; gap: 10px; }
+    .inv-card {
+      background: var(--bb-bg-card); border-radius: var(--bb-radius-sm);
+      border: 1px solid var(--bb-border-subtle); padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .inv-card-swatch { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
+    .inv-card-info { flex: 1; min-width: 0; }
+    .inv-card-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inv-card-sub { font-size: 12px; color: var(--bb-text-muted); margin-top: 2px; }
+    .inv-card-right { text-align: right; flex-shrink: 0; }
+    .inv-card-actions { display: flex; gap: 6px; margin-top: 6px; justify-content: flex-end; }
+
+    /* ── Archived section ── */
+    .archived-section { margin-top: 24px; opacity: 0.7; }
+    .archived-section:hover { opacity: 1; }
+    .archived-toggle {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      padding: 10px 0; color: var(--bb-text-muted); font-size: 13px; font-weight: 600;
+    }
+    .archived-toggle:hover { color: var(--bb-text-secondary); }
+    .archived-list { display: none; margin-top: 10px; }
+    .archived-list.open { display: block; }
+
+    /* ── NFC Scan modal ── */
+    .nfc-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200;
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .nfc-overlay.open { display: flex; }
+    .nfc-modal {
+      background: var(--bb-bg-secondary); border-radius: var(--bb-radius-lg);
+      border: 1px solid var(--bb-border-light); padding: 32px 28px;
+      width: 360px; max-width: 100%; text-align: center; box-shadow: var(--bb-shadow-lg);
+    }
+    .nfc-icon { font-size: 48px; margin-bottom: 16px; animation: nfc-pulse 1.5s ease-in-out infinite; }
+    @keyframes nfc-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.12);opacity:0.7} }
+    .nfc-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .nfc-sub { font-size: 13px; color: var(--bb-text-muted); margin-bottom: 20px; line-height: 1.5; }
+    .nfc-countdown { font-size: 13px; color: var(--bb-text-muted); margin-bottom: 20px; }
+    .nfc-countdown span { color: var(--bb-orange); font-weight: 700; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--bb-bg-tertiary); border: 1px solid var(--bb-border-light);
+      color: var(--bb-text-primary); padding: 12px 20px; border-radius: 12px;
+      font-size: 13px; font-weight: 500; z-index: 300; opacity: 0;
+      transition: opacity 0.3s; pointer-events: none; max-width: 90vw; text-align: center;
+      box-shadow: var(--bb-shadow-lg);
+    }
+    .toast.show { opacity: 1; }
+    .toast.toast-warn { border-color: rgba(255,196,0,0.4); color: var(--bb-yellow); }
+    .toast.toast-ok { border-color: rgba(76,175,80,0.4); color: var(--bb-green); }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">Bambu<span>Board</span></div>
+    <div class="header-meta">
+      <span id="last-update"></span>
+      <span id="status-badge" class="status-badge disconnected">
+        <span class="status-dot"></span>
+        <span id="status-text">Connexion...</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('ams')">AMS Live</div>
+    <div class="tab" onclick="switchTab('inventory')" id="tab-inv-btn">Inventaire<span class="tab-alert" id="inv-alert"></span></div>
+    <div class="tab" onclick="switchTab('kpis')">Statistiques</div>
+    <div class="tab" onclick="switchTab('settings')">Maintenance</div>
+  </div>
+
+  <!-- AMS Tab -->
+  <div class="tab-content active" id="tab-ams">
+    <div id="error-banner" class="error-banner"></div>
+    <div class="section-header">
+      <span class="section-title">Filaments charges</span>
+    </div>
+    <div class="ams-grid" id="ams-grid">
+      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- Inventory Tab -->
+  <div class="tab-content" id="tab-inventory">
+    <div class="section-header">
+      <span class="section-title">Stock de bobines</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input class="filter-input" id="inv-filter" placeholder="Filtrer..." oninput="filterInventory()" />
+        <a class="btn btn-ghost btn-sm" href="api/spools/export.csv" download>CSV</a>
+        <button class="btn btn-ghost btn-sm" onclick="startNfcScan()" id="btn-nfc-scan">&#x1F4F6; Scan Flipper</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal()">+ Ajouter</button>
+      </div>
+    </div>
+
+    <!-- Status filter chips -->
+    <div class="filter-chips" id="inv-chips" style="margin-bottom:14px"></div>
+
+    <!-- Desktop table -->
+    <div class="bb-table-wrap inv-desktop">
+      <table class="bb-table">
+        <thead>
+          <tr>
+            <th>Bobine</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th>Restant</th>
+            <th>Poids</th>
+            <th>AMS</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="inv-tbody">
+          <tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine enregistree</div><div class="empty-state-sub">Ajoutez-en une ou enregistrez depuis l'AMS</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Mobile cards -->
+    <div class="inv-mobile" id="inv-mobile"></div>
+
+    <!-- Archived section (collapsible) -->
+    <div class="archived-section" id="archived-section" style="display:none">
+      <div class="archived-toggle" onclick="toggleArchived()">
+        <span>&#9660;</span> <span>Bobines archivees</span>
+        <span id="archived-count" class="chip-count" style="font-size:11px"></span>
+      </div>
+      <div class="archived-list" id="archived-list"></div>
+    </div>
+  </div>
+
+  <!-- KPIs Tab -->
+  <div class="tab-content" id="tab-kpis">
+    <div class="section-header">
+      <span class="section-title">Vue d'ensemble</span>
+      <button class="btn btn-ghost btn-sm" onclick="loadKpis()">Actualiser</button>
+    </div>
+    <div class="kpi-grid" id="kpi-cards"></div>
+    <div id="kpi-low-stock"></div>
+    <div class="kpi-two-col" id="kpi-tables"></div>
+    <div id="kpi-sessions"></div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div class="tab-content" id="tab-settings">
+    <div style="max-width:520px">
+
+      <div class="section-header"><span class="section-title">Configuration</span></div>
+      <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
+        <div style="font-size:13px;color:var(--bb-text-secondary);line-height:1.6">
+          La connexion imprimante et le webhook sont configures dans les
+          <strong>options de l'add-on Home Assistant</strong>.
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="testHaNotification()">Tester la notification</button>
+          <span id="ha-msg" style="font-size:13px;display:none"></span>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-title">Donnees</span></div>
+      <div class="bb-table-wrap" style="padding:18px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:14px;font-weight:600">Vider l'historique</div>
+              <div style="font-size:12px;color:var(--bb-text-muted)">Efface les logs — conserve les bobines</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="resetData()">Vider</button>
+          </div>
+          <div style="border-top:1px solid var(--bb-border-subtle);padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:14px;font-weight:600">Reset complet</div>
+              <div style="font-size:12px;color:var(--bb-text-muted)">Efface tout (bobines + historique)</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="resetAll()">Reset total</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NFC Scan overlay -->
+  <div class="nfc-overlay" id="nfc-overlay">
+    <div class="nfc-modal">
+      <!-- Étape 1 : brancher le Flipper -->
+      <div id="nfc-step-connect">
+        <div class="nfc-icon">&#x1F50C;</div>
+        <div class="nfc-title">Connecter le Flipper Zero</div>
+        <div class="nfc-sub">Branchez le Flipper Zero en USB,<br>puis cliquez sur <strong>Connecter</strong>.</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="connectFlipper()">Connecter</button>
+          <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()">Annuler</button>
+        </div>
+      </div>
+      <!-- Étape 2 : attente du scan -->
+      <div id="nfc-step-scan" style="display:none">
+        <div class="nfc-icon">&#x1F4F6;</div>
+        <div class="nfc-title">Flipper connecte</div>
+        <div class="nfc-sub">Lancez <strong>Bambu NFC</strong> sur le Flipper,<br>puis approchez une bobine.</div>
+        <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()">Annuler</button>
+      </div>
+      <!-- Navigateur non compatible -->
+      <div id="nfc-step-unsupported" style="display:none">
+        <div class="nfc-icon" style="animation:none">&#x26A0;&#xFE0F;</div>
+        <div class="nfc-title">Navigateur incompatible</div>
+        <div class="nfc-sub">
+          Web Serial requiert <strong>Chrome</strong> ou <strong>Edge</strong>.<br><br>
+          Accedez au dashboard via l'interface Home Assistant (ingress) ou copiez l'URL en <strong>https://</strong>.
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <div class="modal-title"><span id="modal-title-text">Ajouter une bobine</span></div>
+      <form id="spool-form" onsubmit="submitSpool(event)">
+        <input type="hidden" id="f-id" />
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Nom *</label>
+            <input class="form-input" id="f-name" placeholder="Ex: PLA Rouge" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Marque</label>
+            <input class="form-input" id="f-brand" placeholder="Bambu Lab, eSUN..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <input class="form-input" id="f-tray-type" placeholder="PLA, PETG, ABS..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sous-marque</label>
+            <input class="form-input" id="f-sub-brands" placeholder="PLA Basic..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Code filament</label>
+            <input class="form-input" id="f-filament-code" placeholder="33101" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Couleur</label>
+            <input class="form-input" id="f-color-name" placeholder="Rouge, Gris..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Couleur hex</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input class="form-input" id="f-color-hex" placeholder="#C12E1F" style="flex:1" />
+              <input type="color" id="f-color-picker" style="width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px" oninput="document.getElementById('f-color-hex').value=this.value" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Poids initial (g)</label>
+            <input class="form-input" id="f-weight" type="number" placeholder="1000" value="1000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Prix/kg (optionnel)</label>
+            <input class="form-input" id="f-price" type="number" step="0.01" placeholder="25.00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">% de depart</label>
+            <input class="form-input" id="f-initial-remain" type="number" min="0" max="100" placeholder="100" value="100" />
+            <span style="font-size:11px;color:var(--bb-text-muted)">Si bobine deja entamee</span>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Tray UUID</label>
+            <input class="form-input" id="f-tray-uuid" placeholder="Pre-rempli depuis l'AMS" />
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Tag UID</label>
+            <input class="form-input" id="f-tag-uid" placeholder="Optionnel" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="modal-submit-btn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ── State ─────────────────────────────────────────────────────────────────
+    let amsData = { connected: false, slots: [] };
+    let inventory = [];
+    let archivedSpools = [];
+    let activeTab = 'ams';
+    let invStatusFilter = null; // null = toutes sauf archived
+    let lowStockThreshold = 20;
+
+    // ── Tabs ──────────────────────────────────────────────────────────────────
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', ['ams','inventory','kpis','settings'][i] === tab);
+      });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      if (tab === 'inventory') loadInventory();
+      if (tab === 'kpis') loadKpis();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function remainColor(pct) {
+      if (pct === null || pct === undefined) return 'var(--bb-text-muted)';
+      if (pct <= lowStockThreshold) return 'var(--bb-red)';
+      if (pct <= 50) return 'var(--bb-yellow)';
+      return 'var(--bb-green)';
+    }
+
+    function isColorDark(hex) {
+      if (!hex || hex.length < 7) return true;
+      const r = parseInt(hex.slice(1,3), 16);
+      const g = parseInt(hex.slice(3,5), 16);
+      const b = parseInt(hex.slice(5,7), 16);
+      return (0.299*r + 0.587*g + 0.114*b) < 40;
+    }
+
+    function remainBar(pct, mini = false) {
+      if (pct === null || pct === undefined) return '';
+      const color = remainColor(pct);
+      if (mini) return `
+        <div class="remain-mini">
+          <div class="remain-bar-mini"><div class="remain-fill-mini" style="width:${pct}%;background:${color}"></div></div>
+          <span style="font-size:12px;font-weight:600;color:${color}">${pct}%</span>
+        </div>`;
+      return `
+        <div class="remain-row">
+          <div class="remain-bar"><div class="remain-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span class="remain-label" style="color:${color}">${pct}%</span>
+        </div>`;
+    }
+
+    function colorDot(hex) {
+      return `<span class="color-dot" style="background:${hex || '#333'}"></span>`;
+    }
+
+    function fmtDate(ts) {
+      if (!ts) return '';
+      try {
+        const d = new Date(ts.replace(' ','T'));
+        return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) + ' ' +
+               d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      } catch(e) { return ts; }
+    }
+
+    function statusBadge(status) {
+      const labels = { active: 'Dans AMS', idle: 'En stock', empty: 'Vide', archived: 'Archive' };
+      return `<span class="spool-status st-${status || 'active'}">${labels[status] || labels.active}</span>`;
+    }
+
+    // ── AMS ───────────────────────────────────────────────────────────────────
+    function renderSlot(slot) {
+      const isEmpty = !slot.tray_type;
+      const color = slot.color || '#2a2a2a';
+      const label = `S${slot.index + 1}`;
+      const mainType = slot.tray_sub_brands || slot.tray_type || '';
+      const brand = slot.tray_id_name || slot.tray_info_idx || '';
+      const swatchBorder = isColorDark(slot.color) ? '1px solid rgba(255,255,255,0.25)' : '1px solid rgba(255,255,255,0.1)';
+      const temp = (slot.nozzle_temp_min && slot.nozzle_temp_max)
+        ? `<span class="temp-badge">${slot.nozzle_temp_min}–${slot.nozzle_temp_max}°C</span>` : '';
+
+      if (isEmpty) {
+        return `<div class="slot-card empty">
+          <span class="slot-label">${label}</span>
+          <div class="color-swatch"></div>
+          <div class="filament-type" style="color:var(--bb-text-muted)">Vide</div>
+        </div>`;
+      }
+
+      let stockBadge = '';
+      if (slot.spool) {
+        stockBadge = `<div><span class="stock-badge known">${slot.spool.name}</span></div>`;
+      } else if (slot.tray_uuid) {
+        stockBadge = `<div><span class="stock-badge unknown" onclick="openModalFromSlot(${JSON.stringify(slot).replace(/"/g,'&quot;')})">Bobine inconnue — Enregistrer</span></div>`;
+      }
+
+      return `<div class="slot-card active">
+        <span class="slot-label">${label}</span>
+        <div class="color-swatch" style="background:${color};border:${swatchBorder}"></div>
+        <div class="filament-type">${mainType}</div>
+        <div class="filament-brand">${brand}</div>
+        ${temp}
+        ${remainBar(slot.remain)}
+        ${stockBadge}
+      </div>`;
+    }
+
+    async function fetchAMS() {
+      try {
+        const res = await fetch('api/ams');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        amsData = await res.json();
+
+        document.getElementById('error-banner').style.display = 'none';
+        const connected = amsData.connected;
+        const badge = document.getElementById('status-badge');
+        badge.className = `status-badge ${connected ? 'connected' : 'disconnected'}`;
+        document.getElementById('status-text').textContent = connected ? 'Connecte' : 'Deconnecte';
+        document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString('fr-FR')}`;
+
+        if (amsData.slots?.length > 0) {
+          document.getElementById('ams-grid').innerHTML = amsData.slots.map(renderSlot).join('');
+        }
+        if (amsData.error) {
+          const b = document.getElementById('error-banner');
+          b.textContent = `Erreur : ${amsData.error}`; b.style.display = 'block';
+        }
+      } catch (err) {
+        document.getElementById('status-badge').className = 'status-badge disconnected';
+        document.getElementById('status-text').textContent = 'Deconnecte';
+        const b = document.getElementById('error-banner');
+        b.textContent = `Backend inaccessible : ${err.message}`; b.style.display = 'block';
+      }
+    }
+
+    // ── Inventory ─────────────────────────────────────────────────────────────
+    async function loadInventory() {
+      const [mainRes, archivedRes, configRes] = await Promise.all([
+        fetch('api/spools'),
+        fetch('api/spools?status=archived'),
+        fetch('api/config'),
+      ]);
+      inventory = await mainRes.json();
+      archivedSpools = await archivedRes.json();
+      try { const cfg = await configRes.json(); lowStockThreshold = cfg.low_stock_threshold || 20; } catch(e) {}
+
+      renderFilterChips();
+      renderInventory(getFilteredInventory());
+      renderArchived();
+
+      const lowCount = inventory.filter(s => (s.current_remain ?? 100) <= lowStockThreshold).length;
+      document.getElementById('inv-alert').style.display = lowCount > 0 ? 'block' : 'none';
+    }
+
+    function renderFilterChips() {
+      const counts = { active: 0, idle: 0, empty: 0 };
+      inventory.forEach(s => { counts[s.status || 'active'] = (counts[s.status || 'active'] || 0) + 1; });
+      const total = inventory.length;
+
+      const chips = [
+        { key: null, label: 'Toutes', count: total },
+        { key: 'active', label: 'Dans AMS', count: counts.active },
+        { key: 'idle', label: 'En stock', count: counts.idle },
+        { key: 'empty', label: 'Vides', count: counts.empty },
+      ];
+
+      document.getElementById('inv-chips').innerHTML = chips.map(c =>
+        `<div class="filter-chip ${invStatusFilter === c.key ? 'active' : ''}" onclick="setStatusFilter(${c.key === null ? 'null' : "'" + c.key + "'"})">
+          ${c.label}<span class="chip-count">${c.count}</span>
+        </div>`
+      ).join('');
+    }
+
+    function setStatusFilter(status) {
+      invStatusFilter = status;
+      renderFilterChips();
+      renderInventory(getFilteredInventory());
+    }
+
+    function getFilteredInventory() {
+      let list = inventory;
+      if (invStatusFilter) {
+        list = list.filter(s => (s.status || 'active') === invStatusFilter);
+      }
+      const q = (document.getElementById('inv-filter')?.value || '').toLowerCase();
+      if (q) {
+        list = list.filter(s =>
+          (s.name||'').toLowerCase().includes(q) ||
+          (s.tray_type||'').toLowerCase().includes(q) ||
+          (s.brand||'').toLowerCase().includes(q) ||
+          (s.sub_brands||'').toLowerCase().includes(q)
+        );
+      }
+      return list;
+    }
+
+    function renderInventory(spools) {
+      const tbody = document.getElementById('inv-tbody');
+      const mobile = document.getElementById('inv-mobile');
+      if (!spools.length) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div><div class="empty-state-sub">Ajoutez-en une ou enregistrez depuis l'AMS</div></div></td></tr>`;
+        mobile.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div></div>`;
+        return;
+      }
+      // Desktop
+      tbody.innerHTML = spools.map(s => {
+        const st = s.status || 'active';
+        const amsSlot = amsData.slots?.find(sl => sl.tag_uid && sl.tag_uid === s.tag_uid);
+        const amsCell = amsSlot ? `<span class="ams-slot-badge">S${amsSlot.index + 1}</span>` : '<span style="color:var(--bb-text-muted)">—</span>';
+        const remain = s.current_remain ?? 100;
+        const weightG = s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000));
+        const actions = buildActions(s, st);
+        return `<tr>
+          <td>${colorDot(s.color_hex)}<strong>${s.name}</strong></td>
+          <td><span style="font-size:12px;font-weight:600">${s.tray_type || '—'}</span></td>
+          <td>${statusBadge(st)}</td>
+          <td>${remainBar(remain, true)}</td>
+          <td style="font-size:13px;font-weight:600">${weightG}g <span style="color:var(--bb-text-muted);font-weight:400">/ ${s.initial_weight || 1000}g</span></td>
+          <td>${amsCell}</td>
+          <td style="white-space:nowrap">${actions}</td>
+        </tr>`;
+      }).join('');
+      // Mobile
+      mobile.innerHTML = spools.map(s => {
+        const st = s.status || 'active';
+        const remain = s.current_remain ?? 100;
+        const weightG = s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000));
+        return `<div class="inv-card">
+          <div class="inv-card-swatch" style="background:${s.color_hex || '#333'}"></div>
+          <div class="inv-card-info">
+            <div class="inv-card-name">${s.name} ${statusBadge(st)}</div>
+            <div class="inv-card-sub">${s.tray_type || '—'} · ${s.brand || ''}</div>
+            ${remainBar(remain, true)}
+          </div>
+          <div class="inv-card-right">
+            <div style="font-size:14px;font-weight:700">${weightG}g</div>
+            <div class="inv-card-actions">
+              ${st === 'empty' ? `<button class="btn btn-success btn-sm" onclick="rebuySpool(${s.id})" title="Racheter">+</button>` : ''}
+              <button class="btn btn-ghost btn-sm" onclick="editSpool(${s.id})">✏️</button>
+              ${st === 'empty' || st === 'idle' ? `<button class="btn btn-ghost btn-sm" onclick="archiveSpool(${s.id})" title="Archiver">📁</button>` : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function buildActions(s, st) {
+      let html = '';
+      if (st === 'empty') {
+        html += `<button class="btn btn-success btn-sm" onclick="rebuySpool(${s.id})" title="Racheter (nouvelle bobine identique)">+ Racheter</button> `;
+      }
+      html += `<button class="btn btn-ghost btn-sm" onclick="editSpool(${s.id})" title="Modifier">✏️</button>`;
+      if (st === 'active') {
+        html += `<button class="btn btn-ghost btn-sm" title="Snapshot" onclick="snapshotSpool(${s.id})">📸</button>`;
+      }
+      if (st === 'idle' || st === 'empty') {
+        html += `<button class="btn btn-ghost btn-sm" onclick="archiveSpool(${s.id})" title="Archiver">📁</button>`;
+      }
+      return html;
+    }
+
+    function renderArchived() {
+      const section = document.getElementById('archived-section');
+      if (!archivedSpools.length) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+      document.getElementById('archived-count').textContent = archivedSpools.length;
+
+      document.getElementById('archived-list').innerHTML = `
+        <div class="bb-table-wrap">
+          <table class="bb-table">
+            <thead><tr><th>Bobine</th><th>Type</th><th>Consomme</th><th></th></tr></thead>
+            <tbody>
+              ${archivedSpools.map(s => {
+                const remain = s.current_remain ?? 0;
+                const used = 100 - remain;
+                const weightUsed = Math.round(used / 100 * (s.initial_weight || 1000));
+                return `<tr style="opacity:0.6">
+                  <td>${colorDot(s.color_hex)}<strong>${s.name}</strong></td>
+                  <td>${s.tray_type || '—'}</td>
+                  <td>${weightUsed}g utilises</td>
+                  <td>
+                    <button class="btn btn-success btn-sm" onclick="rebuySpool(${s.id})" title="Racheter">+ Racheter</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteSpool(${s.id}, '${s.name.replace(/'/g,"\\'")}')">Supprimer</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    function toggleArchived() {
+      document.getElementById('archived-list').classList.toggle('open');
+    }
+
+    function filterInventory() {
+      renderInventory(getFilteredInventory());
+    }
+
+    // ── Spool actions ────────────────────────────────────────────────────────
+    async function rebuySpool(id) {
+      const spool = [...inventory, ...archivedSpools].find(s => s.id === id);
+      const name = spool ? spool.name : 'cette bobine';
+      if (!confirm(`Racheter "${name}" ?\nL'ancienne sera archivee et une nouvelle bobine identique a 100% sera creee.`)) return;
+      await fetch(`api/spools/${id}/rebuy`, { method: 'POST' });
+      loadInventory();
+    }
+
+    async function archiveSpool(id) {
+      if (!confirm('Archiver cette bobine ? Elle sera masquee de l\'inventaire actif.')) return;
+      await fetch(`api/spools/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'archived' })
+      });
+      loadInventory();
+    }
+
+    async function setSpoolStatus(id, status) {
+      await fetch(`api/spools/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      loadInventory();
+    }
+
+    // ── KPIs ──────────────────────────────────────────────────────────────────
+    async function loadKpis() {
+      const res = await fetch('api/kpis');
+      const kpis = await res.json();
+      if (kpis.low_stock_threshold) lowStockThreshold = kpis.low_stock_threshold;
+
+      const totalGrams = (kpis.by_type || []).reduce((s, r) => s + (r.grams_used || 0), 0);
+      const stock = kpis.stock || {};
+
+      let cards = `
+        <div class="kpi-card">
+          <div class="kpi-label">Consommation totale</div>
+          <div class="kpi-value">${Math.round(totalGrams)}g</div>
+          <div class="kpi-sub">${(totalGrams/1000).toFixed(1)} kg utilises</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Bobines en stock</div>
+          <div class="kpi-value">${kpis.spool_count || 0}</div>
+          <div class="kpi-sub">${stock.active || 0} dans AMS · ${stock.idle || 0} rangees</div>
+        </div>`;
+      if ((stock.empty || 0) > 0) {
+        cards += `<div class="kpi-card">
+          <div class="kpi-label">Bobines vides</div>
+          <div class="kpi-value" style="color:var(--bb-red)">${stock.empty}</div>
+          <div class="kpi-sub">a racheter ou archiver</div>
+        </div>`;
+      }
+      if (kpis.total_cost > 0) {
+        cards += `<div class="kpi-card">
+          <div class="kpi-label">Cout consomme</div>
+          <div class="kpi-value">${kpis.total_cost.toFixed(2)}€</div>
+          <div class="kpi-sub">estimation</div>
+        </div>`;
+      }
+      if (kpis.low_stock?.length) {
+        cards += `<div class="kpi-card">
+          <div class="kpi-label">Stocks faibles</div>
+          <div class="kpi-value" style="color:var(--bb-red)">${kpis.low_stock.length}</div>
+          <div class="kpi-sub">sous ${lowStockThreshold}%</div>
+        </div>`;
+      }
+      if ((stock.archived || 0) > 0) {
+        cards += `<div class="kpi-card">
+          <div class="kpi-label">Archivees</div>
+          <div class="kpi-value" style="color:var(--bb-text-muted)">${stock.archived}</div>
+          <div class="kpi-sub">bobines consommees</div>
+        </div>`;
+      }
+      document.getElementById('kpi-cards').innerHTML = cards;
+
+      // Low stock badges
+      document.getElementById('kpi-low-stock').innerHTML = kpis.low_stock?.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+          ${kpis.low_stock.map(s => `<span class="low-stock-badge">${colorDot(s.color_hex)}${s.name} — ${s.remain_pct}%</span>`).join('')}
+        </div>` : '';
+
+      // Tables by_type + by_brand
+      const typeTable = kpis.by_type?.length ? `
+        <div class="bb-table-wrap">
+          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">Par type</div>
+          <table class="bb-table">
+            <thead><tr><th>Type</th><th>Couleur</th><th>Utilise</th></tr></thead>
+            <tbody>${kpis.by_type.map(r => {
+              const label = r.sub_brands || r.tray_type || '—';
+              const colorLabel = r.color_name || '—';
+              return `<tr>
+                <td><strong>${label}</strong></td>
+                <td>${colorDot(r.color_hex)}${colorLabel}</td>
+                <td style="font-weight:600">${Math.round(r.grams_used || 0)}g</td>
+              </tr>`;
+            }).join('')}</tbody>
+          </table>
+        </div>` : '<div></div>';
+
+      const brandTable = kpis.by_brand?.length ? `
+        <div class="bb-table-wrap">
+          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">Par marque</div>
+          <table class="bb-table">
+            <thead><tr><th>Marque</th><th>Utilise</th></tr></thead>
+            <tbody>${kpis.by_brand.map(r => `<tr><td><strong>${r.brand}</strong></td><td style="font-weight:600">${Math.round(r.grams_used || 0)}g</td></tr>`).join('')}</tbody>
+          </table>
+        </div>` : '<div></div>';
+
+      document.getElementById('kpi-tables').innerHTML = typeTable + brandTable;
+
+      // Sessions d'impression
+      const sessions = kpis.sessions || [];
+      if (sessions.length) {
+        document.getElementById('kpi-sessions').innerHTML = `
+          <div class="section-header" style="margin-top:6px"><span class="section-title">Dernieres impressions</span></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            ${sessions.map(s => `
+              <div class="session-card">
+                <div class="session-swatch" style="background:${s.color_hex || '#333'}"></div>
+                <div class="session-info">
+                  <div class="session-name">${s.name}</div>
+                  <div class="session-detail">
+                    ${s.tray_type || ''} · ${s.start_pct}% → ${s.end_pct}%${s.slot_index !== null ? ` · S${s.slot_index + 1}` : ''}
+                  </div>
+                  <div class="session-detail">${fmtDate(s.start_time)}</div>
+                </div>
+                <div class="session-consumed">
+                  <div class="session-consumed-value">${s.consumed_pct > 0 ? '-' + s.consumed_grams + 'g' : '—'}</div>
+                  <div class="session-consumed-sub">${s.consumed_pct > 0 ? '-' + s.consumed_pct + '%' : 'init'}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>`;
+      } else {
+        document.getElementById('kpi-sessions').innerHTML = `
+          <div class="empty-state" style="padding:30px">
+            <div class="empty-state-icon">📊</div>
+            <div class="empty-state-title">Pas encore de donnees</div>
+            <div class="empty-state-sub">Les statistiques apparaitront au fil des impressions</div>
+          </div>`;
+      }
+    }
+
+    // ── Modal ─────────────────────────────────────────────────────────────────
+    function openModal(spool = null) {
+      document.getElementById('modal-title-text').textContent = spool ? 'Modifier la bobine' : 'Ajouter une bobine';
+      document.getElementById('modal-submit-btn').textContent = spool ? 'Mettre a jour' : 'Enregistrer';
+      document.getElementById('f-id').value = spool?.id || '';
+      document.getElementById('f-name').value = spool?.name || '';
+      document.getElementById('f-brand').value = spool?.brand || '';
+      document.getElementById('f-tray-type').value = spool?.tray_type || '';
+      document.getElementById('f-sub-brands').value = spool?.sub_brands || '';
+      document.getElementById('f-color-name').value = spool?.color_name || '';
+      document.getElementById('f-color-hex').value = spool?.color_hex || '';
+      document.getElementById('f-color-picker').value = spool?.color_hex || '#ffffff';
+      document.getElementById('f-filament-code').value = spool?.filament_code || '';
+      document.getElementById('f-weight').value = spool?.initial_weight || 1000;
+      document.getElementById('f-price').value = spool?.price_per_kg || '';
+      document.getElementById('f-tray-uuid').value = spool?.tray_uuid || '';
+      document.getElementById('f-tray-uuid').readOnly = false;
+      document.getElementById('f-tag-uid').value = spool?.tag_uid || '';
+      document.getElementById('f-initial-remain').value = spool?.initial_remain ?? 100;
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+
+    function openModalFromSlot(slot) {
+      openModal({
+        tray_uuid: slot.tray_uuid,
+        tag_uid: slot.tag_uid,
+        tray_type: slot.tray_type,
+        sub_brands: slot.tray_sub_brands,
+        color_hex: slot.color,
+      });
+      document.getElementById('f-tray-uuid').readOnly = true;
+      document.getElementById('f-name').focus();
+    }
+
+    async function editSpool(id) {
+      const spool = [...inventory, ...archivedSpools].find(s => s.id === id);
+      if (spool) openModal(spool);
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    function closeModalOutside(e) {
+      if (e.target === document.getElementById('modal-overlay')) closeModal();
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+    let _toastTimer = null;
+    function showToast(msg, type = '') {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = `toast show ${type ? 'toast-' + type : ''}`;
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    // ── NFC Scan — Web Serial API ─────────────────────────────────────────────
+    let _serialPort   = null;
+    let _serialReader = null;
+
+    function startNfcScan() {
+      // Le modal s'ouvre toujours — l'erreur éventuelle est affichée dedans
+      document.getElementById('nfc-overlay').classList.add('open');
+
+      if (!('serial' in navigator)) {
+        _nfcShowStep('unsupported');
+        return;
+      }
+      _nfcShowStep('connect');
+    }
+
+    function _nfcShowStep(step) {
+      document.getElementById('nfc-step-connect').style.display     = step === 'connect'     ? '' : 'none';
+      document.getElementById('nfc-step-scan').style.display        = step === 'scan'        ? '' : 'none';
+      document.getElementById('nfc-step-unsupported').style.display = step === 'unsupported' ? '' : 'none';
+    }
+
+    async function connectFlipper() {
+      try {
+        // Sélecteur de port natif (comme lab.flipper.net)
+        _serialPort = await navigator.serial.requestPort();
+        await _serialPort.open({ baudRate: 230400 });
+        _nfcShowStep('scan');
+        _readSerialLines();
+      } catch (e) {
+        if (e.name !== 'NotAllowedError') {
+          showToast('Connexion echouee : ' + e.message, 'warn');
+        }
+        // Si refus utilisateur, on reste sur l'overlay step connect
+      }
+    }
+
+    async function _readSerialLines() {
+      const decoder = new TextDecoder();
+      const reader  = _serialPort.readable.getReader();
+      _serialReader = reader;
+      let buf = '';
+
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+
+          let nl;
+          while ((nl = buf.indexOf('\n')) !== -1) {
+            const line = buf.slice(0, nl);
+            buf = buf.slice(nl + 1);
+            const idx = line.indexOf('BAMBU_NFC:');
+            if (idx !== -1) {
+              try {
+                const data = JSON.parse(line.slice(idx + 10).trim());
+                // Fermer proprement avant d'ouvrir le modal
+                reader.releaseLock();
+                _serialReader = null;
+                try { await _serialPort.close(); } catch(_) {}
+                _serialPort = null;
+                document.getElementById('nfc-overlay').classList.remove('open');
+                _handleNfcData(data);
+              } catch (pe) { console.warn('BAMBU_NFC parse error:', pe); }
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        if (e.name !== 'AbortError') console.log('Serial ended:', e.message);
+      } finally {
+        try { reader.releaseLock(); } catch(_) {}
+      }
+    }
+
+    async function stopNfcScan() {
+      document.getElementById('nfc-overlay').classList.remove('open');
+      if (_serialReader) {
+        try { await _serialReader.cancel(); } catch(_) {}
+        _serialReader = null;
+      }
+      if (_serialPort) {
+        try { await _serialPort.close(); } catch(_) {}
+        _serialPort = null;
+      }
+    }
+
+    function _handleNfcData(d) {
+      // Vérifier si le tag_uid existe déjà dans l'inventaire local
+      const tagUid = d.tag_uid || '';
+      const existing = tagUid
+        ? [...inventory, ...archivedSpools].find(s => s.tag_uid === tagUid)
+        : null;
+
+      if (existing) {
+        showToast(`Bobine deja enregistree : ${existing.name}`, 'warn');
+        openModal(existing);
+        return;
+      }
+      const colorHex = d.color_hex
+        ? (d.color_hex.startsWith('#') ? d.color_hex : '#' + d.color_hex)
+        : '';
+      const subBrands = d.sub_brands || '';
+      const colorName = d.color_name || '';
+      const name = [subBrands, colorName].filter(Boolean).join(' ') || d.tray_type || 'Bobine';
+      openModal({
+        name,
+        brand:          d.brand || 'Bambu Lab',
+        tray_type:      d.tray_type || '',
+        sub_brands:     subBrands,
+        color_name:     colorName,
+        color_hex:      colorHex,
+        filament_code:  d.filament_code || '',
+        initial_weight: d.initial_weight || 1000,
+        tag_uid:        tagUid,
+        initial_remain: 100,
+      });
+      showToast('Formulaire pre-rempli depuis le tag NFC', 'ok');
+    }
+
+    async function submitSpool(e) {
+      e.preventDefault();
+      const id = document.getElementById('f-id').value;
+      const payload = {
+        name: document.getElementById('f-name').value,
+        brand: document.getElementById('f-brand').value || null,
+        tray_type: document.getElementById('f-tray-type').value || null,
+        sub_brands: document.getElementById('f-sub-brands').value || null,
+        color_name: document.getElementById('f-color-name').value || null,
+        color_hex: document.getElementById('f-color-hex').value || null,
+        filament_code: document.getElementById('f-filament-code').value || null,
+        initial_weight: parseInt(document.getElementById('f-weight').value) || 1000,
+        price_per_kg: parseFloat(document.getElementById('f-price').value) || null,
+        tray_uuid: document.getElementById('f-tray-uuid').value || null,
+        tag_uid: document.getElementById('f-tag-uid').value || null,
+        initial_remain: parseInt(document.getElementById('f-initial-remain').value) ?? 100,
+      };
+
+      const url = id ? `api/spools/${id}` : 'api/spools';
+      const method = id ? 'PUT' : 'POST';
+      await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      closeModal();
+      loadInventory();
+    }
+
+    async function deleteSpool(id, name) {
+      if (!confirm(`Supprimer definitivement "${name}" et tout son historique ?`)) return;
+      await fetch(`api/spools/${id}`, { method: 'DELETE' });
+      loadInventory();
+    }
+
+    async function snapshotSpool(id) {
+      const res = await fetch(`api/spools/${id}/snapshot`, { method: 'POST' });
+      const data = await res.json();
+      const source = data.source === 'ams' ? 'depuis l\'AMS' : 'dernier etat connu';
+      alert(`Snapshot : ${data.remain_pct}% (${source})`);
+      loadInventory();
+    }
+
+    // ── Settings ──────────────────────────────────────────────────────────────
+    async function testHaNotification() {
+      const msg = document.getElementById('ha-msg');
+      msg.style.display = 'inline';
+      msg.style.color = 'var(--bb-text-muted)';
+      msg.textContent = 'Envoi...';
+      try {
+        const res = await fetch('api/notifications/test', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          msg.style.color = 'var(--bb-green)';
+          msg.textContent = `OK (HTTP ${data.status})`;
+        } else {
+          msg.style.color = 'var(--bb-red)';
+          msg.textContent = data.detail || data.error || 'Erreur';
+        }
+      } catch (e) {
+        msg.style.color = 'var(--bb-red)';
+        msg.textContent = e.message;
+      }
+      setTimeout(() => msg.style.display = 'none', 5000);
+    }
+
+    async function resetData() {
+      if (!confirm('Vider l\'historique de consommation ? Les bobines sont conservees.')) return;
+      await fetch('api/admin/reset-data', { method: 'POST' });
+      alert('Historique efface.');
+      if (activeTab === 'kpis') loadKpis();
+    }
+
+    async function resetAll() {
+      if (!confirm('Reset COMPLET — toutes les bobines et l\'historique seront supprimes. Continuer ?')) return;
+      await fetch('api/admin/reset-all', { method: 'POST' });
+      inventory = [];
+      archivedSpools = [];
+      alert('Base reinitialisee.');
+      if (activeTab === 'inventory') loadInventory();
+      if (activeTab === 'kpis') loadKpis();
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    fetchAMS();
+    setInterval(fetchAMS, 2500);
+  </script>
+</body>
+</html>

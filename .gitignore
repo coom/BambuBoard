@@ -1,0 +1,36 @@
+# ── Secrets / config locale ───────────────────────────────────────────────
+backend/config.py
+.env
+.env.*
+
+# ── Base SQLite (WAL + shm générés à chaud) ───────────────────────────────
+bambu.db
+*.db-wal
+*.db-shm
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Flipper ufbt (artefacts locaux et caches) ─────────────────────────────
+flipper/*/dist/
+flipper/*/.vscode/
+flipper/*/.ufbt/
+
+# ── IDE / outils locaux ───────────────────────────────────────────────────
+.claude/
+.idea/
+CLAUDE.md
+docs/superpowers/
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,16 @@
+App(
+    appid="bambu_scanner",
+    name="Bambu Scanner",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="bambu_scanner_app",
+    requires=["gui", "nfc"],
+    stack_size=4 * 1024,
+    fap_category="NFC",
+    fap_version=(1, 0),
+    fap_description="Scan Bambu Lab spool NFC tags and send to dashboard",
+    fap_libs=["mbedtls"],
+    sources=[
+        "bambu_scanner.c",
+        "bambu_crypto.c",
+    ],
+)

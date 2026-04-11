@@ -1,0 +1,32 @@
+name: Bambu Dashboard
+version: "1.0.0"
+slug: bambu_dashboard
+description: Dashboard AMS Bambu Lab — suivi de bobines, KPIs et notifications
+url: https://github.com/
+arch:
+  - amd64
+  - aarch64
+  - armv7
+init: false
+startup: application
+boot: auto
+ingress: true
+ingress_port: 8000
+panel_icon: mdi:printer-3d-nozzle
+panel_title: Bambu
+map:
+  - share:rw
+options:
+  printer_ip: ""
+  printer_serial: ""
+  printer_access_code: ""
+  ha_webhook_url: ""
+  ha_webhook_token: ""
+  low_stock_threshold: 20
+schema:
+  printer_ip: str
+  printer_serial: str
+  printer_access_code: password
+  ha_webhook_url: str?
+  ha_webhook_token: password?
+  low_stock_threshold: "int(1,100)?"
