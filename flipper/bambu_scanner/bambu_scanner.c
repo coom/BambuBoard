@@ -1,4 +1,5 @@
 #include <furi.h>
+#include <furi_hal_usb_cdc.h>
 #include <gui/gui.h>
 #include <notification/notification_messages.h>
 #include <nfc/nfc.h>
@@ -10,6 +11,24 @@
 #include "bambu_crypto.h"
 
 #define TAG "BambuNFC"
+
+// printf() dans une FAP officielle n'est pas routé vers l'USB CDC par défaut.
+// On installe un callback qui pipe stdout → CDC channel 0 (celui que Chrome
+// ouvre via Web Serial), découpé en paquets de CDC_DATA_SZ (64) octets.
+// furi_hal_cdc_send() est non-bloquant : sans délai inter-chunk, les paquets
+// successifs écrasent le buffer matériel USB avant TX. 1 ms suffit largement
+// (un chunk de 64 B en USB full-speed prend ~50 µs).
+static void bambu_cdc_stdout(const char* data, size_t size, void* context) {
+    UNUSED(context);
+    const uint8_t* p = (const uint8_t*)data;
+    while(size > 0) {
+        uint16_t chunk = size > CDC_DATA_SZ ? CDC_DATA_SZ : (uint16_t)size;
+        furi_hal_cdc_send(0, (uint8_t*)p, chunk);
+        furi_delay_ms(1);
+        p += chunk;
+        size -= chunk;
+    }
+}
 
 // BAMBU_KEY_A et DEFAULT_KEY_B supprimés (inutilisés en mode stub — à restaurer Task 4)
 
@@ -263,6 +282,9 @@ int32_t bambu_scanner_app(void* p) {
 
     BambuNfcApp* app = malloc(sizeof(BambuNfcApp));
     memset(app, 0, sizeof(BambuNfcApp));
+
+    // Router printf() du thread courant vers le CDC USB pour send_via_serial().
+    furi_thread_set_stdout_callback(bambu_cdc_stdout, NULL);
 
     app->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
     app->view_port   = view_port_alloc();
