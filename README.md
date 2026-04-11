@@ -28,10 +28,13 @@ bas, et scan NFC des bobines 2024+ via un Flipper Zero.
 
 Le dossier [`flipper/bambu_scanner/`](./flipper/bambu_scanner/) contient
 une application Flipper Zero qui scanne les tags NFC des bobines Bambu
-Lab et les envoie au dashboard via USB Web Serial. Il s'installe
-indépendamment de Home Assistant — voir le
-[README du plugin](./flipper/bambu_scanner/README.md) pour le build et
-l'installation sur le Flipper.
+Lab et les envoie au dashboard via USB Web Serial.
+
+Un `.fap` pré-compilé (SDK officiel 1.4.3) est directement versionné à
+[`flipper/bambu_scanner/dist/bambu_scanner.fap`](./flipper/bambu_scanner/dist/bambu_scanner.fap)
+— installable en drag-and-drop via qFlipper sans builder quoi que ce
+soit. Le [README du plugin](./flipper/bambu_scanner/README.md) couvre ce
+chemin simple ainsi que l'alternative build local via ufbt.
 
 ## Architecture
 

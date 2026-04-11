@@ -9,8 +9,8 @@ par l'add-on Bambu Dashboard via l'API Web Serial dans Chrome/Edge.
 ## Sommaire
 
 - [Prérequis matériels et logiciels](#prérequis-matériels-et-logiciels)
-- [Installation — chemin rapide (build local + flash)](#installation--chemin-rapide-build-local--flash)
-- [Installation — chemin qFlipper (drag-and-drop)](#installation--chemin-qflipper-drag-and-drop)
+- [Installation — chemin simple (qFlipper, binaire pré-compilé)](#installation--chemin-simple-qflipper-binaire-pré-compilé)
+- [Installation — chemin ufbt (build local + flash)](#installation--chemin-ufbt-build-local--flash)
 - [Utilisation sur le Flipper](#utilisation-sur-le-flipper)
 - [Intégration avec le dashboard](#intégration-avec-le-dashboard)
 - [Format de la ligne série émise](#format-de-la-ligne-série-émise)
@@ -30,10 +30,36 @@ par l'add-on Bambu Dashboard via l'API Web Serial dans Chrome/Edge.
 
 Le firmware officiel suffit — pas besoin de Unleashed, Momentum ou RogueMaster.
 
-## Installation — chemin rapide (build local + flash)
+## Installation — chemin simple (qFlipper, binaire pré-compilé)
 
-Cette méthode compile l'app **et** la flashe sur ton Flipper en une commande.
-C'est le plus simple pour itérer.
+Un `.fap` pré-compilé est directement **versionné dans le repo** à
+[`flipper/bambu_scanner/dist/bambu_scanner.fap`][fap-direct]. Pas besoin
+de Python, d'ufbt, ni de builder quoi que ce soit : télécharge le
+fichier et glisse-dépose.
+
+[fap-direct]: https://code.e-odyssey.net/coom/bambuboard/raw/branch/main/flipper/bambu_scanner/dist/bambu_scanner.fap
+
+1. Télécharge [`bambu_scanner.fap`][fap-direct] (clic droit → Enregistrer
+   sous), ou clone le repo et prends-le dans
+   `flipper/bambu_scanner/dist/`
+2. Ouvre **qFlipper** et connecte ton Flipper
+3. Onglet **File manager**
+4. Navigue vers **SD Card → apps → NFC**
+5. Glisse-dépose `bambu_scanner.fap` dans ce dossier
+6. Débranche-rebranche ton Flipper
+
+L'app apparaît dans **Apps → NFC → Bambu Scanner**.
+
+> Le `.fap` versionné est compilé avec le **SDK officiel 1.4.3 / API
+> 87.1**. Si ton Flipper tourne sur un firmware custom (Unleashed,
+> Momentum, RogueMaster), passe par le chemin ufbt ci-dessous — les FAP
+> ne sont pas binaire-compatibles entre firmwares.
+
+## Installation — chemin ufbt (build local + flash)
+
+À utiliser si tu veux modifier le plugin, recompiler avec un firmware
+custom, ou simplement flasher directement depuis la ligne de commande
+sans passer par qFlipper.
 
 ```bash
 cd flipper/bambu_scanner
@@ -49,7 +75,7 @@ L'app apparaît dans **Apps → NFC → Bambu Scanner** sur le Flipper.
 
 ### Build sans flash
 
-Si tu préfères juste compiler le `.fap` pour l'installer manuellement :
+Si tu préfères juste recompiler le `.fap` pour l'installer manuellement :
 
 ```bash
 cd flipper/bambu_scanner
@@ -57,22 +83,7 @@ python -m ufbt          # produit dist/bambu_scanner.fap
 ```
 
 Le fichier `dist/bambu_scanner.fap` peut ensuite être copié via qFlipper
-(voir section suivante).
-
-## Installation — chemin qFlipper (drag-and-drop)
-
-Si tu ne veux pas installer Python ni ufbt, ou si tu veux distribuer le
-plugin à quelqu'un d'autre :
-
-1. Récupère un `bambu_scanner.fap` déjà compilé (depuis
-   `flipper/bambu_scanner/dist/` après un build, ou depuis les releases)
-2. Ouvre **qFlipper** et connecte ton Flipper
-3. Onglet **File manager**
-4. Navigue vers **SD Card → apps → NFC**
-5. Glisse-dépose `bambu_scanner.fap` dans ce dossier
-6. Débranche-rebranche ton Flipper
-
-L'app apparaît dans **Apps → NFC → Bambu Scanner**.
+(voir la section précédente).
 
 ## Utilisation sur le Flipper
 

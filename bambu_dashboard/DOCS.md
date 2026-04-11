@@ -78,6 +78,26 @@ Pour recevoir une notification dans HA quand une bobine passe sous
 Le bouton **Racheter** archive l'ancienne bobine et en crée une nouvelle
 copie à 100 % / `idle`, utile quand tu rachètes le même filament.
 
+### Enregistrer une bobine inconnue depuis l'AMS
+
+Quand une bobine chargée dans l'AMS n'existe pas encore dans l'inventaire,
+son slot affiche un bouton **"Bobine inconnue — Enregistrer"**. Le
+formulaire s'ouvre pré-rempli avec **toutes** les métadonnées exposées
+par l'imprimante :
+
+- **Nom** : `{sub_brands} {couleur}` (ex : `PLA Basic Noir`) — le nom
+  de couleur est deviné depuis le hex via une palette de 23 couleurs
+  françaises, pour distinguer visuellement les bobines d'un même type
+- **Marque** : `Bambu Lab` par défaut
+- **Code filament** : `tray_info_idx` (ex : `GFA00`)
+- **Couleur (nom + hex)** : hex exposé par l'AMS + nom deviné
+- **Poids initial** : `tray_weight` réel (ex : `1000 g`)
+- **Remain initial** : valeur courante rapportée par l'AMS
+- **tray_uuid / tag_uid** : liés automatiquement pour la réconciliation
+
+Ajuste ce que tu veux et valide — la bobine est créée en `active`
+(puisqu'elle est présente dans l'AMS).
+
 ### Scan NFC via Flipper Zero
 
 Si tu as un Flipper Zero avec l'app `bambu_scanner` installée :
