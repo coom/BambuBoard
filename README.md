@@ -1,66 +1,129 @@
-# Bambu Dashboard — Home Assistant Add-ons
+<div align="center">
 
-Dépôt d'add-ons Home Assistant pour superviser une imprimante Bambu Lab
-avec AMS : suivi de bobines, KPIs de consommation, notifications de stock
-bas, et scan NFC des bobines 2024+ via un Flipper Zero.
+# 🎨 Bambu Dashboard
 
-## Ajouter ce dépôt dans Home Assistant
+### *Dépôt d'add-ons Home Assistant pour suivre, inventorier et optimiser tes bobines Bambu Lab*
 
-1. Ouvrir **Paramètres → Modules complémentaires → Boutique des modules complémentaires**
-2. Menu ⋮ (en haut à droite) → **Dépôts**
-3. Coller l'URL :
-   ```
-   https://code.e-odyssey.net/coom/bambuboard
-   ```
-4. **Ajouter** → fermer la boîte de dialogue
-5. La section **Bambu Dashboard Add-ons** apparaît en bas de la boutique
-6. Cliquer sur **Bambu Dashboard** → **Installer**
-7. Configurer les options (`printer_ip`, `printer_serial`, `printer_access_code`)
-8. **Démarrer**, puis **Ouvrir l'interface Web** (via l'ingress HA)
+![amd64](https://img.shields.io/badge/amd64-supported-success?style=flat-square)
+![aarch64](https://img.shields.io/badge/aarch64-supported-success?style=flat-square)
+![armv7](https://img.shields.io/badge/armv7-supported-success?style=flat-square)
+![HA Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
-## Add-ons inclus
+**MQTT LAN direct** *·* **AMS temps réel** *·* **Inventaire bobines** *·* **KPIs** *·* **Scan NFC Flipper Zero**
 
-| Add-on | Description |
+</div>
+
+---
+
+## ✨ Ce que tu obtiens
+
+| | |
 |---|---|
-| [Bambu Dashboard](./bambu_dashboard/) | Dashboard complet : AMS, inventaire bobines, KPIs, scan NFC Flipper |
+| 🖨️ **AMS temps réel** | Les 4 slots, couleur, type, poids restant, affichés en direct via MQTT TLS |
+| 📦 **Inventaire persistant** | Catalogue des bobines avec réconciliation auto `tray_uuid` → `active/idle/empty/archived` |
+| 📊 **KPIs** | Consommation totale, sessions, top matériaux, 7/30 derniers jours |
+| 🔔 **Alertes stock bas** | Webhook Home Assistant automatique sous un seuil configurable |
+| 🏷️ **Scan NFC Bambu** | Lecture des tags des bobines 2024+ via un Flipper Zero — **le `.fap` est fourni pré-compilé** |
+| 🚫 **Zéro Cloud Bambu** | Tout est local, LAN uniquement, pas de compte requis |
 
-## Plugin Flipper Zero (optionnel)
+---
 
-Le dossier [`flipper/bambu_scanner/`](./flipper/bambu_scanner/) contient
-une application Flipper Zero qui scanne les tags NFC des bobines Bambu
-Lab et les envoie au dashboard via USB Web Serial.
+## 🚀 Installation en 30 secondes
 
-Un `.fap` pré-compilé (SDK officiel 1.4.3) est directement versionné à
-[`flipper/bambu_scanner/dist/bambu_scanner.fap`](./flipper/bambu_scanner/dist/bambu_scanner.fap)
-— installable en drag-and-drop via qFlipper sans builder quoi que ce
-soit. Le [README du plugin](./flipper/bambu_scanner/README.md) couvre ce
-chemin simple ainsi que l'alternative build local via ufbt.
+> 1️⃣ Ouvre **Paramètres → Modules complémentaires → Boutique**
+>
+> 2️⃣ Menu **⋮** (en haut à droite) → **Dépôts**
+>
+> 3️⃣ Colle l'URL ci-dessous et clique **Ajouter** :
+>
+> ```
+> https://code.e-odyssey.net/coom/bambuboard
+> ```
+>
+> 4️⃣ La section **Bambu Dashboard Add-ons** apparaît ✨
+>
+> 5️⃣ Clique **Bambu Dashboard → Installer**
+>
+> 6️⃣ Renseigne `printer_ip`, `printer_serial`, `printer_access_code`
+>
+> 7️⃣ **Démarrer** → **Ouvrir l'interface Web** 🎉
 
-## Architecture
+---
+
+## 📦 Add-ons inclus
+
+| Add-on | Description | Version |
+|---|---|:---:|
+| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.3](https://img.shields.io/badge/v1.0.3-latest-success?style=flat-square) |
+
+---
+
+## 🛰️ Plugin Flipper Zero *(optionnel mais cool)*
+
+Le dossier [`flipper/bambu_scanner/`](./flipper/bambu_scanner/) contient une app
+Flipper Zero qui scanne les tags NFC des bobines Bambu Lab (clés dérivées par
+UID, compatibles bobines **2024+**) et envoie les métadonnées au dashboard via
+**USB Web Serial**.
+
+> 💡 **Bonne nouvelle** : un `.fap` pré-compilé (SDK officiel 1.4.3) est
+> directement versionné à
+> [`flipper/bambu_scanner/dist/bambu_scanner.fap`](./flipper/bambu_scanner/dist/bambu_scanner.fap).
+>
+> **Pas besoin de Python, d'ufbt, ni de toolchain** — télécharge, drag-and-drop
+> dans qFlipper, c'est installé. ✨
+
+Les détails (build custom, firmware alternatif, troubleshooting) sont dans le
+[**README du plugin**](./flipper/bambu_scanner/README.md).
+
+---
+
+## 🏗️ Architecture
 
 ```
-┌────────────┐  MQTT TLS   ┌─────────────────┐  HTTPS ingress  ┌─────────┐
-│ Imprimante │ ──────────▶ │ bambu_dashboard │ ──────────────▶ │ Browser │
-│ Bambu Lab  │             │  (add-on HA)    │                 │  (SPA)  │
-└────────────┘             └─────────────────┘                 └────┬────┘
-                                   │                                │ Web Serial
-                                   │ Webhook low-stock              │
-                                   ▼                                ▼
-                            ┌─────────────┐                  ┌─────────────┐
-                            │ HA Notify   │                  │ Flipper Zero│
-                            └─────────────┘                  │ bambu_scan. │
-                                                             └─────────────┘
+┌────────────────┐   MQTT TLS :8883   ┌─────────────────────┐
+│   Imprimante   │ ──────────────────▶│   bambu_dashboard   │
+│   Bambu Lab    │      (LAN only)    │     (add-on HA)     │
+└────────────────┘                    └──────────┬──────────┘
+                                                 │
+                          ┌──────────────────────┼──────────────────────┐
+                          │                      │                      │
+                          ▼                      ▼                      ▼
+                  HTTPS ingress HA         Webhook HA            Web Serial API
+                          │                      │                      │
+                          ▼                      ▼                      ▼
+                  ┌──────────────┐       ┌─────────────┐         ┌──────────────┐
+                  │  Navigateur  │       │  HA Notify  │         │ Flipper Zero │
+                  │  (SPA vanilla)│       │   (mobile)  │         │ bambu_scanner│
+                  └──────────────┘       └─────────────┘         └──────────────┘
 ```
 
-## Compatibilité
+---
 
-- **Imprimantes** : toute imprimante Bambu Lab avec AMS (X1/X1C/X1E, P1S, P1P, A1, A1 mini)
-- **Architectures HA** : amd64, aarch64, armv7
-- **Navigateurs** (pour le scan NFC Flipper) : Chrome ou Edge uniquement (Web Serial API requise)
+## ✅ Compatibilité
 
-## Licence
+| | |
+|---|---|
+| 🖨️ **Imprimantes** | Toute Bambu Lab avec AMS — *X1 / X1C / X1E / P1S / P1P / A1 / A1 mini* |
+| 🏗️ **Architectures HA** | `amd64` · `aarch64` · `armv7` |
+| 🌐 **Navigateurs** *(scan NFC)* | **Chrome** ou **Edge** uniquement — *Web Serial API requise* |
+| 📡 **Mode imprimante** | **LAN uniquement** ou LAN + Cloud *(MQTT local obligatoire)* |
 
-MIT pour le code du dashboard. Voir
-[`flipper/bambu_scanner/README.md`](./flipper/bambu_scanner/README.md) pour
-les licences spécifiques à l'app Flipper (KDF importée de BambuTagger,
-"educational and personal use").
+---
+
+## 📜 Licence
+
+Le code du dashboard est sous **MIT**.
+
+⚠️ L'app Flipper Zero utilise une KDF (`bambu_crypto.c/h`) importée de
+[ductai199x/BambuTagger](https://github.com/ductai199x/BambuTagger) sous
+licence *"educational and personal use"*. Voir le
+[README du plugin](./flipper/bambu_scanner/README.md#attribution-et-licences).
+
+---
+
+<div align="center">
+
+*Fait avec ❤️ et beaucoup de filament PLA*
+
+</div>

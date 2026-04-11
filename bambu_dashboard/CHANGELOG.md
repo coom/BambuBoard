@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.4 — 2026-04-11
+
+### ✨ Documentation
+
+- **Refonte visuelle complète** des docs : emojis, badges shields.io,
+  tableaux stylisés, blockquotes de callout (💡 / ⚠️ / ❌ / ✅),
+  sommaires avec icônes, et en-têtes centrés. Les 4 fichiers majeurs
+  sont refaits : `README.md` racine, `bambu_dashboard/README.md`,
+  `bambu_dashboard/DOCS.md`, et `flipper/bambu_scanner/README.md`.
+- Plus aucun changement de code — **bump de version uniquement** pour
+  que Home Assistant détecte la 1.0.4 et propose l'update.
+
 ## 1.0.3 — 2026-04-11
 
 ### Documentation
