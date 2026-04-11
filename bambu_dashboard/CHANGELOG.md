@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.2 — 2026-04-11
+
+### Améliorations
+
+- **Modal "Bobine inconnue — Enregistrer"** : le nom de couleur est
+  désormais deviné automatiquement à partir du hex exposé par l'AMS
+  (palette de 23 couleurs françaises, recherche par distance euclidienne
+  RGB). La case **Couleur** est pré-remplie (ex : `Noir`, `Rouge`,
+  `Turquoise`) et le **Nom** est suffixé avec la couleur (ex : `PLA
+  Basic Noir`) pour distinguer visuellement les bobines d'un même type
+  dans l'inventaire.
+
 ## 1.0.1 — 2026-04-11
 
 ### Corrections
