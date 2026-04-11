@@ -1,6 +1,5 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
-# v2 — force cache bust pour recopier les sources
 
 ENV LANG=C.UTF-8 \
     PYTHONUNBUFFERED=1 \
