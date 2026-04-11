@@ -1043,8 +1043,11 @@
 
     // ── Modal ─────────────────────────────────────────────────────────────────
     function openModal(spool = null) {
-      document.getElementById('modal-title-text').textContent = spool ? 'Modifier la bobine' : 'Ajouter une bobine';
-      document.getElementById('modal-submit-btn').textContent = spool ? 'Mettre a jour' : 'Enregistrer';
+      // Distinction creation/modification basee sur l'existence d'un id en DB,
+      // pas sur la presence de spool : openModalFromSlot passe un objet
+      // pre-rempli sans id (nouvelle bobine).
+      document.getElementById('modal-title-text').textContent = spool?.id ? 'Modifier la bobine' : 'Ajouter une bobine';
+      document.getElementById('modal-submit-btn').textContent = spool?.id ? 'Mettre a jour' : 'Enregistrer';
       document.getElementById('f-id').value = spool?.id || '';
       document.getElementById('f-name').value = spool?.name || '';
       document.getElementById('f-brand').value = spool?.brand || '';
@@ -1064,12 +1067,23 @@
     }
 
     function openModalFromSlot(slot) {
+      // On pre-remplit avec tout ce que le slot AMS expose. Le MQTT Bambu ne
+      // donne ni le nom lisible de la couleur ni le nom de la marque, donc :
+      //  - name    : fallback sur sub_brands (ex "PLA Basic"), modifiable
+      //  - brand   : "Bambu Lab" par defaut (detection via tray_uuid)
+      //  - color_name: laisse vide (pas disponible cote MQTT)
+      const weight = parseInt(slot.tray_weight);
       openModal({
-        tray_uuid: slot.tray_uuid,
-        tag_uid: slot.tag_uid,
-        tray_type: slot.tray_type,
-        sub_brands: slot.tray_sub_brands,
-        color_hex: slot.color,
+        name:           slot.tray_sub_brands || slot.tray_type || '',
+        brand:          'Bambu Lab',
+        tray_uuid:      slot.tray_uuid,
+        tag_uid:        slot.tag_uid,
+        tray_type:      slot.tray_type,
+        sub_brands:     slot.tray_sub_brands,
+        color_hex:      slot.color,
+        filament_code:  slot.tray_info_idx || slot.tray_id_name || '',
+        initial_weight: Number.isFinite(weight) && weight > 0 ? weight : 1000,
+        initial_remain: (slot.remain != null) ? slot.remain : 100,
       });
       document.getElementById('f-tray-uuid').readOnly = true;
       document.getElementById('f-name').focus();
