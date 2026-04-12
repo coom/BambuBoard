@@ -46,11 +46,13 @@ def _process_and_enrich(db, ams_data: dict):
 
     # Batch fetch du dernier log pour chaque spool concerné
     last_logs = {}
+    # Détecte les bobines jamais vues par l'AMS (dernier log sans slot_index)
+    _no_ams_history = set()
     if spools_by_uuid:
         spool_ids = [s["id"] for s in spools_by_uuid.values()]
         placeholders = ",".join("?" * len(spool_ids))
         rows = db.execute(
-            f"""SELECT spool_id, remain_pct FROM consumption_logs
+            f"""SELECT spool_id, remain_pct, slot_index FROM consumption_logs
                 WHERE id IN (
                     SELECT MAX(id) FROM consumption_logs
                     WHERE spool_id IN ({placeholders})
@@ -58,7 +60,10 @@ def _process_and_enrich(db, ams_data: dict):
                 )""",
             spool_ids,
         ).fetchall()
-        last_logs = {r["spool_id"]: r["remain_pct"] for r in rows}
+        for r in rows:
+            last_logs[r["spool_id"]] = r["remain_pct"]
+            if r["slot_index"] is None:
+                _no_ams_history.add(r["spool_id"])
 
     dirty = False
 
@@ -149,7 +154,20 @@ def _process_and_enrich(db, ams_data: dict):
 
         last_pct = last_logs.get(spool["id"])
 
-        if last_pct is None:
+        # Première observation AMS pour cette bobine : aligner le baseline
+        # au lieu de comptabiliser le delta initial→AMS comme consommation
+        if spool["id"] in _no_ams_history:
+            db.execute("""
+                UPDATE consumption_logs SET remain_pct = ?, slot_index = ?
+                WHERE id = (
+                    SELECT id FROM consumption_logs
+                    WHERE spool_id = ? ORDER BY id DESC LIMIT 1
+                )
+            """, (remain, idx, spool["id"]))
+            last_logs[spool["id"]] = remain
+            _no_ams_history.discard(spool["id"])
+            dirty = True
+        elif last_pct is None:
             db.execute(
                 "INSERT INTO consumption_logs (spool_id, slot_index, remain_pct, print_job) VALUES (?,?,?,?)",
                 (spool["id"], idx, remain, print_job),

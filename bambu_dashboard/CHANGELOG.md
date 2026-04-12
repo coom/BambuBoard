@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.21 — 2026-04-12
+
+### Corrections
+
+- **Faux logs de consommation** : quand une bobine scannée via NFC
+  (log initial à 100 %) était ensuite vue par l'AMS à un % inférieur,
+  le delta était faussement compté comme consommation (ex : 100 % → 0 %
+  = −1000 g). Le backend aligne désormais le baseline au premier
+  relevé AMS au lieu de logger un drop fictif. Migration automatique
+  pour corriger les données existantes.
+
 ## 1.0.20 — 2026-04-12
 
 ### Corrections

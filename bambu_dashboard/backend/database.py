@@ -53,6 +53,31 @@ def _migrate(conn):
     conn.execute("UPDATE ams_state SET tag_uid = UPPER(SUBSTR(tag_uid, 1, 8)) WHERE LENGTH(tag_uid) > 8")
     conn.commit()
 
+    # Corriger les faux logs de consommation : quand une bobine créée via NFC
+    # (log initial à 100%, slot_index NULL) est ensuite vue par l'AMS à un %
+    # inférieur, le delta est faussement compté comme consommation.
+    # On aligne le log initial au premier log AMS pour annuler le faux delta.
+    false_baselines = conn.execute("""
+        SELECT cl_init.id AS init_id, cl_ams.remain_pct AS ams_pct
+        FROM consumption_logs cl_init
+        JOIN consumption_logs cl_ams ON cl_ams.spool_id = cl_init.spool_id
+        WHERE cl_init.slot_index IS NULL
+          AND cl_ams.slot_index IS NOT NULL
+          AND cl_init.id = (
+              SELECT MIN(id) FROM consumption_logs WHERE spool_id = cl_init.spool_id
+          )
+          AND cl_ams.id = (
+              SELECT MIN(id) FROM consumption_logs
+              WHERE spool_id = cl_init.spool_id AND slot_index IS NOT NULL
+          )
+          AND cl_init.remain_pct > cl_ams.remain_pct
+    """).fetchall()
+    for row in false_baselines:
+        conn.execute("UPDATE consumption_logs SET remain_pct = ? WHERE id = ?",
+                     (row["ams_pct"], row["init_id"]))
+    if false_baselines:
+        conn.commit()
+
     # Dédoublonner les spools qui ont le même tag_uid après normalisation :
     # garder le plus ancien (id le plus petit), transférer les logs, supprimer les doublons
     dupes = conn.execute("""
