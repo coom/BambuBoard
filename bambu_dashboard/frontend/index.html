@@ -205,6 +205,13 @@
     .bb-table tr:hover td { background: rgba(255,255,255,0.02); }
     .bb-table-wrap { background: var(--bb-bg-card); border-radius: var(--bb-radius-lg); border: 1px solid var(--bb-border-subtle); overflow: hidden; box-shadow: var(--bb-shadow-md); }
 
+    .bb-table th.sortable { cursor: pointer; user-select: none; }
+    .bb-table th.sortable:hover { color: var(--bb-orange); }
+    .bb-table th .sort-arrow { font-size: 10px; margin-left: 3px; opacity: 0.35; }
+    .bb-table th.sort-active .sort-arrow { opacity: 1; color: var(--bb-orange); }
+    .btn-delete { background: transparent; color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); border-radius: 8px; padding: 4px 8px; font-size: 14px; cursor: pointer; line-height: 1; }
+    .btn-delete:hover { background: rgba(255,61,0,0.15); }
+
     .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); vertical-align: middle; margin-right: 6px; }
     .ams-slot-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; background: rgba(255,109,0,0.15); color: var(--bb-orange); border: 1px solid rgba(255,109,0,0.3); }
     .remain-mini { display: flex; align-items: center; gap: 6px; }
@@ -411,11 +418,11 @@
       <table class="bb-table">
         <thead>
           <tr>
-            <th>Bobine</th>
-            <th>Type</th>
+            <th class="sortable" onclick="setInvSort('name')">Bobine<span class="sort-arrow" id="sort-name"></span></th>
+            <th class="sortable" onclick="setInvSort('type')">Type<span class="sort-arrow" id="sort-type"></span></th>
             <th>Statut</th>
-            <th>Restant</th>
-            <th>Poids</th>
+            <th class="sortable" onclick="setInvSort('remain')">Restant<span class="sort-arrow" id="sort-remain"></span></th>
+            <th class="sortable" onclick="setInvSort('weight')">Poids<span class="sort-arrow" id="sort-weight"></span></th>
             <th>AMS</th>
             <th></th>
           </tr>
@@ -601,6 +608,8 @@
     let activeTab = 'ams';
     let invStatusFilter = null; // null = toutes sauf archived
     let lowStockThreshold = 20;
+    let invSortKey = 'name';   // 'name' | 'type' | 'remain' | 'weight'
+    let invSortAsc = true;
 
     // ── Tabs ──────────────────────────────────────────────────────────────────
     function switchTab(tab) {
@@ -831,12 +840,49 @@
           (s.sub_brands||'').toLowerCase().includes(q)
         );
       }
+      list = [...list].sort((a, b) => {
+        let va, vb;
+        switch (invSortKey) {
+          case 'name':   va = (a.name||'').toLowerCase(); vb = (b.name||'').toLowerCase(); break;
+          case 'type':   va = (a.tray_type||'').toLowerCase(); vb = (b.tray_type||'').toLowerCase(); break;
+          case 'remain': va = a.current_remain ?? 100; vb = b.current_remain ?? 100; break;
+          case 'weight': va = a.initial_weight || 1000; vb = b.initial_weight || 1000; break;
+          default:       va = 0; vb = 0;
+        }
+        if (va < vb) return invSortAsc ? -1 : 1;
+        if (va > vb) return invSortAsc ? 1 : -1;
+        return 0;
+      });
       return list;
+    }
+
+    function setInvSort(key) {
+      if (invSortKey === key) { invSortAsc = !invSortAsc; }
+      else { invSortKey = key; invSortAsc = true; }
+      updateSortArrows();
+      renderInventory(getFilteredInventory());
+    }
+
+    function updateSortArrows() {
+      ['name','type','remain','weight'].forEach(k => {
+        const el = document.getElementById('sort-' + k);
+        if (!el) return;
+        el.parentElement.classList.toggle('sort-active', invSortKey === k);
+        el.textContent = invSortKey === k ? (invSortAsc ? ' ▲' : ' ▼') : ' ▲';
+      });
+    }
+
+    function liveStatus(s) {
+      const dbSt = s.status || 'active';
+      if (dbSt === 'archived' || dbSt === 'empty') return dbSt;
+      const inAms = amsData.slots?.some(sl => sl.tray_uuid && sl.tray_uuid === s.tray_uuid);
+      return inAms ? 'active' : 'idle';
     }
 
     function renderInventory(spools) {
       const tbody = document.getElementById('inv-tbody');
       const mobile = document.getElementById('inv-mobile');
+      updateSortArrows();
       if (!spools.length) {
         tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div><div class="empty-state-sub">Ajoutez-en une ou enregistrez depuis l'AMS</div></div></td></tr>`;
         mobile.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div></div>`;
@@ -844,8 +890,8 @@
       }
       // Desktop
       tbody.innerHTML = spools.map(s => {
-        const st = s.status || 'active';
-        const amsSlot = amsData.slots?.find(sl => sl.tag_uid && sl.tag_uid === s.tag_uid);
+        const st = liveStatus(s);
+        const amsSlot = amsData.slots?.find(sl => sl.tray_uuid && sl.tray_uuid === s.tray_uuid);
         const amsCell = amsSlot ? `<span class="ams-slot-badge">S${amsSlot.index + 1}</span>` : '<span style="color:var(--bb-text-muted)">—</span>';
         const remain = s.current_remain ?? 100;
         const weightG = s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000));
@@ -862,7 +908,7 @@
       }).join('');
       // Mobile
       mobile.innerHTML = spools.map(s => {
-        const st = s.status || 'active';
+        const st = liveStatus(s);
         const remain = s.current_remain ?? 100;
         const weightG = s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000));
         return `<div class="inv-card">
@@ -878,6 +924,7 @@
               ${st === 'empty' ? `<button class="btn btn-success btn-sm" onclick="rebuySpool(${s.id})" title="Racheter">+</button>` : ''}
               <button class="btn btn-ghost btn-sm" onclick="editSpool(${s.id})">✏️</button>
               ${st === 'empty' || st === 'idle' ? `<button class="btn btn-ghost btn-sm" onclick="archiveSpool(${s.id})" title="Archiver">📁</button>` : ''}
+              <button class="btn-delete" onclick="deleteSpool(${s.id}, '${(s.name||'').replace(/'/g,"\\'")}')" title="Supprimer">✕</button>
             </div>
           </div>
         </div>`;
@@ -896,6 +943,7 @@
       if (st === 'idle' || st === 'empty') {
         html += `<button class="btn btn-ghost btn-sm" onclick="archiveSpool(${s.id})" title="Archiver">📁</button>`;
       }
+      html += `<button class="btn-delete" onclick="deleteSpool(${s.id}, '${(s.name||'').replace(/'/g,"\\'")}')" title="Supprimer">✕</button>`;
       return html;
     }
 
