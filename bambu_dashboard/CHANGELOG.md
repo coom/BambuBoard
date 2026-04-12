@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.17 — 2026-04-12
+
+### Améliorations
+
+- **Thème vert Bambu** : toutes les couleurs d'accent (boutons, badges,
+  chips, KPIs, inputs focus, etc.) passent de l'orange au vert Bambu
+  (#00AE42) pour une identité visuelle cohérente.
+- **Réconciliation `tray_uuid` sur scan NFC** : quand une bobine scannée
+  (Android ou Flipper) est actuellement dans l'AMS, le `tray_uuid` est
+  automatiquement résolu depuis l'état AMS live et pré-rempli dans le
+  formulaire (ou utilisé lors de l'ajout automatique).
+
 ## 1.0.16 — 2026-04-12
 
 ### Améliorations
