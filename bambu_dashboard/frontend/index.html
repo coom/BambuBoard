@@ -1411,11 +1411,11 @@
       const colorName = d.color_name || '';
       const name = [subBrands, colorName].filter(Boolean).join(' ') || d.tray_type || 'Bobine';
 
-      // Résoudre tray_uuid depuis l'état AMS live (si la bobine est dans l'AMS)
+      // Résoudre tray_uuid : priorité au tag NFC, fallback AMS live
       const amsMatch = tagUid
         ? amsData.slots?.find(sl => _normUid(sl.tag_uid) === tagUid)
         : null;
-      const trayUuid = amsMatch?.tray_uuid || null;
+      const trayUuid = d.tray_uuid || amsMatch?.tray_uuid || null;
 
       const spool = {
         name,
