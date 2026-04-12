@@ -1416,11 +1416,11 @@
       const colorName = d.color_name || '';
       const name = [subBrands, colorName].filter(Boolean).join(' ') || d.tray_type || 'Bobine';
 
-      // Résoudre tray_uuid : priorité au tag NFC, fallback AMS live
+      // Enrichir tray_uuid avec fallback AMS live
       const amsMatch = tagUid
         ? amsData.slots?.find(sl => _normUid(sl.tag_uid) === tagUid)
         : null;
-      const trayUuid = d.tray_uuid || amsMatch?.tray_uuid || null;
+      const resolvedTrayUuid = trayUuid || amsMatch?.tray_uuid || null;
 
       const spool = {
         name,
@@ -1432,7 +1432,7 @@
         filament_code:  d.filament_code || '',
         initial_weight: d.initial_weight || 1000,
         tag_uid:        tagUid,
-        tray_uuid:      trayUuid,
+        tray_uuid:      resolvedTrayUuid,
         initial_remain: 100,
       };
 
