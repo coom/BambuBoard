@@ -15,9 +15,12 @@ bashio::log.info "DB path:    ${BAMBU_DB_PATH}"
 
 # Overlay du frontend depuis /share/bambu_dashboard/frontend/ si présent.
 # Permet de mettre à jour index.html sans rebuild de l'image Docker.
+# ATTENTION : si ce dossier contient un ancien index.html, il écrasera
+# la version embarquée dans l'image et les MAJ ne seront pas visibles !
 SHARE_FRONTEND="/share/bambu_dashboard/frontend"
 if [ -d "${SHARE_FRONTEND}" ] && [ -f "${SHARE_FRONTEND}/index.html" ]; then
-    bashio::log.info "Frontend: chargement depuis ${SHARE_FRONTEND}"
+    bashio::log.warning "Frontend: OVERLAY ACTIF depuis ${SHARE_FRONTEND}"
+    bashio::log.warning "Si le dashboard semble ancien apres une MAJ, supprimez ${SHARE_FRONTEND}/index.html"
     cp -r "${SHARE_FRONTEND}/." /app/frontend/
 else
     bashio::log.info "Frontend: utilisation de l'image embarquee"

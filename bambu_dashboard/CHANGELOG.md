@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.11 — 2026-04-12
+
+### Améliorations
+
+- **Endpoint `/api/debug`** : diagnostic accessible en navigateur qui
+  affiche la version, le hash MD5 du frontend servi, si l'overlay
+  `/share/` est actif (et son propre hash), et le chemin de la DB.
+  Permet de troubleshooter les problèmes de MAJ sans accès SSH.
+- **Warning overlay au démarrage** : si un fichier
+  `/share/bambu_dashboard/frontend/index.html` est détecté, les logs
+  de l'add-on affichent un avertissement clair au lieu d'un simple
+  « info ».
+
 ## 1.0.10 — 2026-04-12
 
 ### Améliorations

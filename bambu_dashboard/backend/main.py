@@ -442,6 +442,41 @@ def get_config():
     return {"low_stock_threshold": cfg.LOW_STOCK_THRESHOLD}
 
 
+@app.get("/api/debug")
+def debug_info():
+    import hashlib
+    frontend_path = os.path.join(FRONTEND_DIR, "index.html")
+    overlay_path = "/share/bambu_dashboard/frontend/index.html"
+    frontend_hash = ""
+    frontend_size = 0
+    overlay_exists = os.path.exists(overlay_path)
+    overlay_hash = ""
+    try:
+        with open(frontend_path, "rb") as f:
+            data = f.read()
+            frontend_hash = hashlib.md5(data).hexdigest()
+            frontend_size = len(data)
+    except Exception:
+        pass
+    if overlay_exists:
+        try:
+            with open(overlay_path, "rb") as f:
+                overlay_hash = hashlib.md5(f.read()).hexdigest()
+        except Exception:
+            pass
+    return {
+        "version": "1.0.10",
+        "frontend_path": frontend_path,
+        "frontend_size": frontend_size,
+        "frontend_md5": frontend_hash,
+        "overlay_active": overlay_exists,
+        "overlay_path": overlay_path if overlay_exists else None,
+        "overlay_md5": overlay_hash or None,
+        "overlay_warning": "L'overlay ecrase le frontend embarque !" if overlay_exists else None,
+        "db_path": database.DB_PATH,
+    }
+
+
 # ── Notifications ────────────────────────────────────────────────────────────
 
 @app.post("/api/notifications/test")
