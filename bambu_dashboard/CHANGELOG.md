@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.27 — 2026-04-13
+
+### Corrections
+
+- **Fix JS cassé** : doublon de variable `trayUuid` dans le frontend
+  qui empêchait le chargement de toutes les pages.
+
 ## 1.0.26 — 2026-04-13
 
 ### Changements
