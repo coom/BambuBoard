@@ -684,18 +684,21 @@
       return bestName;
     }
 
+    function clampRemain(pct) { return Math.max(0, pct ?? 0); }
+
     function remainBar(pct, mini = false) {
       if (pct === null || pct === undefined) return '';
-      const color = remainColor(pct);
+      const clamped = clampRemain(pct);
+      const color = remainColor(clamped);
       if (mini) return `
         <div class="remain-mini">
-          <div class="remain-bar-mini"><div class="remain-fill-mini" style="width:${pct}%;background:${color}"></div></div>
-          <span style="font-size:12px;font-weight:600;color:${color}">${pct}%</span>
+          <div class="remain-bar-mini"><div class="remain-fill-mini" style="width:${clamped}%;background:${color}"></div></div>
+          <span style="font-size:12px;font-weight:600;color:${color}">${clamped}%</span>
         </div>`;
       return `
         <div class="remain-row">
-          <div class="remain-bar"><div class="remain-fill" style="width:${pct}%;background:${color}"></div></div>
-          <span class="remain-label" style="color:${color}">${pct}%</span>
+          <div class="remain-bar"><div class="remain-fill" style="width:${clamped}%;background:${color}"></div></div>
+          <span class="remain-label" style="color:${color}">${clamped}%</span>
         </div>`;
     }
 
@@ -902,8 +905,8 @@
         const st = liveStatus(s);
         const amsSlot = amsData.slots?.find(sl => sl.tray_uuid && sl.tray_uuid === s.tray_uuid);
         const amsCell = amsSlot ? `<span class="ams-slot-badge">S${amsSlot.index + 1}</span>` : '<span style="color:var(--bb-text-muted)">—</span>';
-        const remain = s.current_remain ?? 100;
-        const weightG = s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000));
+        const remain = clampRemain(s.current_remain ?? 100);
+        const weightG = Math.max(0, s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000)));
         const actions = buildActions(s, st);
         return `<tr>
           <td>${colorDot(s.color_hex)}<strong>${s.name}</strong></td>
@@ -918,8 +921,8 @@
       // Mobile
       mobile.innerHTML = spools.map(s => {
         const st = liveStatus(s);
-        const remain = s.current_remain ?? 100;
-        const weightG = s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000));
+        const remain = clampRemain(s.current_remain ?? 100);
+        const weightG = Math.max(0, s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000)));
         return `<div class="inv-card">
           <div class="inv-card-swatch" style="background:${s.color_hex || '#333'}"></div>
           <div class="inv-card-info">
@@ -946,6 +949,7 @@
         html += `<button class="btn btn-success btn-sm" onclick="rebuySpool(${s.id})" title="Racheter (nouvelle bobine identique)">+ Racheter</button> `;
       }
       html += `<button class="btn btn-ghost btn-sm" onclick="editSpool(${s.id})" title="Modifier">✏️</button>`;
+      html += `<button class="btn btn-ghost btn-sm" onclick="calibrateSpool(${s.id}, '${(s.name||'').replace(/'/g,"\\'")}')" title="Recalibrer le restant">🎯</button>`;
       if (st === 'active') {
         html += `<button class="btn btn-ghost btn-sm" title="Snapshot" onclick="snapshotSpool(${s.id})">📸</button>`;
       }
@@ -1371,6 +1375,22 @@
       const data = await res.json();
       const source = data.source === 'ams' ? 'depuis l\'AMS' : 'dernier etat connu';
       alert(`Snapshot : ${data.remain_pct}% (${source})`);
+      loadInventory();
+    }
+
+    async function calibrateSpool(id, name) {
+      const input = prompt(`Recalibrer "${name}"\n\nEntrez le pourcentage restant reel (0-100) :`);
+      if (input === null) return;
+      const pct = parseInt(input, 10);
+      if (isNaN(pct) || pct < 0 || pct > 100) {
+        alert('Valeur invalide. Entrez un nombre entre 0 et 100.');
+        return;
+      }
+      await fetch(`api/spools/${id}/calibrate`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ remain_pct: pct })
+      });
       loadInventory();
     }
 

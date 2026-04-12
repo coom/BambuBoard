@@ -298,6 +298,28 @@ def snapshot_spool(spool_id: int):
         db.close()
 
 
+@app.put("/api/spools/{spool_id}/calibrate")
+def calibrate_spool(spool_id: int, data: dict):
+    remain_pct = data.get("remain_pct")
+    if remain_pct is None or not (0 <= int(remain_pct) <= 100):
+        raise HTTPException(status_code=400, detail="remain_pct doit etre entre 0 et 100")
+    remain_pct = int(remain_pct)
+    db = get_db()
+    try:
+        spool = spool_service.get_spool(db, spool_id)
+        if not spool:
+            raise HTTPException(status_code=404, detail="Bobine non trouvee")
+        spool_service.log_consumption(db, spool_id, None, remain_pct)
+        db.execute(
+            "UPDATE ams_state SET remain_pct=? WHERE tray_uuid=?",
+            (remain_pct, spool.get("tray_uuid"))
+        )
+        db.commit()
+        return {"id": spool_id, "remain_pct": remain_pct}
+    finally:
+        db.close()
+
+
 @app.get("/api/spools/export.csv")
 def export_csv():
     from fastapi.responses import Response

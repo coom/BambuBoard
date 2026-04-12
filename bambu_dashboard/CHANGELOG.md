@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.9 — 2026-04-12
+
+### Améliorations
+
+- **Clamp à 0 %** : les valeurs de remain négatives (dérive de
+  l'estimation AMS) ne s'affichent plus. Le pourcentage et le poids
+  sont plafonnés à 0 minimum dans l'inventaire (desktop et mobile).
+- **Bouton Recalibrer 🎯** : nouveau bouton sur chaque bobine pour
+  saisir manuellement le pourcentage restant réel (0–100). Utile quand
+  l'AMS surestime la consommation ou quand on remet une bobine
+  partiellement utilisée. L'endpoint `PUT /api/spools/{id}/calibrate`
+  écrit un nouveau log de consommation et met à jour l'état AMS.
+
 ## 1.0.8 — 2026-04-12
 
 ### Corrections
