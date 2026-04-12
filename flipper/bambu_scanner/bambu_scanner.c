@@ -44,6 +44,7 @@ typedef struct {
     uint16_t weight_g;
     char filament_code[8];  // ex: "10204" (depuis lookup)
     char color_name[32];    // ex: "Hot Pink" (depuis lookup)
+    char tray_uuid[33];     // 16 octets → 32 hex chars + '\0'
 } BambuSpoolData;
 
 // ── Parsing ───────────────────────────────────────────────────────────────────
@@ -83,6 +84,11 @@ static bool bambu_parse_mf_classic(const MfClassicData* mfc, BambuSpoolData* out
     out->color_b  = b5[2];
     out->color_a  = b5[3];
     out->weight_g = bambu_read_le16(&b5[4]);
+
+    // Block 9: tray_uuid (16 octets bruts → 32 hex)
+    const uint8_t* b9 = mfc->block[BLOCK_TRAY_UUID].data;
+    for(int i = 0; i < 16; i++)
+        snprintf(&out->tray_uuid[i * 2], 3, "%02X", b9[i]);
 
     // Lookup filament_code et color_name depuis variant_id
     const BambuFilamentInfo* fi = bambu_lookup_filament(out->variant_id);
@@ -203,6 +209,7 @@ static void send_via_serial(BambuNfcApp* app) {
         "\"color_name\":\"%s\","
         "\"filament_code\":\"%s\","
         "\"initial_weight\":%u,"
+        "\"tray_uuid\":\"%s\","
         "\"brand\":\"Bambu Lab\""
         "}",
         app->spool.tag_uid,
@@ -211,7 +218,8 @@ static void send_via_serial(BambuNfcApp* app) {
         app->spool.color_r, app->spool.color_g, app->spool.color_b,
         app->spool.color_name,
         app->spool.filament_code,
-        app->spool.weight_g);
+        app->spool.weight_g,
+        app->spool.tray_uuid);
 
     printf("\nBAMBU_NFC:%s\n", json);
     app->sent = true;

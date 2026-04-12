@@ -21,6 +21,7 @@
 #define BLOCK_NOZZLE            8   // Nozzle diameter float (bytes 12-15)
 #define BLOCK_SPOOL_WIDTH      10   // Spool width mm*100 uint16 (bytes 4-5)
 #define BLOCK_PRODUCTION_DATE  12   // Production date ASCII YYYY_MM_DD_HH_MM
+#define BLOCK_TRAY_UUID         9   // Tray UUID (16 raw bytes → 32 hex chars)
 #define BLOCK_FILAMENT_LENGTH  14   // Filament length meters uint16 (bytes 4-5)
 
 // Helper: Read little-endian uint16
