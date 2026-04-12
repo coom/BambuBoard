@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.25 — 2026-04-13
+
+### Corrections
+
+- **Tray UUID NFC** : le champ tray_uuid est correctement pré-rempli
+  dans le formulaire d'ajout lors d'un scan NFC (nouvelles bobines et
+  bobines existantes).
+- **Affichage tray_uuid (Android)** : la card de résultat affiche le
+  tray_uuid lu depuis le tag.
+
 ## 1.0.24 — 2026-04-13
 
 ### Nouveautés
