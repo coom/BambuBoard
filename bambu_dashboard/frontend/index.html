@@ -583,6 +583,17 @@
             <input class="form-input" id="f-initial-remain" type="number" min="0" max="100" placeholder="100" value="100" />
             <span style="font-size:11px;color:var(--bb-text-muted)">Si bobine deja entamee</span>
           </div>
+          <div class="form-group full" id="ams-sync-group" style="display:none">
+            <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" id="f-ams-sync" checked onchange="toggleAmsSync()" style="width:18px;height:18px;accent-color:var(--bb-orange);cursor:pointer" />
+              Synchroniser le restant avec l'AMS
+            </label>
+            <div id="manual-remain-group" style="display:none;margin-top:8px">
+              <label class="form-label">Restant manuel (%)</label>
+              <input class="form-input" id="f-manual-remain" type="number" min="0" max="100" placeholder="Ex: 45" />
+              <span style="font-size:11px;color:var(--bb-text-muted)">Cette valeur ne sera pas ecrasee par l'AMS</span>
+            </div>
+          </div>
           <div class="form-group full">
             <label class="form-label">Tray UUID</label>
             <input class="form-input" id="f-tray-uuid" placeholder="Pre-rempli depuis l'AMS" />
@@ -949,7 +960,6 @@
         html += `<button class="btn btn-success btn-sm" onclick="rebuySpool(${s.id})" title="Racheter (nouvelle bobine identique)">+ Racheter</button> `;
       }
       html += `<button class="btn btn-ghost btn-sm" onclick="editSpool(${s.id})" title="Modifier">✏️</button>`;
-      html += `<button class="btn btn-ghost btn-sm" onclick="calibrateSpool(${s.id}, '${(s.name||'').replace(/'/g,"\\'")}')" title="Recalibrer le restant">🎯</button>`;
       if (st === 'active') {
         html += `<button class="btn btn-ghost btn-sm" title="Snapshot" onclick="snapshotSpool(${s.id})">📸</button>`;
       }
@@ -1169,7 +1179,29 @@
       document.getElementById('f-tray-uuid').readOnly = false;
       document.getElementById('f-tag-uid').value = spool?.tag_uid || '';
       document.getElementById('f-initial-remain').value = spool?.initial_remain ?? 100;
+
+      // Section sync AMS : visible uniquement en mode édition (bobine existante)
+      const syncGroup = document.getElementById('ams-sync-group');
+      const syncCheckbox = document.getElementById('f-ams-sync');
+      const manualRemainInput = document.getElementById('f-manual-remain');
+      if (spool?.id) {
+        syncGroup.style.display = '';
+        const synced = spool.ams_sync !== 0;
+        syncCheckbox.checked = synced;
+        manualRemainInput.value = synced ? '' : (spool.current_remain ?? '');
+        toggleAmsSync();
+      } else {
+        syncGroup.style.display = 'none';
+        syncCheckbox.checked = true;
+        manualRemainInput.value = '';
+      }
+
       document.getElementById('modal-overlay').classList.add('open');
+    }
+
+    function toggleAmsSync() {
+      const synced = document.getElementById('f-ams-sync').checked;
+      document.getElementById('manual-remain-group').style.display = synced ? 'none' : '';
     }
 
     function openModalFromSlot(slot) {
@@ -1357,6 +1389,17 @@
         initial_remain: parseInt(document.getElementById('f-initial-remain').value) ?? 100,
       };
 
+      // Sync AMS : uniquement en mode édition
+      if (id) {
+        payload.ams_sync = document.getElementById('f-ams-sync').checked ? 1 : 0;
+        if (!payload.ams_sync) {
+          const manualVal = parseInt(document.getElementById('f-manual-remain').value);
+          if (!isNaN(manualVal) && manualVal >= 0 && manualVal <= 100) {
+            payload.manual_remain = manualVal;
+          }
+        }
+      }
+
       const url = id ? `api/spools/${id}` : 'api/spools';
       const method = id ? 'PUT' : 'POST';
       await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1378,21 +1421,6 @@
       loadInventory();
     }
 
-    async function calibrateSpool(id, name) {
-      const input = prompt(`Recalibrer "${name}"\n\nEntrez le pourcentage restant reel (0-100) :`);
-      if (input === null) return;
-      const pct = parseInt(input, 10);
-      if (isNaN(pct) || pct < 0 || pct > 100) {
-        alert('Valeur invalide. Entrez un nombre entre 0 et 100.');
-        return;
-      }
-      await fetch(`api/spools/${id}/calibrate`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ remain_pct: pct })
-      });
-      loadInventory();
-    }
 
     // ── Settings ──────────────────────────────────────────────────────────────
     async function testHaNotification() {

@@ -91,6 +91,9 @@ def _process_and_enrich(db, ams_data: dict):
         if remain is None:
             continue
 
+        # Clamp : l'AMS peut estimer des valeurs negatives
+        remain = max(0, remain)
+
         # Réconciliation tag_uid → tray_uuid pour bobines déjà enregistrées
         if tray_uuid and tag_uid:
             db.execute("""
@@ -99,16 +102,29 @@ def _process_and_enrich(db, ams_data: dict):
             """, (tray_uuid, tag_uid))
             dirty = True
 
-        # Mise à jour de l'état du slot
-        db.execute("""
-            INSERT INTO ams_state (slot_index, tray_uuid, tag_uid, remain_pct, updated_at)
-            VALUES (?, ?, ?, ?, datetime('now'))
-            ON CONFLICT(slot_index) DO UPDATE SET
-                tray_uuid=excluded.tray_uuid,
-                tag_uid=excluded.tag_uid,
-                remain_pct=excluded.remain_pct,
-                updated_at=excluded.updated_at
-        """, (idx, tray_uuid, tag_uid, remain))
+        # Si la bobine a ams_sync=0, ne pas écraser remain_pct
+        skip_remain = spool and spool.get("ams_sync") == 0
+
+        # Mise à jour de l'état du slot (sauf remain_pct si sync désactivée)
+        if skip_remain:
+            db.execute("""
+                INSERT INTO ams_state (slot_index, tray_uuid, tag_uid, remain_pct, updated_at)
+                VALUES (?, ?, ?, ?, datetime('now'))
+                ON CONFLICT(slot_index) DO UPDATE SET
+                    tray_uuid=excluded.tray_uuid,
+                    tag_uid=excluded.tag_uid,
+                    updated_at=excluded.updated_at
+            """, (idx, tray_uuid, tag_uid, remain))
+        else:
+            db.execute("""
+                INSERT INTO ams_state (slot_index, tray_uuid, tag_uid, remain_pct, updated_at)
+                VALUES (?, ?, ?, ?, datetime('now'))
+                ON CONFLICT(slot_index) DO UPDATE SET
+                    tray_uuid=excluded.tray_uuid,
+                    tag_uid=excluded.tag_uid,
+                    remain_pct=excluded.remain_pct,
+                    updated_at=excluded.updated_at
+            """, (idx, tray_uuid, tag_uid, remain))
         dirty = True
 
         if not spool:
@@ -127,7 +143,7 @@ def _process_and_enrich(db, ams_data: dict):
                 (spool["id"], idx, remain),
             )
             dirty = True
-        elif last_pct > remain and (last_pct - remain) >= 2:
+        elif not skip_remain and last_pct > remain and (last_pct - remain) >= 2:
             db.execute(
                 "INSERT INTO consumption_logs (spool_id, slot_index, remain_pct) VALUES (?,?,?)",
                 (spool["id"], idx, remain),
@@ -232,9 +248,21 @@ def create_spool(data: dict):
 def update_spool(spool_id: int, data: dict):
     db = get_db()
     try:
+        manual_remain = data.pop("manual_remain", None)
         spool = spool_service.update_spool(db, spool_id, data)
         if not spool:
             raise HTTPException(status_code=404, detail="Bobine non trouvée")
+        # Si ams_sync=0 et manual_remain fourni, écrire la valeur calibrée
+        if data.get("ams_sync") == 0 and manual_remain is not None:
+            pct = max(0, min(100, int(manual_remain)))
+            spool_service.log_consumption(db, spool_id, None, pct)
+            tray_uuid = spool.get("tray_uuid")
+            if tray_uuid:
+                db.execute(
+                    "UPDATE ams_state SET remain_pct=? WHERE tray_uuid=?",
+                    (pct, tray_uuid)
+                )
+                db.commit()
         return spool
     finally:
         db.close()
@@ -297,27 +325,6 @@ def snapshot_spool(spool_id: int):
     finally:
         db.close()
 
-
-@app.put("/api/spools/{spool_id}/calibrate")
-def calibrate_spool(spool_id: int, data: dict):
-    remain_pct = data.get("remain_pct")
-    if remain_pct is None or not (0 <= int(remain_pct) <= 100):
-        raise HTTPException(status_code=400, detail="remain_pct doit etre entre 0 et 100")
-    remain_pct = int(remain_pct)
-    db = get_db()
-    try:
-        spool = spool_service.get_spool(db, spool_id)
-        if not spool:
-            raise HTTPException(status_code=404, detail="Bobine non trouvee")
-        spool_service.log_consumption(db, spool_id, None, remain_pct)
-        db.execute(
-            "UPDATE ams_state SET remain_pct=? WHERE tray_uuid=?",
-            (remain_pct, spool.get("tray_uuid"))
-        )
-        db.commit()
-        return {"id": spool_id, "remain_pct": remain_pct}
-    finally:
-        db.close()
 
 
 @app.get("/api/spools/export.csv")
@@ -454,7 +461,10 @@ def test_notification():
 
 @app.get("/")
 def index():
-    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+    return FileResponse(
+        os.path.join(FRONTEND_DIR, "index.html"),
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"},
+    )
 
 
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")

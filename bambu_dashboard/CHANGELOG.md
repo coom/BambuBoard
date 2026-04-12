@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.10 — 2026-04-12
+
+### Améliorations
+
+- **Clamp backend** : les valeurs `remain` négatives envoyées par l'AMS
+  (dérive de l'estimation par longueur extrudée) sont désormais
+  clampées à 0 **avant** stockage en DB et en `ams_state`, pas
+  seulement à l'affichage.
+- **Sync AMS configurable par bobine** : nouvelle case à cocher
+  « Synchroniser le restant avec l'AMS » dans le modal d'édition
+  (cochée par défaut). Quand décochée, un champ « Restant manuel (%) »
+  apparaît et la valeur saisie n'est plus écrasée par les messages
+  MQTT. Re-cocher la case réactive la synchro AMS. Colonne
+  `ams_sync` ajoutée à la table `spools` (migration automatique).
+- Suppression du bouton 🎯 (remplacé par la case à cocher dans le
+  modal, plus ergonomique).
+
 ## 1.0.9 — 2026-04-12
 
 ### Améliorations

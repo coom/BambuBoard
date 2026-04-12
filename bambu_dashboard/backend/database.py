@@ -38,6 +38,9 @@ def _migrate(conn):
     if "tag_uid" not in ams_cols:
         conn.execute("ALTER TABLE ams_state ADD COLUMN tag_uid TEXT")
         conn.commit()
+    if "ams_sync" not in spools_cols:
+        conn.execute("ALTER TABLE spools ADD COLUMN ams_sync INTEGER DEFAULT 1")
+        conn.commit()
 
 
 def init_db():
