@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.22 — 2026-04-12
+
+### Suppressions
+
+- **Bouton « + Racheter »** : supprimé de l'inventaire (mobile,
+  desktop, archivées) et endpoint `POST /api/spools/{id}/rebuy`.
+  Inutile depuis l'ajout du scan NFC offline.
+
 ## 1.0.21 — 2026-04-12
 
 ### Corrections

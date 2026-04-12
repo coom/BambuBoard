@@ -112,31 +112,6 @@ def set_status(db: sqlite3.Connection, spool_id: int, status: str) -> Optional[d
     return get_spool(db, spool_id)
 
 
-def rebuy_spool(db: sqlite3.Connection, spool_id: int) -> Optional[dict]:
-    """Duplique une bobine (rachat) : archive l'ancienne, crée une nouvelle identique à 100%."""
-    old = get_spool(db, spool_id)
-    if not old:
-        return None
-    # Archiver l'ancienne
-    db.execute("UPDATE spools SET status='archived', tray_uuid=NULL WHERE id=?", (spool_id,))
-    db.commit()
-    # Créer la nouvelle
-    new_data = {
-        "name": old["name"],
-        "brand": old.get("brand"),
-        "tray_type": old.get("tray_type"),
-        "sub_brands": old.get("sub_brands"),
-        "color_name": old.get("color_name"),
-        "color_hex": old.get("color_hex"),
-        "filament_code": old.get("filament_code"),
-        "initial_weight": old.get("initial_weight") or 1000,
-        "price_per_kg": old.get("price_per_kg"),
-        "initial_remain": 100,
-        "status": "idle",
-    }
-    return create_spool(db, new_data)
-
-
 def delete_spool(db: sqlite3.Connection, spool_id: int) -> bool:
     """Suppression définitive (avec cascade des logs)."""
     cur = db.execute("DELETE FROM spools WHERE id=?", (spool_id,))

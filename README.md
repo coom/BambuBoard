@@ -54,7 +54,7 @@
 
 | Add-on | Description | Version |
 |---|---|:---:|
-| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.21](https://img.shields.io/badge/v1.0.21-latest-success?style=flat-square) |
+| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.22](https://img.shields.io/badge/v1.0.22-latest-success?style=flat-square) |
 
 ---
 

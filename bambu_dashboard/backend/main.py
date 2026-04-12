@@ -300,17 +300,6 @@ def change_status(spool_id: int, data: dict):
         db.close()
 
 
-@app.post("/api/spools/{spool_id}/rebuy")
-def rebuy_spool(spool_id: int):
-    db = get_db()
-    try:
-        new_spool = spool_service.rebuy_spool(db, spool_id)
-        if not new_spool:
-            raise HTTPException(status_code=404, detail="Bobine non trouvée")
-        return new_spool
-    finally:
-        db.close()
-
 
 @app.delete("/api/spools/{spool_id}", status_code=204)
 def delete_spool(spool_id: int):
