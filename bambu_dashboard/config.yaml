@@ -1,5 +1,5 @@
 name: Bambu Dashboard
-version: "1.0.13"
+version: "1.0.14"
 slug: bambu_dashboard
 description: Dashboard AMS Bambu Lab — suivi de bobines, KPIs et notifications
 url: https://code.e-odyssey.net/coom/bambuboard
@@ -25,6 +25,7 @@ options:
   ha_webhook_url: ""
   ha_webhook_token: ""
   low_stock_threshold: 20
+  nfc_api_key: ""
 schema:
   printer_ip: str
   printer_serial: str
@@ -32,3 +33,4 @@ schema:
   ha_webhook_url: str?
   ha_webhook_token: password?
   low_stock_threshold: "int(1,100)?"
+  nfc_api_key: str?

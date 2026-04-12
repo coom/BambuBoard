@@ -1,6 +1,6 @@
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
 
@@ -395,9 +395,14 @@ def get_kpis():
 # ── NFC Scan (Flipper Zero) ───────────────────────────────────────────────────
 
 @app.post("/api/nfc/push", status_code=200)
-def nfc_push(data: dict):
-    """Reçoit les données NFC depuis le Flipper Zero et les stocke temporairement."""
+def nfc_push(data: dict, request: Request):
+    """Reçoit les données NFC depuis le Flipper Zero / l'app Android."""
     global _pending_nfc_scan
+    api_key = cfg.NFC_API_KEY
+    if api_key:
+        provided = request.headers.get("X-API-Key", "")
+        if provided != api_key:
+            raise HTTPException(status_code=403, detail="Cle API invalide")
     required = {"tag_uid", "tray_type"}
     if not required.issubset(data.keys()):
         raise HTTPException(status_code=400, detail="Champs requis : tag_uid, tray_type")

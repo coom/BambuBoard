@@ -8,3 +8,5 @@ HA_WEBHOOK_URL = os.environ.get("HA_WEBHOOK_URL", "")
 HA_WEBHOOK_TOKEN = os.environ.get("HA_WEBHOOK_TOKEN", "")
 
 LOW_STOCK_THRESHOLD = int(os.environ.get("LOW_STOCK_THRESHOLD", "20"))
+
+NFC_API_KEY = os.environ.get("NFC_API_KEY", "")

@@ -7,6 +7,7 @@ export PRINTER_ACCESS_CODE="$(bashio::config 'printer_access_code')"
 export HA_WEBHOOK_URL="$(bashio::config 'ha_webhook_url')"
 export HA_WEBHOOK_TOKEN="$(bashio::config 'ha_webhook_token')"
 export LOW_STOCK_THRESHOLD="$(bashio::config 'low_stock_threshold')"
+export NFC_API_KEY="$(bashio::config 'nfc_api_key')"
 export BAMBU_DB_PATH="/data/bambu.db"
 
 bashio::log.info "Bambu Dashboard starting..."

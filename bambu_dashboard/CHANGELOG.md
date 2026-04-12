@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.14 — 2026-04-12
+
+### Améliorations
+
+- **Clé API NFC** : nouvelle option `nfc_api_key` dans la configuration
+  de l'add-on. Si renseignée, l'endpoint `POST /api/nfc/push` exige le
+  header `X-API-Key` correspondant. Permet de sécuriser l'accès au port
+  8000 exposé sans nécessiter un Long-Lived Access Token HA.
+
 ## 1.0.13 — 2026-04-12
 
 ### Corrections
