@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.24 — 2026-04-13
+
+### Nouveautés
+
+- **Lecture du tray_uuid depuis le tag NFC** : le Flipper Zero et l'app
+  Android lisent le bloc 9 (secteur 2) du tag MIFARE et transmettent
+  le tray_uuid au dashboard. Le formulaire d'ajout est pré-rempli
+  automatiquement.
+- **Envoi automatique (Android)** : option cochable pour envoyer
+  directement au dashboard après chaque scan NFC, sans interaction.
+- **Bip sonore au scan (Android)** : confirmation sonore à chaque
+  bobine détectée.
+
 ## 1.0.23 — 2026-04-12
 
 ### Nouveautés
