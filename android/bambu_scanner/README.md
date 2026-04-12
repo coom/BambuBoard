@@ -137,7 +137,7 @@ Après l'envoi, appuyez sur **Nouveau Scan** et approchez la bobine suivante.
 
 ## Crédits
 
-- **Erti** — développement de l'application Android et du dashboard
-- **coom** — développement du module Flipper Zero `bambu_scanner`
+- **Erti** — auteur principal du projet Bambu Dashboard
+- **coom** — développement de l'application Android et du plugin Flipper Zero
 - KDF basée sur [ductai199x/BambuTagger](https://github.com/ductai199x/BambuTagger) (Tai Nguyen) — usage personnel uniquement
 - Table de filaments : [queengooborg/Bambu-Lab-RFID-Library](https://github.com/queengooborg/Bambu-Lab-RFID-Library)

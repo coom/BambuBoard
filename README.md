@@ -55,7 +55,7 @@
 
 | Add-on | Description | Version |
 |---|---|:---:|
-| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.3](https://img.shields.io/badge/v1.0.3-latest-success?style=flat-square) |
+| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.15](https://img.shields.io/badge/v1.0.15-latest-success?style=flat-square) |
 
 ---
 
@@ -133,8 +133,8 @@ Les détails (build custom, firmware alternatif, troubleshooting) sont dans le
 
 | Rôle | Personne |
 |---|---|
-| 🧑‍💻 **Développement principal** | **Erti** *(add-on HA : backend FastAPI, frontend SPA, inventaire, KPIs, scan NFC côté dashboard)* |
-| 🛰️ **Co-développement module Flipper Zero** | **coom** *(assistance sur l'app `bambu_scanner` : routage CDC stdout, packaging ufbt, intégration série)* |
+| 🧑‍💻 **Auteur principal** | **Erti** *(add-on HA : backend FastAPI, frontend SPA, inventaire, KPIs, intégration NFC côté dashboard)* |
+| 🛰️ **Contributeur majeur** | **coom** *(plugin Flipper Zero `bambu_scanner`, application Android `Bambu Scanner`)* |
 
 > 💡 Contributions upstream *(KDF BambuTagger, parser dérivé de
 > `flipper-bambu`)* détaillées dans le
@@ -155,6 +155,6 @@ licence *"educational and personal use"*. Voir le
 
 <div align="center">
 
-*Fait avec ❤️ et beaucoup de filament PLA par **Erti** (avec l'aide de **coom** sur le Flipper)*
+*Fait avec ❤️ et beaucoup de filament PLA par **Erti** (avec **coom** pour le Flipper et l'app Android)*
 
 </div>

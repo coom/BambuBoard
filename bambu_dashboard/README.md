@@ -66,8 +66,9 @@ printer_access_code: "12345678"
 
 ## 👥 Crédits
 
-Développé par **Erti**, avec l'aide de **coom** sur le module Flipper
-Zero *(app `bambu_scanner`)*.
+Projet créé par **Erti** *(add-on HA, backend, frontend)*. **coom** est
+contributeur majeur *(plugin Flipper Zero `bambu_scanner`, application
+Android `Bambu Scanner`)*.
 
 ---
 
