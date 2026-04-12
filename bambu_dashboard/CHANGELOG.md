@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.15 — 2026-04-12
+
+### Nouveautés
+
+- **Application Android Bambu Scanner** : app compagnon pour scanner les
+  bobines Bambu Lab via NFC (MIFARE Classic, clés dérivées par UID) et
+  les enregistrer dans le dashboard en un tap. Thème Material Blue,
+  icône NFC vectorielle, authentification par clé API. APK distribué
+  dans `android/bambu_scanner/dist/`.
+- **Documentation utilisateur Android** : guide complet d'installation,
+  configuration du dashboard (port exposé, clé API), utilisation
+  pas-à-pas et dépannage.
+
 ## 1.0.14 — 2026-04-12
 
 ### Améliorations
