@@ -420,10 +420,10 @@
           <tr>
             <th class="sortable" onclick="setInvSort('name')">Bobine<span class="sort-arrow" id="sort-name"></span></th>
             <th class="sortable" onclick="setInvSort('type')">Type<span class="sort-arrow" id="sort-type"></span></th>
-            <th>Statut</th>
+            <th class="sortable" onclick="setInvSort('status')">Statut<span class="sort-arrow" id="sort-status"></span></th>
             <th class="sortable" onclick="setInvSort('remain')">Restant<span class="sort-arrow" id="sort-remain"></span></th>
             <th class="sortable" onclick="setInvSort('weight')">Poids<span class="sort-arrow" id="sort-weight"></span></th>
-            <th>AMS</th>
+            <th class="sortable" onclick="setInvSort('ams')">AMS<span class="sort-arrow" id="sort-ams"></span></th>
             <th></th>
           </tr>
         </thead>
@@ -840,6 +840,7 @@
           (s.sub_brands||'').toLowerCase().includes(q)
         );
       }
+      const statusOrder = { active: 0, idle: 1, empty: 2, archived: 3 };
       list = [...list].sort((a, b) => {
         let va, vb;
         switch (invSortKey) {
@@ -847,6 +848,14 @@
           case 'type':   va = (a.tray_type||'').toLowerCase(); vb = (b.tray_type||'').toLowerCase(); break;
           case 'remain': va = a.current_remain ?? 100; vb = b.current_remain ?? 100; break;
           case 'weight': va = a.initial_weight || 1000; vb = b.initial_weight || 1000; break;
+          case 'status': va = statusOrder[liveStatus(a)] ?? 9; vb = statusOrder[liveStatus(b)] ?? 9; break;
+          case 'ams': {
+            const slotA = amsData.slots?.find(sl => sl.tray_uuid && sl.tray_uuid === a.tray_uuid);
+            const slotB = amsData.slots?.find(sl => sl.tray_uuid && sl.tray_uuid === b.tray_uuid);
+            va = slotA ? slotA.index : 99;
+            vb = slotB ? slotB.index : 99;
+            break;
+          }
           default:       va = 0; vb = 0;
         }
         if (va < vb) return invSortAsc ? -1 : 1;
@@ -864,7 +873,7 @@
     }
 
     function updateSortArrows() {
-      ['name','type','remain','weight'].forEach(k => {
+      ['name','type','status','remain','weight','ams'].forEach(k => {
         const el = document.getElementById('sort-' + k);
         if (!el) return;
         el.parentElement.classList.toggle('sort-active', invSortKey === k);

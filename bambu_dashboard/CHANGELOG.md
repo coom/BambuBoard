@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.7 — 2026-04-12
+
+### Améliorations
+
+- **Tri inventaire étendu** : les colonnes Statut et AMS sont désormais
+  triables. Statut trie par ordre logique (Dans AMS → En stock → Vide →
+  Archivé), AMS trie par numéro de slot (S1–S4, puis les bobines hors
+  AMS).
+
 ## 1.0.6 — 2026-04-12
 
 ### Améliorations
