@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.20 — 2026-04-12
+
+### Corrections
+
+- **Tag UID normalisé** : l'AMS envoie un `tag_uid` de 16 caractères
+  (ex : `2A9153EF00000100`) alors que les scanners NFC Flipper/Android
+  ne capturent que les 8 premiers (ex : `2A9153EF`). Tous les `tag_uid`
+  sont désormais normalisés à 8 caractères (4 octets UID MIFARE) à la
+  réception et en base. La réconciliation `tag_uid → tray_uuid`
+  fonctionne quel que soit la source du scan.
+- **Dédoublonnage automatique** : migration au démarrage qui détecte
+  les bobines avec le même `tag_uid` (après normalisation), transfère
+  les logs de consommation vers la bobine la plus ancienne, et supprime
+  les doublons.
+
 ## 1.0.19 — 2026-04-12
 
 ### Corrections

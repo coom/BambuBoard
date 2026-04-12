@@ -47,6 +47,43 @@ def _migrate(conn):
         conn.execute("ALTER TABLE consumption_logs ADD COLUMN print_job TEXT")
         conn.commit()
 
+    # Normaliser les tag_uid longs (AMS envoie 16 chars, NFC scanners 8)
+    # On tronque à 8 chars (4 octets UID MIFARE) pour éviter les doublons
+    conn.execute("UPDATE spools SET tag_uid = UPPER(SUBSTR(tag_uid, 1, 8)) WHERE LENGTH(tag_uid) > 8")
+    conn.execute("UPDATE ams_state SET tag_uid = UPPER(SUBSTR(tag_uid, 1, 8)) WHERE LENGTH(tag_uid) > 8")
+    conn.commit()
+
+    # Dédoublonner les spools qui ont le même tag_uid après normalisation :
+    # garder le plus ancien (id le plus petit), transférer les logs, supprimer les doublons
+    dupes = conn.execute("""
+        SELECT tag_uid, MIN(id) as keep_id, GROUP_CONCAT(id) as all_ids
+        FROM spools
+        WHERE tag_uid IS NOT NULL AND tag_uid != ''
+        GROUP BY tag_uid
+        HAVING COUNT(*) > 1
+    """).fetchall()
+    for row in dupes:
+        keep_id = row["keep_id"]
+        all_ids = [int(x) for x in row["all_ids"].split(",")]
+        dup_ids = [x for x in all_ids if x != keep_id]
+        # Transférer les logs de consommation vers la bobine conservée
+        for dup_id in dup_ids:
+            conn.execute("UPDATE consumption_logs SET spool_id = ? WHERE spool_id = ?",
+                         (keep_id, dup_id))
+        # Copier tray_uuid du doublon si la bobine conservée n'en a pas
+        conn.execute("""
+            UPDATE spools SET tray_uuid = (
+                SELECT tray_uuid FROM spools s2
+                WHERE s2.id IN ({}) AND s2.tray_uuid IS NOT NULL AND s2.tray_uuid != ''
+                LIMIT 1
+            ) WHERE id = ? AND (tray_uuid IS NULL OR tray_uuid = '')
+        """.format(",".join("?" * len(dup_ids))), (*dup_ids, keep_id))
+        # Supprimer les doublons
+        conn.execute("DELETE FROM spools WHERE id IN ({})".format(
+            ",".join("?" * len(dup_ids))), dup_ids)
+    if dupes:
+        conn.commit()
+
 
 def init_db():
     with get_db() as conn:

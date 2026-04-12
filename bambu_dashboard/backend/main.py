@@ -15,6 +15,15 @@ import time as _time
 _pending_nfc_scan: dict | None = None
 
 
+def _normalize_tag_uid(uid: str | None) -> str | None:
+    """Normalise un tag_uid à 8 caractères (4 octets UID MIFARE).
+    L'AMS ajoute un suffixe '00000100' (SAK/ATQA) que les scanners NFC
+    Flipper/Android ne capturent pas."""
+    if not uid:
+        return uid
+    return uid[:8].upper()
+
+
 def _process_and_enrich(db, ams_data: dict):
     """Détecte les changements de remain, log la consommation, gère les statuts,
     et enrichit chaque slot avec son spool. Tout en une passe, un seul commit."""
@@ -80,7 +89,8 @@ def _process_and_enrich(db, ams_data: dict):
 
     for slot in slots:
         tray_uuid = slot.get("tray_uuid")
-        tag_uid = slot.get("tag_uid")
+        tag_uid = _normalize_tag_uid(slot.get("tag_uid"))
+        slot["tag_uid"] = tag_uid  # normaliser aussi dans le slot pour le frontend
         remain = slot.get("remain")
         idx = slot.get("index")
 
@@ -94,11 +104,14 @@ def _process_and_enrich(db, ams_data: dict):
         remain = max(0, remain)
 
         # Réconciliation tag_uid → tray_uuid pour bobines déjà enregistrées
+        # Comparaison sur les 8 premiers chars (4 octets UID) pour gérer
+        # les tag_uid longs (AMS) vs courts (Flipper/Android)
         if tray_uuid and tag_uid:
             db.execute("""
                 UPDATE spools SET tray_uuid = ?
-                WHERE tag_uid = ? AND (tray_uuid IS NULL OR tray_uuid = '')
-            """, (tray_uuid, tag_uid))
+                WHERE UPPER(SUBSTR(tag_uid, 1, 8)) = ?
+                  AND (tray_uuid IS NULL OR tray_uuid = '')
+            """, (tray_uuid, tag_uid[:8]))
             dirty = True
 
         # Si la bobine a ams_sync=0, ne pas écraser remain_pct
@@ -408,12 +421,13 @@ def nfc_pending():
         return Response(status_code=204)
     scan_data = scan["data"]
 
-    # Vérifier si la bobine existe déjà par tag_uid
-    tag_uid = scan_data.get("tag_uid")
+    # Vérifier si la bobine existe déjà par tag_uid (normalisé à 8 chars)
+    tag_uid = _normalize_tag_uid(scan_data.get("tag_uid"))
+    scan_data["tag_uid"] = tag_uid  # normaliser dans les données retournées
     db = get_db()
     try:
         existing = db.execute(
-            "SELECT * FROM spools WHERE tag_uid = ?", (tag_uid,)
+            "SELECT * FROM spools WHERE UPPER(SUBSTR(tag_uid, 1, 8)) = ?", (tag_uid,)
         ).fetchone()
         existing_spool = dict(existing) if existing else None
     finally:

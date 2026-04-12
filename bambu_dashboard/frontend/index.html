@@ -1376,11 +1376,14 @@
       }
     }
 
+    // Normalise un tag_uid à 8 caractères (4 octets UID MIFARE)
+    function _normUid(uid) { return uid ? uid.substring(0, 8).toUpperCase() : ''; }
+
     // source: 'android' | 'flipper'
     function _handleNfcData(d, source) {
-      const tagUid = d.tag_uid || '';
+      const tagUid = _normUid(d.tag_uid);
       const existing = tagUid
-        ? [...inventory, ...archivedSpools].find(s => s.tag_uid === tagUid)
+        ? [...inventory, ...archivedSpools].find(s => _normUid(s.tag_uid) === tagUid)
         : null;
 
       if (existing) {
@@ -1397,7 +1400,7 @@
 
       // Résoudre tray_uuid depuis l'état AMS live (si la bobine est dans l'AMS)
       const amsMatch = tagUid
-        ? amsData.slots?.find(sl => sl.tag_uid === tagUid)
+        ? amsData.slots?.find(sl => _normUid(sl.tag_uid) === tagUid)
         : null;
       const trayUuid = amsMatch?.tray_uuid || null;
 
