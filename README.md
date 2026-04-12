@@ -10,7 +10,7 @@
 ![HA Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
-**MQTT LAN direct** *·* **AMS temps réel** *·* **Inventaire bobines** *·* **KPIs** *·* **Scan NFC Flipper Zero**
+**MQTT LAN direct** *·* **AMS temps réel** *·* **Inventaire bobines** *·* **KPIs** *·* **Scan NFC Flipper Zero & Android**
 
 </div>
 
@@ -24,7 +24,7 @@
 | 📦 **Inventaire persistant** | Catalogue des bobines avec réconciliation auto `tray_uuid` → `active/idle/empty/archived` |
 | 📊 **KPIs** | Consommation totale, sessions, top matériaux, 7/30 derniers jours |
 | 🔔 **Alertes stock bas** | Webhook Home Assistant automatique sous un seuil configurable |
-| 🏷️ **Scan NFC Bambu** | Lecture des tags des bobines 2024+ via un Flipper Zero — **le `.fap` est fourni pré-compilé** |
+| 🏷️ **Scan NFC Bambu** | Lecture des tags des bobines 2024+ via un **Flipper Zero** ou un **téléphone Android** compatible NFC |
 | 🚫 **Zéro Cloud Bambu** | Tout est local, LAN uniquement, pas de compte requis |
 
 ---
@@ -59,6 +59,24 @@
 
 ---
 
+## 📱 Application Android *(optionnel mais pratique)*
+
+Le dossier [`android/bambu_scanner/`](./android/bambu_scanner/) contient une app
+Android compagnon qui scanne les tags NFC des bobines Bambu Lab directement avec
+ton téléphone et les envoie au dashboard en un tap.
+
+> 💡 **APK prêt à l'emploi** : télécharge
+> [`android/bambu_scanner/dist/bambu_scanner.apk`](./android/bambu_scanner/dist/bambu_scanner.apk),
+> installe-le sur ton téléphone — c'est tout.
+>
+> **Compatible** : Samsung, Pixel (Tensor), OnePlus et tout téléphone avec chip
+> NFC NXP (MIFARE Classic). Android 7.0+.
+
+Le guide complet (configuration du dashboard, utilisation, dépannage) est dans le
+[**README de l'app Android**](./android/bambu_scanner/README.md).
+
+---
+
 ## 🛰️ Plugin Flipper Zero *(optionnel mais cool)*
 
 Le dossier [`flipper/bambu_scanner/`](./flipper/bambu_scanner/) contient une app
@@ -86,16 +104,16 @@ Les détails (build custom, firmware alternatif, troubleshooting) sont dans le
 │   Bambu Lab    │      (LAN only)    │     (add-on HA)     │
 └────────────────┘                    └──────────┬──────────┘
                                                  │
-                          ┌──────────────────────┼──────────────────────┐
-                          │                      │                      │
-                          ▼                      ▼                      ▼
-                  HTTPS ingress HA         Webhook HA            Web Serial API
-                          │                      │                      │
-                          ▼                      ▼                      ▼
-                  ┌──────────────┐       ┌─────────────┐         ┌──────────────┐
-                  │  Navigateur  │       │  HA Notify  │         │ Flipper Zero │
-                  │  (SPA vanilla)│       │   (mobile)  │         │ bambu_scanner│
-                  └──────────────┘       └─────────────┘         └──────────────┘
+                          ┌───────────────┬──────┼──────────────────────┐
+                          │               │      │                      │
+                          ▼               ▼      ▼                      ▼
+                  HTTPS ingress HA   Port 8000  Webhook HA       Web Serial API
+                          │               │      │                      │
+                          ▼               ▼      ▼                      ▼
+                  ┌──────────────┐  ┌──────────┐ ┌─────────────┐ ┌──────────────┐
+                  │  Navigateur  │  │ Android  │ │  HA Notify  │ │ Flipper Zero │
+                  │ (SPA vanilla)│  │  NFC App │ │   (mobile)  │ │ bambu_scanner│
+                  └──────────────┘  └──────────┘ └─────────────┘ └──────────────┘
 ```
 
 ---

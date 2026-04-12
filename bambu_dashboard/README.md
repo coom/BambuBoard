@@ -23,7 +23,8 @@
 - 🔔 **Notifications stock bas** — webhook Home Assistant quand une
   bobine passe sous un seuil configurable
 - 🏷️ **Scan NFC Bambu** — reconnaissance des bobines **2024+** via un
-  Flipper Zero avec `.fap` pré-compilé fourni
+  Flipper Zero (`.fap` pré-compilé fourni) ou l'**app Android compagnon**
+  ([`Bambu Scanner`](../android/bambu_scanner/README.md))
 - 🎨 **Pré-remplissage intelligent** — le nom de couleur est deviné
   depuis le hex (palette FR) et suffixé au nom *(ex : « PLA Basic
   Noir »)*
