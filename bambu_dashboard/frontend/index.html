@@ -1157,6 +1157,7 @@
                 <div class="session-swatch" style="background:${s.color_hex || '#333'}"></div>
                 <div class="session-info">
                   <div class="session-name">${s.name}</div>
+                  ${s.print_job ? `<div class="session-detail" style="color:var(--bb-text-secondary)">&#x1F4C4; ${s.print_job}</div>` : ''}
                   <div class="session-detail">
                     ${s.tray_type || ''} · ${s.start_pct}% → ${s.end_pct}%${s.slot_index !== null ? ` · S${s.slot_index + 1}` : ''}
                   </div>

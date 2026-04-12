@@ -50,6 +50,8 @@ def _build_sessions(rows: list[dict]) -> list[dict]:
             current["_last_dt"] = dt
             current["end_time"] = ts
             current["log_count"] += 1
+            if not current.get("print_job") and r.get("print_job"):
+                current["print_job"] = r["print_job"]
         else:
             if current:
                 _finalize(current)
@@ -62,6 +64,7 @@ def _build_sessions(rows: list[dict]) -> list[dict]:
                 "color_name": r.get("color_name", ""),
                 "initial_weight": r.get("initial_weight", 1000),
                 "slot_index": r["slot_index"],
+                "print_job": r.get("print_job") or None,
                 "start_pct": r["remain_pct"],
                 "end_pct": r["remain_pct"],
                 "start_time": ts,
@@ -79,6 +82,10 @@ def _build_sessions(rows: list[dict]) -> list[dict]:
 
 def _finalize(s: dict):
     """Calcule les champs dérivés d'une session."""
+    # Les logs sont traités en DESC : start_pct = plus récent (bas),
+    # end_pct = plus ancien (haut). On swap pour l'ordre chronologique.
+    s["start_pct"], s["end_pct"] = s["end_pct"], s["start_pct"]
+    s["start_time"], s["end_time"] = s["end_time"], s["start_time"]
     s["consumed_pct"] = max(0, s["start_pct"] - s["end_pct"])
     weight = s.get("initial_weight") or 1000
     s["consumed_grams"] = round(s["consumed_pct"] / 100 * weight)
@@ -145,7 +152,7 @@ def get_kpis(db: sqlite3.Connection) -> dict:
     # Sessions d'impression
     recent_raw = db.execute("""
         SELECT cl.id, cl.spool_id, s.name, s.tray_type, s.color_hex, s.color_name,
-               s.initial_weight, cl.slot_index, cl.remain_pct, cl.logged_at
+               s.initial_weight, cl.slot_index, cl.remain_pct, cl.logged_at, cl.print_job
         FROM consumption_logs cl
         JOIN spools s ON s.id = cl.spool_id
         ORDER BY cl.id DESC

@@ -42,6 +42,11 @@ def _migrate(conn):
         conn.execute("ALTER TABLE spools ADD COLUMN ams_sync INTEGER DEFAULT 1")
         conn.commit()
 
+    logs_cols = {r[1] for r in conn.execute("PRAGMA table_info(consumption_logs)")}
+    if "print_job" not in logs_cols:
+        conn.execute("ALTER TABLE consumption_logs ADD COLUMN print_job TEXT")
+        conn.commit()
+
 
 def init_db():
     with get_db() as conn:

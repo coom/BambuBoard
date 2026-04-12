@@ -23,6 +23,7 @@ def _process_and_enrich(db, ams_data: dict):
         return
 
     slots = ams_data.get("slots", [])
+    print_job = ams_data.get("print_job")
     tray_uuids = [s.get("tray_uuid") for s in slots if s.get("tray_uuid")]
 
     # Batch fetch de tous les spools concernés
@@ -139,14 +140,14 @@ def _process_and_enrich(db, ams_data: dict):
 
         if last_pct is None:
             db.execute(
-                "INSERT INTO consumption_logs (spool_id, slot_index, remain_pct) VALUES (?,?,?)",
-                (spool["id"], idx, remain),
+                "INSERT INTO consumption_logs (spool_id, slot_index, remain_pct, print_job) VALUES (?,?,?,?)",
+                (spool["id"], idx, remain, print_job),
             )
             dirty = True
         elif not skip_remain and last_pct > remain and (last_pct - remain) >= 2:
             db.execute(
-                "INSERT INTO consumption_logs (spool_id, slot_index, remain_pct) VALUES (?,?,?)",
-                (spool["id"], idx, remain),
+                "INSERT INTO consumption_logs (spool_id, slot_index, remain_pct, print_job) VALUES (?,?,?,?)",
+                (spool["id"], idx, remain, print_job),
             )
             dirty = True
 

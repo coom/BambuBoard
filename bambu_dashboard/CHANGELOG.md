@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.18 — 2026-04-12
+
+### Corrections
+
+- **Sessions d'impression inversées** : la progression de consommation
+  s'affichait à l'envers (ex : 8% → 17% au lieu de 17% → 8%). Les
+  champs `start_pct` / `end_pct` et `start_time` / `end_time` sont
+  désormais en ordre chronologique correct.
+
+### Améliorations
+
+- **Nom du fichier imprimé** : le `subtask_name` (ou `gcode_file`) est
+  capturé depuis les messages MQTT de l'imprimante et enregistré dans
+  les logs de consommation. Affiché dans les sessions de la page
+  Statistiques avec une icône document.
+- Migration automatique : colonne `print_job` ajoutée à
+  `consumption_logs`.
+
 ## 1.0.17 — 2026-04-12
 
 ### Améliorations

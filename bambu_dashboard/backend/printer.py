@@ -21,6 +21,7 @@ class PrinterManager:
         self._client: mqtt.Client | None = None
         self._connected = False
         self._cache = {"connected": False, "slots": []}
+        self._current_print_job: str | None = None
         self._lock = threading.Lock()
 
     def reconfigure(self, ip: str, access_code: str, serial: str):
@@ -54,7 +55,17 @@ class PrinterManager:
         except (json.JSONDecodeError, ValueError):
             return
 
-        ams_info = data.get("print", {}).get("ams", {})
+        print_data = data.get("print", {})
+
+        # Capturer le nom du fichier en cours d'impression
+        subtask = print_data.get("subtask_name")
+        gcode = print_data.get("gcode_file")
+        if subtask:
+            self._current_print_job = subtask
+        elif gcode:
+            self._current_print_job = gcode
+
+        ams_info = print_data.get("ams", {})
         ams_list = ams_info.get("ams", [])
         if not ams_list:
             return
@@ -99,7 +110,7 @@ class PrinterManager:
                     "tray_weight": None, "diameter": None,
                 })
 
-        new_data = {"connected": True, "slots": slots}
+        new_data = {"connected": True, "slots": slots, "print_job": self._current_print_job}
 
         # Appeler le callback d'enrichissement si défini
         if self._enrich_callback:
