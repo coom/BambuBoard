@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.8 — 2026-04-12
+
+### Corrections
+
+- **Chips de filtre inventaire** : les compteurs « Toutes / Dans AMS /
+  En stock / Vides » utilisent désormais `liveStatus()` (cross-check
+  AMS live) au lieu du statut DB brut, qui pouvait être désynchronisé
+  et afficher un total incorrect (ex : 8 « Dans AMS » alors que seules
+  3 bobines étaient physiquement dans l'AMS). Le filtre par clic sur
+  un chip utilise également le statut live.
+
 ## 1.0.7 — 2026-04-12
 
 ### Améliorations

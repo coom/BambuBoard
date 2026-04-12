@@ -803,7 +803,7 @@
 
     function renderFilterChips() {
       const counts = { active: 0, idle: 0, empty: 0 };
-      inventory.forEach(s => { counts[s.status || 'active'] = (counts[s.status || 'active'] || 0) + 1; });
+      inventory.forEach(s => { const st = liveStatus(s); counts[st] = (counts[st] || 0) + 1; });
       const total = inventory.length;
 
       const chips = [
@@ -829,7 +829,7 @@
     function getFilteredInventory() {
       let list = inventory;
       if (invStatusFilter) {
-        list = list.filter(s => (s.status || 'active') === invStatusFilter);
+        list = list.filter(s => liveStatus(s) === invStatusFilter);
       }
       const q = (document.getElementById('inv-filter')?.value || '').toLowerCase();
       if (q) {
