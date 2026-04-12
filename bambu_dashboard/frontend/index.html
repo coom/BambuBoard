@@ -1395,15 +1395,16 @@
     // source: 'android' | 'flipper'
     function _handleNfcData(d, source) {
       const tagUid = _normUid(d.tag_uid);
-      const existing = tagUid
-        ? [...inventory, ...archivedSpools].find(s => _normUid(s.tag_uid) === tagUid)
-        : null;
+      const trayUuid = d.tray_uuid || null;
+      const allSpools = [...inventory, ...archivedSpools];
+      // Identification par tray_uuid (prioritaire), fallback tag_uid
+      const existing = (trayUuid ? allSpools.find(s => s.tray_uuid === trayUuid) : null)
+        || (tagUid ? allSpools.find(s => _normUid(s.tag_uid) === tagUid) : null);
 
       if (existing) {
-        // Enrichir avec le tray_uuid du tag NFC si absent en base
-        if (d.tray_uuid && !existing.tray_uuid) {
-          existing.tray_uuid = d.tray_uuid;
-        }
+        // Enrichir avec les données NFC si absentes en base
+        if (trayUuid && !existing.tray_uuid) existing.tray_uuid = trayUuid;
+        if (tagUid && !existing.tag_uid) existing.tag_uid = tagUid;
         showToast(`Bobine deja enregistree : ${existing.name}`, 'warn');
         openModal(existing);
         return;

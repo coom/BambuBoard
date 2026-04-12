@@ -428,14 +428,21 @@ def nfc_pending():
         return Response(status_code=204)
     scan_data = scan["data"]
 
-    # Vérifier si la bobine existe déjà par tag_uid (normalisé à 8 chars)
+    # Vérifier si la bobine existe déjà par tray_uuid (prioritaire), sinon tag_uid
     tag_uid = _normalize_tag_uid(scan_data.get("tag_uid"))
+    tray_uuid = scan_data.get("tray_uuid") or None
     scan_data["tag_uid"] = tag_uid  # normaliser dans les données retournées
     db = get_db()
     try:
-        existing = db.execute(
-            "SELECT * FROM spools WHERE UPPER(SUBSTR(tag_uid, 1, 8)) = ?", (tag_uid,)
-        ).fetchone()
+        existing = None
+        if tray_uuid:
+            existing = db.execute(
+                "SELECT * FROM spools WHERE tray_uuid = ?", (tray_uuid,)
+            ).fetchone()
+        if not existing and tag_uid:
+            existing = db.execute(
+                "SELECT * FROM spools WHERE UPPER(SUBSTR(tag_uid, 1, 8)) = ?", (tag_uid,)
+            ).fetchone()
         existing_spool = dict(existing) if existing else None
     finally:
         db.close()

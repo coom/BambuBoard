@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.26 — 2026-04-13
+
+### Changements
+
+- **Unicité par tray_uuid** : l'identification des bobines utilise
+  désormais le `tray_uuid` (lu depuis le tag NFC) comme critère
+  principal, avec fallback sur `tag_uid`. Backend et frontend alignés.
+
 ## 1.0.25 — 2026-04-13
 
 ### Corrections
