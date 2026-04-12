@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.16 — 2026-04-12
+
+### Améliorations
+
+- **Logo** : "Board" passe du orange au vert Bambu (#00AE42)
+- **Onglet "Maintenance" renommé "Options"**
+- **Auto add NFC** : deux options dans la page Options permettent
+  l'ajout automatique des bobines scannées (Android et/ou Flipper Zero)
+  sans passer par le formulaire de confirmation. Les préférences sont
+  sauvegardées dans le navigateur (localStorage).
+
 ## 1.0.15 — 2026-04-12
 
 ### Nouveautés
