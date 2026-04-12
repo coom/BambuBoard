@@ -1371,6 +1371,18 @@
       showToast('Formulaire pre-rempli depuis le tag NFC', 'ok');
     }
 
+    // Poll /api/nfc/pending toutes les 3s pour capter les scans
+    // envoyés par l'app Android (ou tout client externe)
+    setInterval(async () => {
+      try {
+        const r = await fetch('api/nfc/pending');
+        if (r.status === 200) {
+          const d = await r.json();
+          if (d && d.data) _handleNfcData(d.data);
+        }
+      } catch (_) {}
+    }, 3000);
+
     async function submitSpool(e) {
       e.preventDefault();
       const id = document.getElementById('f-id').value;

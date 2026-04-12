@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.13 — 2026-04-12
+
+### Corrections
+
+- **Polling NFC pour app Android** : le frontend poll désormais
+  `GET /api/nfc/pending` toutes les 3 secondes. Quand l'app Android
+  (ou tout client externe) envoie un scan via `POST /api/nfc/push`,
+  le modal d'enregistrement s'ouvre automatiquement dans le navigateur.
+  Auparavant, seul le Flipper Zero fonctionnait (données reçues via
+  Web Serial, sans passer par le backend).
+
 ## 1.0.12 — 2026-04-12
 
 ### Améliorations
