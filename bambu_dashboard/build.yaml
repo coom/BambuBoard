@@ -5,5 +5,5 @@ build_from:
 labels:
   org.opencontainers.image.title: Bambu Dashboard
   org.opencontainers.image.description: Dashboard AMS Bambu Lab — suivi de bobines et KPIs
-  org.opencontainers.image.source: https://code.e-odyssey.net/coom/bambuboard
+  org.opencontainers.image.source: https://github.com/coom/BambuBoard
   org.opencontainers.image.licenses: MIT

@@ -35,7 +35,7 @@
 > Boutique → Dépôts** :
 >
 > ```
-> https://code.e-odyssey.net/coom/bambuboard
+> https://github.com/coom/BambuBoard
 > ```
 >
 > **2.** Installe **Bambu Dashboard** depuis la section qui apparaît ✨

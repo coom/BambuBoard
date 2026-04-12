@@ -211,7 +211,7 @@ rebuild de l'image Docker** :
 
 ## 🔗 Liens utiles
 
-- 📦 **Dépôt** : https://code.e-odyssey.net/coom/bambuboard
+- 📦 **Dépôt** : https://github.com/coom/BambuBoard
 - 🛰️ **Plugin Flipper** : [`flipper/bambu_scanner/`](../flipper/bambu_scanner/)
 - 📜 **Changelog** : [`CHANGELOG.md`](./CHANGELOG.md)
 

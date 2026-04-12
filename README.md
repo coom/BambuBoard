@@ -37,7 +37,7 @@
 > 3️⃣ Colle l'URL ci-dessous et clique **Ajouter** :
 >
 > ```
-> https://code.e-odyssey.net/coom/bambuboard
+> https://github.com/coom/BambuBoard
 > ```
 >
 > 4️⃣ La section **Bambu Dashboard Add-ons** apparaît ✨

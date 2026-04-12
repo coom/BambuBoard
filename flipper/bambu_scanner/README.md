@@ -62,7 +62,7 @@
 > 🚫 **pas de toolchain à installer** — *télécharge, drag-and-drop,
 > c'est installé*.
 
-[fap-direct]: https://code.e-odyssey.net/coom/bambuboard/raw/branch/main/flipper/bambu_scanner/dist/bambu_scanner.fap
+[fap-direct]: https://github.com/coom/BambuBoard/raw/main/flipper/bambu_scanner/dist/bambu_scanner.fap
 
 **1.** 📥 Télécharge [`bambu_scanner.fap`][fap-direct] *(clic droit →
 Enregistrer sous)*, ou clone le repo et prends-le dans
