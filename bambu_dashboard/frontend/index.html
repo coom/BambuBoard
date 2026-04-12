@@ -1400,6 +1400,10 @@
         : null;
 
       if (existing) {
+        // Enrichir avec le tray_uuid du tag NFC si absent en base
+        if (d.tray_uuid && !existing.tray_uuid) {
+          existing.tray_uuid = d.tray_uuid;
+        }
         showToast(`Bobine deja enregistree : ${existing.name}`, 'warn');
         openModal(existing);
         return;
