@@ -4,6 +4,6 @@ build_from:
   armv7: ghcr.io/home-assistant/armv7-base:3.19
 labels:
   org.opencontainers.image.title: Bambu Dashboard
-  org.opencontainers.image.description: Dashboard AMS Bambu Lab — suivi de bobines, KPIs et notifications
+  org.opencontainers.image.description: Dashboard AMS Bambu Lab — suivi de bobines et KPIs
   org.opencontainers.image.source: https://code.e-odyssey.net/coom/bambuboard
   org.opencontainers.image.licenses: MIT

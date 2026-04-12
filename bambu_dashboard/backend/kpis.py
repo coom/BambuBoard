@@ -1,8 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
 
-import config as cfg
-
 
 # Calcule la consommation réelle en sommant uniquement les décroissances
 _CONSUMPTION_CTE = """
@@ -77,7 +75,8 @@ def _build_sessions(rows: list[dict]) -> list[dict]:
         _finalize(current)
         sessions.append(current)
 
-    return sessions
+    # Ne garder que les sessions avec consommation réelle (exclut les ajouts initiaux)
+    return [s for s in sessions if s["consumed_pct"] > 0]
 
 
 def _finalize(s: dict):
@@ -92,8 +91,10 @@ def _finalize(s: dict):
     del s["_last_dt"]
 
 
+LOW_STOCK_THRESHOLD = 20
+
 def get_kpis(db: sqlite3.Connection) -> dict:
-    threshold = cfg.LOW_STOCK_THRESHOLD
+    threshold = LOW_STOCK_THRESHOLD
 
     # Consommation par type + couleur (grammes) — inclut toutes les bobines (même archivées)
     by_type = db.execute(_CONSUMPTION_CTE + """
@@ -169,6 +170,26 @@ def get_kpis(db: sqlite3.Connection) -> dict:
     for r in counts:
         stock[r["status"] or "active"] = r["cnt"]
 
+    # Compteur "dans AMS" basé sur la présence réelle dans ams_state (pas le statut DB)
+    in_ams = db.execute("""
+        SELECT COUNT(*) as cnt
+        FROM spools s
+        JOIN ams_state a ON a.tray_uuid = s.tray_uuid
+        WHERE s.tray_uuid IS NOT NULL
+          AND a.tray_uuid IS NOT NULL
+          AND s.status NOT IN ('archived')
+    """).fetchone()["cnt"]
+
+    # "rangées" = bobines non-archivées, non-vides, pas dans l'AMS
+    in_stock = db.execute("""
+        SELECT COUNT(*) as cnt
+        FROM spools s
+        WHERE s.status IN ('active', 'idle')
+          AND (s.tray_uuid IS NULL OR s.tray_uuid NOT IN (
+              SELECT tray_uuid FROM ams_state WHERE tray_uuid IS NOT NULL
+          ))
+    """).fetchone()["cnt"]
+
     return {
         "by_type": [dict(r) for r in by_type if (r["grams_used"] or 0) > 0],
         "by_brand": [dict(r) for r in by_brand if (r["grams_used"] or 0) > 0],
@@ -177,5 +198,7 @@ def get_kpis(db: sqlite3.Connection) -> dict:
         "low_stock_threshold": threshold,
         "sessions": sessions[:15],
         "stock": stock,
-        "spool_count": stock["active"] + stock["idle"],
+        "in_ams": in_ams,
+        "in_stock": in_stock,
+        "spool_count": in_ams + in_stock,
     }

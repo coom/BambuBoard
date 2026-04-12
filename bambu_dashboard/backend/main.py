@@ -9,7 +9,6 @@ from database import init_db, get_db
 import spools as spool_service
 import kpis as kpi_service
 import config as cfg
-import notifications as notif_service
 import time as _time
 
 # ── NFC scan pending store ────────────────────────────────────────────────────
@@ -53,7 +52,6 @@ def _process_and_enrich(db, ams_data: dict):
         last_logs = {r["spool_id"]: r["remain_pct"] for r in rows}
 
     dirty = False
-    notifications = []
 
     # ── Auto-détection : bobines qui étaient dans l'AMS mais n'y sont plus ──
     current_ams_uuids = set(tray_uuids)
@@ -151,25 +149,12 @@ def _process_and_enrich(db, ams_data: dict):
             )
             dirty = True
 
-            # Notification stock faible
-            threshold = cfg.LOW_STOCK_THRESHOLD
-            if remain <= threshold and last_pct > threshold:
-                notifications.append({
-                    "spool_name": spool["name"],
-                    "tray_type": spool.get("tray_type") or "",
-                    "color_name": spool.get("color_name") or "",
-                    "remain_pct": remain,
-                })
-
             # Auto-empty : bobine à 0%
             if remain <= 0:
                 db.execute("UPDATE spools SET status='empty' WHERE id=?", (spool["id"],))
 
     if dirty:
         db.commit()
-
-    for n in notifications:
-        notif_service.notify_low_spool(**n)
 
 
 def _enrich_callback(data: dict):
@@ -445,7 +430,7 @@ def nfc_pending():
 
 @app.get("/api/config")
 def get_config():
-    return {"low_stock_threshold": cfg.LOW_STOCK_THRESHOLD}
+    return {}
 
 
 @app.get("/api/debug")
@@ -483,19 +468,6 @@ def debug_info():
     }
 
 
-# ── Notifications ────────────────────────────────────────────────────────────
-
-@app.post("/api/notifications/test")
-def test_notification():
-    result = notif_service.notify_low_spool(
-        spool_name="Test Bobine",
-        tray_type="PLA",
-        color_name="Rouge",
-        remain_pct=18,
-    )
-    if not result.get("ok"):
-        raise HTTPException(status_code=400, detail=result.get("error", "Erreur inconnue"))
-    return result
 
 
 # ── Static ────────────────────────────────────────────────────────────────────

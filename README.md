@@ -23,7 +23,6 @@
 | 🖨️ **AMS temps réel** | Les 4 slots, couleur, type, poids restant, affichés en direct via MQTT TLS |
 | 📦 **Inventaire persistant** | Catalogue des bobines avec réconciliation auto `tray_uuid` → `active/idle/empty/archived` |
 | 📊 **KPIs** | Consommation totale, sessions, top matériaux, 7/30 derniers jours |
-| 🔔 **Alertes stock bas** | Webhook Home Assistant automatique sous un seuil configurable |
 | 🏷️ **Scan NFC Bambu** | Lecture des tags des bobines 2024+ via un **Flipper Zero** ou un **téléphone Android** compatible NFC |
 | 🚫 **Zéro Cloud Bambu** | Tout est local, LAN uniquement, pas de compte requis |
 
@@ -55,7 +54,7 @@
 
 | Add-on | Description | Version |
 |---|---|:---:|
-| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.18](https://img.shields.io/badge/v1.0.18-latest-success?style=flat-square) |
+| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.19](https://img.shields.io/badge/v1.0.19-latest-success?style=flat-square) |
 
 ---
 

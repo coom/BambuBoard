@@ -5,7 +5,7 @@
 ![Supports armv7][armv7-shield]
 
 > **Dashboard AMS Bambu Lab tout-en-un** — suivi bobines, KPIs de
-> consommation, notifications de stock bas, scan NFC Flipper Zero.
+> consommation, scan NFC Flipper Zero et Android.
 > Intégré directement dans Home Assistant via l'ingress. 🏠
 
 ---
@@ -20,8 +20,6 @@
   `tray_uuid`, cycle `active → idle → empty → archived`
 - 📊 **KPIs de consommation** — total, sessions d'impression, top
   matériaux, 7 / 30 derniers jours
-- 🔔 **Notifications stock bas** — webhook Home Assistant quand une
-  bobine passe sous un seuil configurable
 - 🏷️ **Scan NFC Bambu** — reconnaissance des bobines **2024+** via un
   Flipper Zero (`.fap` pré-compilé fourni) ou l'**app Android compagnon**
   ([`Bambu Scanner`](../android/bambu_scanner/README.md))

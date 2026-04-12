@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.19 — 2026-04-12
+
+### Corrections
+
+- **Dernières impressions** : les sessions sans consommation (ajouts
+  initiaux de bobines, logs à 100%) sont exclues. Seules les sessions
+  avec une décroissance réelle apparaissent.
+- **KPI « Bobines en stock »** : le compteur « dans AMS » affichait
+  le nombre total de bobines avec statut `active` en base (ex : 19)
+  au lieu du nombre réellement présent dans l'AMS (ex : 4). Le compteur
+  utilise désormais la table `ams_state` pour refléter l'état physique
+  réel de l'AMS.
+
+### Suppressions
+
+- **Notifications Home Assistant** : suppression complète du système
+  de notifications par webhook (options `ha_webhook_url`,
+  `ha_webhook_token`, `low_stock_threshold`, endpoint
+  `/api/notifications/test`, module `notifications.py`, bouton
+  « Tester la notification » dans la page Options). Le seuil stock bas
+  reste affiché dans les KPIs à titre indicatif (fixé à 20%).
+
 ## 1.0.18 — 2026-04-12
 
 ### Corrections

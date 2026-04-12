@@ -461,18 +461,6 @@
   <div class="tab-content" id="tab-settings">
     <div style="max-width:520px">
 
-      <div class="section-header"><span class="section-title">Configuration</span></div>
-      <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
-        <div style="font-size:13px;color:var(--bb-text-secondary);line-height:1.6">
-          La connexion imprimante et le webhook sont configures dans les
-          <strong>options de l'add-on Home Assistant</strong>.
-        </div>
-        <div style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="testHaNotification()">Tester la notification</button>
-          <span id="ha-msg" style="font-size:13px;display:none"></span>
-        </div>
-      </div>
-
       <div class="section-header"><span class="section-title">Ajout automatique NFC</span></div>
       <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
         <div style="display:flex;flex-direction:column;gap:14px">
@@ -827,7 +815,7 @@
       ]);
       inventory = await mainRes.json();
       archivedSpools = await archivedRes.json();
-      try { const cfg = await configRes.json(); lowStockThreshold = cfg.low_stock_threshold || 20; } catch(e) {}
+      try { await configRes.json(); } catch(e) {}
 
       renderFilterChips();
       renderInventory(getFilteredInventory());
@@ -1065,7 +1053,6 @@
     async function loadKpis() {
       const res = await fetch('api/kpis');
       const kpis = await res.json();
-      if (kpis.low_stock_threshold) lowStockThreshold = kpis.low_stock_threshold;
 
       const totalGrams = (kpis.by_type || []).reduce((s, r) => s + (r.grams_used || 0), 0);
       const stock = kpis.stock || {};
@@ -1079,7 +1066,7 @@
         <div class="kpi-card">
           <div class="kpi-label">Bobines en stock</div>
           <div class="kpi-value">${kpis.spool_count || 0}</div>
-          <div class="kpi-sub">${stock.active || 0} dans AMS · ${stock.idle || 0} rangees</div>
+          <div class="kpi-sub">${kpis.in_ams || 0} dans AMS · ${kpis.in_stock || 0} rangées</div>
         </div>`;
       if ((stock.empty || 0) > 0) {
         cards += `<div class="kpi-card">
@@ -1502,29 +1489,6 @@
       loadInventory();
     }
 
-
-    // ── Settings ──────────────────────────────────────────────────────────────
-    async function testHaNotification() {
-      const msg = document.getElementById('ha-msg');
-      msg.style.display = 'inline';
-      msg.style.color = 'var(--bb-text-muted)';
-      msg.textContent = 'Envoi...';
-      try {
-        const res = await fetch('api/notifications/test', { method: 'POST' });
-        const data = await res.json();
-        if (res.ok) {
-          msg.style.color = 'var(--bb-green)';
-          msg.textContent = `OK (HTTP ${data.status})`;
-        } else {
-          msg.style.color = 'var(--bb-red)';
-          msg.textContent = data.detail || data.error || 'Erreur';
-        }
-      } catch (e) {
-        msg.style.color = 'var(--bb-red)';
-        msg.textContent = e.message;
-      }
-      setTimeout(() => msg.style.display = 'none', 5000);
-    }
 
     async function resetData() {
       if (!confirm('Vider l\'historique de consommation ? Les bobines sont conservees.')) return;
