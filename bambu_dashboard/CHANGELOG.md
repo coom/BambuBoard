@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.28 — 2026-04-13
+
+### Corrections
+
+- **Flipper .fap** : rebuild avec lecture tray_uuid (bloc 9).
+
 ## 1.0.27 — 2026-04-13
 
 ### Corrections
