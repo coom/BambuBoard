@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.6 — 2026-04-12
+
+### Améliorations
+
+- **Tri de l'inventaire** : les colonnes Bobine, Type, Restant et Poids
+  sont cliquables pour trier (ascendant ▲ / descendant ▼).
+- **Bouton supprimer** : croix rouge ✕ sur chaque bobine (desktop et
+  mobile) avec popup de confirmation avant suppression définitive.
+- **Fix statut temps réel** : le badge « Dans AMS » / « En stock » est
+  désormais calculé en cross-checkant le `tray_uuid` avec les données
+  AMS live, au lieu de lire le statut DB potentiellement désynchronisé.
+
 ## 1.0.5 — 2026-04-11
 
 ### 👥 Crédits
