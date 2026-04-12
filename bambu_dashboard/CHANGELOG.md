@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.12 — 2026-04-12
+
+### Améliorations
+
+- **Port 8000 exposé** : le port de l'add-on est désormais accessible
+  directement sur le réseau local (`http://<IP_HA>:8000`), sans passer
+  par l'ingress HA. Permet à l'app Android Bambu Scanner d'envoyer les
+  scans NFC via `POST /api/nfc/push` sans authentification ingress.
+
 ## 1.0.11 — 2026-04-12
 
 ### Améliorations

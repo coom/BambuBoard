@@ -1,5 +1,5 @@
 name: Bambu Dashboard
-version: "1.0.11"
+version: "1.0.12"
 slug: bambu_dashboard
 description: Dashboard AMS Bambu Lab — suivi de bobines, KPIs et notifications
 url: https://code.e-odyssey.net/coom/bambuboard
@@ -12,6 +12,8 @@ startup: application
 boot: auto
 ingress: true
 ingress_port: 8000
+ports:
+  8000/tcp: 8000
 panel_icon: mdi:printer-3d-nozzle
 panel_title: Bambu
 map:
