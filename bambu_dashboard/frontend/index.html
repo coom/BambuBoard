@@ -390,11 +390,13 @@
     <div class="section-header">
       <span class="section-title">Filaments charges</span>
     </div>
-    <div class="ams-grid" id="ams-grid">
-      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
-      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
-      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
-      <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+    <div id="ams-container">
+      <div class="ams-grid">
+        <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+        <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+        <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+        <div class="slot-card"><div class="skeleton" style="height:44px;width:44px;border-radius:12px;margin-bottom:12px"></div><div class="skeleton" style="height:16px;width:50%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div></div>
+      </div>
     </div>
   </div>
 
@@ -742,10 +744,20 @@
     }
 
     // ── AMS ───────────────────────────────────────────────────────────────────
+    function slotLabel(slot) {
+      const amsCount = amsData.ams_count || 1;
+      const trayIdx = slot.tray_index ?? (slot.index % 4);
+      if (amsCount > 1) {
+        const amsId = slot.ams_id ?? Math.floor(slot.index / 4);
+        return `A${amsId + 1}:S${trayIdx + 1}`;
+      }
+      return `S${trayIdx + 1}`;
+    }
+
     function renderSlot(slot) {
       const isEmpty = !slot.tray_type;
       const color = slot.color || '#2a2a2a';
-      const label = `S${slot.index + 1}`;
+      const label = slotLabel(slot);
       const mainType = slot.tray_sub_brands || slot.tray_type || '';
       const brand = slot.tray_id_name || slot.tray_info_idx || '';
       const swatchBorder = isColorDark(slot.color) ? '1px solid rgba(255,255,255,0.25)' : '1px solid rgba(255,255,255,0.1)';
@@ -792,7 +804,21 @@
         document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString('fr-FR')}`;
 
         if (amsData.slots?.length > 0) {
-          document.getElementById('ams-grid').innerHTML = amsData.slots.map(renderSlot).join('');
+          const amsCount = amsData.ams_count || 1;
+          const container = document.getElementById('ams-container');
+          if (amsCount <= 1) {
+            container.innerHTML = `<div class="ams-grid">${amsData.slots.map(renderSlot).join('')}</div>`;
+          } else {
+            const groups = {};
+            amsData.slots.forEach(sl => {
+              const aid = sl.ams_id ?? Math.floor(sl.index / 4);
+              (groups[aid] = groups[aid] || []).push(sl);
+            });
+            container.innerHTML = Object.keys(groups).sort().map(aid =>
+              `<h3 style="margin:${aid > 0 ? '24px' : '0'} 0 10px;font-size:15px;color:var(--bb-text-muted);font-weight:600">AMS ${Number(aid)+1}</h3>
+               <div class="ams-grid">${groups[aid].map(renderSlot).join('')}</div>`
+            ).join('');
+          }
         }
         if (amsData.error) {
           const b = document.getElementById('error-banner');
@@ -925,7 +951,7 @@
       tbody.innerHTML = spools.map(s => {
         const st = liveStatus(s);
         const amsSlot = amsData.slots?.find(sl => sl.tray_uuid && sl.tray_uuid === s.tray_uuid);
-        const amsCell = amsSlot ? `<span class="ams-slot-badge">S${amsSlot.index + 1}</span>` : '<span style="color:var(--bb-text-muted)">—</span>';
+        const amsCell = amsSlot ? `<span class="ams-slot-badge">${slotLabel(amsSlot)}</span>` : '<span style="color:var(--bb-text-muted)">—</span>';
         const remain = clampRemain(s.current_remain ?? 100);
         const weightG = Math.max(0, s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000)));
         const actions = buildActions(s, st);
@@ -1133,7 +1159,7 @@
                   <div class="session-name">${s.name}</div>
                   ${s.print_job ? `<div class="session-detail" style="color:var(--bb-text-secondary)">&#x1F4C4; ${s.print_job}</div>` : ''}
                   <div class="session-detail">
-                    ${s.tray_type || ''} · ${s.start_pct}% → ${s.end_pct}%${s.slot_index !== null ? ` · S${s.slot_index + 1}` : ''}
+                    ${s.tray_type || ''} · ${s.start_pct}% → ${s.end_pct}%${s.slot_index !== null ? ` · ${(amsData.ams_count||1) > 1 ? 'A' + (Math.floor(s.slot_index/4)+1) + ':' : ''}S${s.slot_index % 4 + 1}` : ''}
                   </div>
                   <div class="session-detail">${fmtDate(s.start_time)}</div>
                 </div>

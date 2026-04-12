@@ -70,47 +70,57 @@ class PrinterManager:
         if not ams_list:
             return
 
-        ams = ams_list[0]
-        trays_by_id = {}
-        for t in ams.get("tray", []):
-            try:
-                trays_by_id[int(t["id"])] = t
-            except (KeyError, ValueError):
-                continue
-
         slots = []
-        for i in range(4):
-            tray = trays_by_id.get(i)
-            if tray and tray.get("tray_type"):
-                remain = tray.get("remain")
-                if isinstance(remain, str) and remain.isdigit():
-                    remain = int(remain)
-                slots.append({
-                    "index": i,
-                    "tray_uuid": tray.get("tray_uuid") or None,
-                    "tag_uid": tray.get("tag_uid") or None,
-                    "tray_type": tray.get("tray_type") or None,
-                    "tray_sub_brands": tray.get("tray_sub_brands") or None,
-                    "tray_id_name": tray.get("tray_id_name") or None,
-                    "tray_info_idx": tray.get("tray_info_idx") or None,
-                    "nozzle_temp_min": int(tray["nozzle_temp_min"]) if tray.get("nozzle_temp_min") else None,
-                    "nozzle_temp_max": int(tray["nozzle_temp_max"]) if tray.get("nozzle_temp_max") else None,
-                    "color": self._parse_color(tray.get("tray_color", "")),
-                    "remain": remain,
-                    "tray_weight": tray.get("tray_weight"),
-                    "diameter": tray.get("tray_diameter"),
-                })
-            else:
-                slots.append({
-                    "index": i,
-                    "tray_uuid": None, "tag_uid": None, "tray_type": None,
-                    "tray_sub_brands": None, "tray_id_name": None,
-                    "tray_info_idx": None, "nozzle_temp_min": None,
-                    "nozzle_temp_max": None, "color": None, "remain": None,
-                    "tray_weight": None, "diameter": None,
-                })
+        for ams in ams_list:
+            try:
+                ams_id = int(ams.get("id", 0))
+            except (ValueError, TypeError):
+                ams_id = 0
 
-        new_data = {"connected": True, "slots": slots, "print_job": self._current_print_job}
+            trays_by_id = {}
+            for t in ams.get("tray", []):
+                try:
+                    trays_by_id[int(t["id"])] = t
+                except (KeyError, ValueError):
+                    continue
+
+            for i in range(4):
+                global_index = ams_id * 4 + i
+                tray = trays_by_id.get(i)
+                if tray and tray.get("tray_type"):
+                    remain = tray.get("remain")
+                    if isinstance(remain, str) and remain.isdigit():
+                        remain = int(remain)
+                    slots.append({
+                        "index": global_index,
+                        "ams_id": ams_id,
+                        "tray_index": i,
+                        "tray_uuid": tray.get("tray_uuid") or None,
+                        "tag_uid": tray.get("tag_uid") or None,
+                        "tray_type": tray.get("tray_type") or None,
+                        "tray_sub_brands": tray.get("tray_sub_brands") or None,
+                        "tray_id_name": tray.get("tray_id_name") or None,
+                        "tray_info_idx": tray.get("tray_info_idx") or None,
+                        "nozzle_temp_min": int(tray["nozzle_temp_min"]) if tray.get("nozzle_temp_min") else None,
+                        "nozzle_temp_max": int(tray["nozzle_temp_max"]) if tray.get("nozzle_temp_max") else None,
+                        "color": self._parse_color(tray.get("tray_color", "")),
+                        "remain": remain,
+                        "tray_weight": tray.get("tray_weight"),
+                        "diameter": tray.get("tray_diameter"),
+                    })
+                else:
+                    slots.append({
+                        "index": global_index,
+                        "ams_id": ams_id,
+                        "tray_index": i,
+                        "tray_uuid": None, "tag_uid": None, "tray_type": None,
+                        "tray_sub_brands": None, "tray_id_name": None,
+                        "tray_info_idx": None, "nozzle_temp_min": None,
+                        "nozzle_temp_max": None, "color": None, "remain": None,
+                        "tray_weight": None, "diameter": None,
+                    })
+
+        new_data = {"connected": True, "slots": slots, "ams_count": len(ams_list), "print_job": self._current_print_job}
 
         # Appeler le callback d'enrichissement si défini
         if self._enrich_callback:

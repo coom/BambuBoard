@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.23 — 2026-04-12
+
+### Nouveautés
+
+- **Support multi-AMS** : le dashboard détecte et affiche tous les AMS
+  connectés à l'imprimante (jusqu'à 4 AMS = 16 slots). La page AMS Live
+  regroupe les slots par AMS avec un titre `AMS 1`, `AMS 2`, etc.
+  Les badges de slot passent de `S1` à `A1:S1` quand plusieurs AMS sont
+  détectés. Inventaire, statistiques et réconciliation fonctionnent
+  avec les index globaux (0–15).
+
 ## 1.0.22 — 2026-04-12
 
 ### Suppressions
