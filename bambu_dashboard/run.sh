@@ -5,6 +5,7 @@ export PRINTER_IP="$(bashio::config 'printer_ip')"
 export PRINTER_SERIAL="$(bashio::config 'printer_serial')"
 export PRINTER_ACCESS_CODE="$(bashio::config 'printer_access_code')"
 export NFC_API_KEY="$(bashio::config 'nfc_api_key')"
+export BAMBU_LANGUAGE="$(bashio::config 'language')"
 export BAMBU_DB_PATH="/data/bambu.db"
 
 bashio::log.info "Bambu Dashboard starting..."

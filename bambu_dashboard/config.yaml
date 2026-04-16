@@ -23,8 +23,10 @@ options:
   printer_serial: ""
   printer_access_code: ""
   nfc_api_key: ""
+  language: auto
 schema:
   printer_ip: str
   printer_serial: str
   printer_access_code: password
   nfc_api_key: str?
+  language: "list(auto|fr|en)?"
