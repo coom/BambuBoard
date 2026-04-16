@@ -631,6 +631,368 @@
   </div>
 
   <script>
+    // ── i18n ──────────────────────────────────────────────────────────────────
+    const I18N = {
+      fr: {
+        // header
+        'header.status.connecting':     'Connexion...',
+        'header.status.connected':      'Connecté',
+        'header.status.disconnected':   'Déconnecté',
+        'header.error.backend':         'Backend inaccessible : {msg}',
+        'header.error.ams':             'Erreur : {msg}',
+
+        // tabs
+        'tabs.ams':         'AMS Live',
+        'tabs.inventory':   'Inventaire',
+        'tabs.kpis':        'Statistiques',
+        'tabs.settings':    'Options',
+
+        // AMS
+        'ams.section.loaded':   'Filaments chargés',
+        'ams.slot.empty':       'Vide',
+        'ams.badge.unknown':    'Bobine inconnue — Enregistrer',
+        'ams.group.label':      'AMS {n}',
+
+        // Inventory
+        'inventory.section.title':     'Stock de bobines',
+        'inventory.filter.placeholder':'Filtrer...',
+        'inventory.btn.scan':          '📶 Scan Flipper',
+        'inventory.btn.add':           '+ Ajouter',
+        'inventory.chip.all':          'Toutes',
+        'inventory.chip.active':       'Dans AMS',
+        'inventory.chip.idle':         'En stock',
+        'inventory.chip.empty':        'Vides',
+        'inventory.col.spool':         'Bobine',
+        'inventory.col.type':          'Type',
+        'inventory.col.status':        'Statut',
+        'inventory.col.remain':        'Restant',
+        'inventory.col.weight':        'Poids',
+        'inventory.col.ams':           'AMS',
+        'inventory.col.used':          'Consommé',
+        'inventory.empty.title':       'Aucune bobine',
+        'inventory.empty.title_first': 'Aucune bobine enregistrée',
+        'inventory.empty.sub':         "Ajoutez-en une ou enregistrez depuis l'AMS",
+        'inventory.archived.toggle':   'Bobines archivées',
+        'inventory.used_suffix':       '{g}g utilisés',
+        'inventory.btn.delete':        'Supprimer',
+        'inventory.status.active':     'Dans AMS',
+        'inventory.status.idle':       'En stock',
+        'inventory.status.empty':      'Vide',
+        'inventory.status.archived':   'Archivé',
+
+        // KPIs
+        'kpis.section.title':          "Vue d'ensemble",
+        'kpis.btn.refresh':            'Actualiser',
+        'kpis.card.total':             'Consommation totale',
+        'kpis.card.total.sub':         '{kg} kg utilisés',
+        'kpis.card.stock':             'Bobines en stock',
+        'kpis.card.stock.sub':         '{ams} dans AMS · {idle} rangées',
+        'kpis.card.empty':             'Bobines vides',
+        'kpis.card.empty.sub':         'à racheter ou archiver',
+        'kpis.card.cost':              'Coût consommé',
+        'kpis.card.cost.sub':          'estimation',
+        'kpis.card.low':               'Stocks faibles',
+        'kpis.card.low.sub':           'sous {pct}%',
+        'kpis.card.archived':          'Archivées',
+        'kpis.card.archived.sub':      'bobines consommées',
+        'kpis.table.by_type':          'Par type',
+        'kpis.table.by_brand':         'Par marque',
+        'kpis.col.brand':              'Marque',
+        'kpis.col.color':              'Couleur',
+        'kpis.col.used':               'Utilisé',
+        'kpis.sessions.title':         'Dernières impressions',
+        'kpis.sessions.empty.title':   'Pas encore de données',
+        'kpis.sessions.empty.sub':     'Les statistiques apparaîtront au fil des impressions',
+        'kpis.session.init':           'init',
+
+        // Settings / Options
+        'options.section.autoadd':     'Ajout automatique NFC',
+        'options.autoadd.android':     'Auto add Android',
+        'options.autoadd.android.sub': "Ajoute automatiquement la bobine à l'inventaire lors d'un scan NFC depuis l'app Android, sans passer par le formulaire de confirmation.",
+        'options.autoadd.flipper':     'Auto add Flipper Zero',
+        'options.autoadd.flipper.sub': "Ajoute automatiquement la bobine à l'inventaire lors d'un scan NFC depuis le Flipper Zero, sans passer par le formulaire de confirmation.",
+        'options.section.data':        'Données',
+        'options.data.clear':          "Vider l'historique",
+        'options.data.clear.sub':      'Efface les logs — conserve les bobines',
+        'options.data.clear.btn':      'Vider',
+        'options.data.reset':          'Reset complet',
+        'options.data.reset.sub':      'Efface tout (bobines + historique)',
+        'options.data.reset.btn':      'Reset total',
+        'options.lang.section':        'Langue',
+        'options.lang.auto':           'Automatique',
+
+        // Modal spool
+        'modal.title.add':             'Ajouter une bobine',
+        'modal.title.edit':            'Modifier la bobine',
+        'modal.btn.save':              'Enregistrer',
+        'modal.btn.update':            'Mettre à jour',
+        'modal.btn.cancel':            'Annuler',
+        'modal.field.name':            'Nom *',
+        'modal.field.name.ph':         'Ex: PLA Rouge',
+        'modal.field.brand':           'Marque',
+        'modal.field.brand.ph':        'Bambu Lab, eSUN...',
+        'modal.field.type':            'Type',
+        'modal.field.type.ph':         'PLA, PETG, ABS...',
+        'modal.field.package':         'Conditionnement',
+        'modal.field.package.full':    'Bobine complète',
+        'modal.field.package.refill':  'Recharge',
+        'modal.field.sub_brands':      'Sous-marque',
+        'modal.field.sub_brands.ph':   'PLA Basic...',
+        'modal.field.code':            'Code filament',
+        'modal.field.color_name':      'Couleur',
+        'modal.field.color_name.ph':   'Rouge, Gris...',
+        'modal.field.color_hex':       'Couleur hex',
+        'modal.field.weight':          'Poids initial (g)',
+        'modal.field.price':           'Prix/kg (optionnel)',
+        'modal.field.initial_remain':  '% de départ',
+        'modal.field.initial_remain.hint': 'Si bobine déjà entamée',
+        'modal.field.sync':            "Synchroniser le restant avec l'AMS",
+        'modal.field.manual_remain':   'Restant manuel (%)',
+        'modal.field.manual_remain.ph':'Ex: 45',
+        'modal.field.manual_remain.hint': "Cette valeur ne sera pas écrasée par l'AMS",
+        'modal.field.tray_uuid':       'Tray UUID',
+        'modal.field.tray_uuid.ph':    "Pré-rempli depuis l'AMS",
+        'modal.field.tag_uid':         'Tag UID',
+        'modal.field.tag_uid.ph':      'Optionnel',
+
+        // NFC overlay
+        'nfc.connect.title':           'Connecter le Flipper Zero',
+        'nfc.connect.sub':             'Branchez le Flipper Zero en USB,<br>puis cliquez sur <strong>Connecter</strong>.',
+        'nfc.connect.btn':             'Connecter',
+        'nfc.connect.cancel':          'Annuler',
+        'nfc.scan.title':              'Flipper connecté',
+        'nfc.scan.sub':                'Lancez <strong>Bambu NFC</strong> sur le Flipper,<br>puis approchez une bobine.',
+        'nfc.unsupported.title':       'Navigateur incompatible',
+        'nfc.unsupported.sub':         "Web Serial requiert <strong>Chrome</strong> ou <strong>Edge</strong>.<br><br>Accédez au dashboard via l'interface Home Assistant (ingress) ou copiez l'URL en <strong>https://</strong>.",
+        'nfc.unsupported.btn':         'Fermer',
+
+        // Toasts, confirms, alerts
+        'toast.nfc.connect_failed':    'Connexion échouée : {msg}',
+        'toast.nfc.already':           'Bobine déjà enregistrée : {name}',
+        'toast.nfc.prefilled':         'Formulaire pré-rempli depuis le tag NFC',
+        'toast.spool.auto_added':      'Bobine "{name}" ajoutée automatiquement',
+        'toast.spool.auto_add_error':  "Erreur lors de l'ajout automatique",
+        'confirm.spool.archive':       "Archiver cette bobine ? Elle sera masquée de l'inventaire actif.",
+        'confirm.spool.delete':        'Supprimer définitivement "{name}" et tout son historique ?',
+        'confirm.data.clear':          "Vider l'historique de consommation ? Les bobines sont conservées.",
+        'confirm.data.reset':          "Reset COMPLET — toutes les bobines et l'historique seront supprimés. Continuer ?",
+        'alert.data.cleared':          'Historique effacé.',
+        'alert.data.reset':            'Base réinitialisée.',
+        'alert.snapshot':              'Snapshot : {pct}% ({source})',
+        'snapshot.source.ams':         "depuis l'AMS",
+        'snapshot.source.last':        'dernier état connu',
+      },
+      en: {
+        // header
+        'header.status.connecting':     'Connecting...',
+        'header.status.connected':      'Connected',
+        'header.status.disconnected':   'Disconnected',
+        'header.error.backend':         'Backend unreachable: {msg}',
+        'header.error.ams':             'Error: {msg}',
+
+        // tabs
+        'tabs.ams':         'AMS Live',
+        'tabs.inventory':   'Inventory',
+        'tabs.kpis':        'Statistics',
+        'tabs.settings':    'Options',
+
+        // AMS
+        'ams.section.loaded':   'Loaded filaments',
+        'ams.slot.empty':       'Empty',
+        'ams.badge.unknown':    'Unknown spool — Register',
+        'ams.group.label':      'AMS {n}',
+
+        // Inventory
+        'inventory.section.title':     'Spool stock',
+        'inventory.filter.placeholder':'Filter...',
+        'inventory.btn.scan':          '📶 Scan Flipper',
+        'inventory.btn.add':           '+ Add',
+        'inventory.chip.all':          'All',
+        'inventory.chip.active':       'In AMS',
+        'inventory.chip.idle':         'In stock',
+        'inventory.chip.empty':        'Empty',
+        'inventory.col.spool':         'Spool',
+        'inventory.col.type':          'Type',
+        'inventory.col.status':        'Status',
+        'inventory.col.remain':        'Remaining',
+        'inventory.col.weight':        'Weight',
+        'inventory.col.ams':           'AMS',
+        'inventory.col.used':          'Used',
+        'inventory.empty.title':       'No spools',
+        'inventory.empty.title_first': 'No spools registered',
+        'inventory.empty.sub':         'Add one or register from the AMS',
+        'inventory.archived.toggle':   'Archived spools',
+        'inventory.used_suffix':       '{g}g used',
+        'inventory.btn.delete':        'Delete',
+        'inventory.status.active':     'In AMS',
+        'inventory.status.idle':       'In stock',
+        'inventory.status.empty':      'Empty',
+        'inventory.status.archived':   'Archived',
+
+        // KPIs
+        'kpis.section.title':          'Overview',
+        'kpis.btn.refresh':            'Refresh',
+        'kpis.card.total':             'Total consumption',
+        'kpis.card.total.sub':         '{kg} kg used',
+        'kpis.card.stock':             'Spools in stock',
+        'kpis.card.stock.sub':         '{ams} in AMS · {idle} stored',
+        'kpis.card.empty':             'Empty spools',
+        'kpis.card.empty.sub':         'to rebuy or archive',
+        'kpis.card.cost':              'Cost consumed',
+        'kpis.card.cost.sub':          'estimate',
+        'kpis.card.low':               'Low stock',
+        'kpis.card.low.sub':           'under {pct}%',
+        'kpis.card.archived':          'Archived',
+        'kpis.card.archived.sub':      'consumed spools',
+        'kpis.table.by_type':          'By type',
+        'kpis.table.by_brand':         'By brand',
+        'kpis.col.brand':              'Brand',
+        'kpis.col.color':              'Color',
+        'kpis.col.used':               'Used',
+        'kpis.sessions.title':         'Recent prints',
+        'kpis.sessions.empty.title':   'No data yet',
+        'kpis.sessions.empty.sub':     'Statistics will appear as prints happen',
+        'kpis.session.init':           'init',
+
+        // Settings / Options
+        'options.section.autoadd':     'NFC auto-add',
+        'options.autoadd.android':     'Auto add Android',
+        'options.autoadd.android.sub': 'Automatically adds the spool to inventory on NFC scan from the Android app, skipping the confirmation form.',
+        'options.autoadd.flipper':     'Auto add Flipper Zero',
+        'options.autoadd.flipper.sub': 'Automatically adds the spool to inventory on NFC scan from the Flipper Zero, skipping the confirmation form.',
+        'options.section.data':        'Data',
+        'options.data.clear':          'Clear history',
+        'options.data.clear.sub':      'Erases logs — keeps spools',
+        'options.data.clear.btn':      'Clear',
+        'options.data.reset':          'Full reset',
+        'options.data.reset.sub':      'Erases everything (spools + history)',
+        'options.data.reset.btn':      'Total reset',
+        'options.lang.section':        'Language',
+        'options.lang.auto':           'Automatic',
+
+        // Modal spool
+        'modal.title.add':             'Add a spool',
+        'modal.title.edit':            'Edit spool',
+        'modal.btn.save':              'Save',
+        'modal.btn.update':            'Update',
+        'modal.btn.cancel':            'Cancel',
+        'modal.field.name':            'Name *',
+        'modal.field.name.ph':         'Ex: PLA Red',
+        'modal.field.brand':           'Brand',
+        'modal.field.brand.ph':        'Bambu Lab, eSUN...',
+        'modal.field.type':            'Type',
+        'modal.field.type.ph':         'PLA, PETG, ABS...',
+        'modal.field.package':         'Packaging',
+        'modal.field.package.full':    'Full spool',
+        'modal.field.package.refill':  'Refill',
+        'modal.field.sub_brands':      'Sub-brand',
+        'modal.field.sub_brands.ph':   'PLA Basic...',
+        'modal.field.code':            'Filament code',
+        'modal.field.color_name':      'Color',
+        'modal.field.color_name.ph':   'Red, Gray...',
+        'modal.field.color_hex':       'Color hex',
+        'modal.field.weight':          'Initial weight (g)',
+        'modal.field.price':           'Price/kg (optional)',
+        'modal.field.initial_remain':  'Starting %',
+        'modal.field.initial_remain.hint': 'If spool already used',
+        'modal.field.sync':            'Sync remaining with AMS',
+        'modal.field.manual_remain':   'Manual remaining (%)',
+        'modal.field.manual_remain.ph':'Ex: 45',
+        'modal.field.manual_remain.hint': 'This value will not be overwritten by the AMS',
+        'modal.field.tray_uuid':       'Tray UUID',
+        'modal.field.tray_uuid.ph':    'Pre-filled from AMS',
+        'modal.field.tag_uid':         'Tag UID',
+        'modal.field.tag_uid.ph':      'Optional',
+
+        // NFC overlay
+        'nfc.connect.title':           'Connect the Flipper Zero',
+        'nfc.connect.sub':             'Plug the Flipper Zero via USB,<br>then click <strong>Connect</strong>.',
+        'nfc.connect.btn':             'Connect',
+        'nfc.connect.cancel':          'Cancel',
+        'nfc.scan.title':              'Flipper connected',
+        'nfc.scan.sub':                'Launch <strong>Bambu NFC</strong> on the Flipper,<br>then bring a spool close.',
+        'nfc.unsupported.title':       'Incompatible browser',
+        'nfc.unsupported.sub':         'Web Serial requires <strong>Chrome</strong> or <strong>Edge</strong>.<br><br>Access the dashboard via Home Assistant (ingress) or copy the URL using <strong>https://</strong>.',
+        'nfc.unsupported.btn':         'Close',
+
+        // Toasts, confirms, alerts
+        'toast.nfc.connect_failed':    'Connection failed: {msg}',
+        'toast.nfc.already':           'Spool already registered: {name}',
+        'toast.nfc.prefilled':         'Form pre-filled from NFC tag',
+        'toast.spool.auto_added':      'Spool "{name}" automatically added',
+        'toast.spool.auto_add_error':  'Error during auto-add',
+        'confirm.spool.archive':       'Archive this spool? It will be hidden from active inventory.',
+        'confirm.spool.delete':        'Permanently delete "{name}" and all its history?',
+        'confirm.data.clear':          'Clear consumption history? Spools are kept.',
+        'confirm.data.reset':          'FULL RESET — all spools and history will be deleted. Continue?',
+        'alert.data.cleared':          'History cleared.',
+        'alert.data.reset':            'Database reset.',
+        'alert.snapshot':              'Snapshot: {pct}% ({source})',
+        'snapshot.source.ams':         'from the AMS',
+        'snapshot.source.last':        'last known state',
+      }
+    };
+
+    // Langue courante — resolvue au chargement depuis localStorage / navigator
+    let currentLang;
+    let currentLocale;
+
+    function resolveLang() {
+      const stored = localStorage.getItem('bb_lang');
+      if (stored === 'fr' || stored === 'en') return stored;
+      return (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+    }
+
+    function setLang(lang) {
+      // lang attendu dans {'auto','fr','en'}. 'auto' supprime l'override.
+      if (lang === 'auto') localStorage.removeItem('bb_lang');
+      else localStorage.setItem('bb_lang', lang);
+      currentLang = resolveLang();
+      currentLocale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+      document.documentElement.lang = currentLang;
+      applyI18n();
+      // Refresh dynamique : on reconstruit tout ce qui est deja rendu
+      closeModal();
+      try { stopNfcScan(); } catch(_) {}
+      if (activeTab === 'inventory') loadInventory();
+      if (activeTab === 'kpis') loadKpis();
+      fetchAMS();
+    }
+
+    function t(key, params) {
+      const dict = I18N[currentLang] || I18N.fr;
+      let s = dict[key];
+      if (s === undefined) s = I18N.fr[key];
+      if (s === undefined) return key;
+      if (params) {
+        for (const k of Object.keys(params)) {
+          s = s.split('{' + k + '}').join(String(params[k]));
+        }
+      }
+      return s;
+    }
+
+    function applyI18n(root) {
+      root = root || document;
+      root.querySelectorAll('[data-i18n]').forEach(function(el) {
+        el.textContent = t(el.getAttribute('data-i18n'));
+      });
+      root.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+        el.innerHTML = t(el.getAttribute('data-i18n-html'));
+      });
+      root.querySelectorAll('[data-i18n-attr]').forEach(function(el) {
+        el.getAttribute('data-i18n-attr').split(',').forEach(function(pair) {
+          const parts = pair.trim().split(':');
+          if (parts.length === 2) el.setAttribute(parts[0], t(parts[1]));
+        });
+      });
+    }
+
+    // Init langue AVANT toute autre initialisation
+    currentLang = resolveLang();
+    currentLocale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+    document.documentElement.lang = currentLang;
+
     // ── State ─────────────────────────────────────────────────────────────────
     let amsData = { connected: false, slots: [] };
     let inventory = [];
