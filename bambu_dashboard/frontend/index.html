@@ -963,7 +963,7 @@
         const weightG = Math.max(0, s.weight_remaining ?? Math.round(remain / 100 * (s.initial_weight || 1000)));
         const actions = buildActions(s, st);
         return `<tr>
-          <td>${colorDot(s.color_hex)}<strong>${s.name}</strong></td>
+          <td>${colorDot(s.color_hex)}<strong>${s.name}</strong>${s.package_type === 'refill' ? ' <span title="Recharge">♻️</span>' : ''}</td>
           <td><span style="font-size:12px;font-weight:600">${s.tray_type || '—'}</span></td>
           <td>${statusBadge(st)}</td>
           <td>${remainBar(remain, true)}</td>
@@ -980,7 +980,7 @@
         return `<div class="inv-card">
           <div class="inv-card-swatch" style="background:${s.color_hex || '#333'}"></div>
           <div class="inv-card-info">
-            <div class="inv-card-name">${s.name} ${statusBadge(st)}</div>
+            <div class="inv-card-name">${s.name}${s.package_type === 'refill' ? ' <span title="Recharge">♻️</span>' : ''} ${statusBadge(st)}</div>
             <div class="inv-card-sub">${s.tray_type || '—'} · ${s.brand || ''}</div>
             ${remainBar(remain, true)}
           </div>
@@ -1028,7 +1028,7 @@
                 const used = 100 - remain;
                 const weightUsed = Math.round(used / 100 * (s.initial_weight || 1000));
                 return `<tr style="opacity:0.6">
-                  <td>${colorDot(s.color_hex)}<strong>${s.name}</strong></td>
+                  <td>${colorDot(s.color_hex)}<strong>${s.name}</strong>${s.package_type === 'refill' ? ' <span title="Recharge">♻️</span>' : ''}</td>
                   <td>${s.tray_type || '—'}</td>
                   <td>${weightUsed}g utilises</td>
                   <td>
