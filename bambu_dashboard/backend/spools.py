@@ -60,7 +60,8 @@ def find_by_tray_uuid(db: sqlite3.Connection, tray_uuid: str) -> Optional[dict]:
 def create_spool(db: sqlite3.Connection, data: dict) -> dict:
     fields = ["tray_uuid", "tag_uid", "name", "brand", "tray_type", "sub_brands",
               "color_name", "color_hex", "filament_code", "initial_weight",
-              "price_per_kg", "initial_remain", "status", "ams_sync"]
+              "price_per_kg", "initial_remain", "status", "ams_sync",
+              "package_type"]
     values = {f: data.get(f) for f in fields}
     if values["initial_remain"] is None:
         values["initial_remain"] = 100
@@ -84,7 +85,8 @@ def create_spool(db: sqlite3.Connection, data: dict) -> dict:
 def update_spool(db: sqlite3.Connection, spool_id: int, data: dict) -> Optional[dict]:
     fields = ["tray_uuid", "tag_uid", "name", "brand", "tray_type", "sub_brands",
               "color_name", "color_hex", "filament_code", "initial_weight",
-              "price_per_kg", "initial_remain", "status", "ams_sync"]
+              "price_per_kg", "initial_remain", "status", "ams_sync",
+              "package_type"]
     updates = {f: data[f] for f in fields if f in data}
     if not updates:
         return get_spool(db, spool_id)

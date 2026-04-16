@@ -41,6 +41,9 @@ def _migrate(conn):
     if "ams_sync" not in spools_cols:
         conn.execute("ALTER TABLE spools ADD COLUMN ams_sync INTEGER DEFAULT 1")
         conn.commit()
+    if "package_type" not in spools_cols:
+        conn.execute("ALTER TABLE spools ADD COLUMN package_type TEXT DEFAULT 'full'")
+        conn.commit()
 
     logs_cols = {r[1] for r in conn.execute("PRAGMA table_info(consumption_logs)")}
     if "print_job" not in logs_cols:
