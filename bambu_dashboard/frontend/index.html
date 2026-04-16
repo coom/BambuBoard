@@ -564,6 +564,13 @@
             <input class="form-input" id="f-tray-type" placeholder="PLA, PETG, ABS..." />
           </div>
           <div class="form-group">
+            <label class="form-label">Conditionnement</label>
+            <select class="form-input" id="f-package-type">
+              <option value="full">Bobine complète</option>
+              <option value="refill">Recharge</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label class="form-label">Sous-marque</label>
             <input class="form-input" id="f-sub-brands" placeholder="PLA Basic..." />
           </div>
@@ -1191,6 +1198,7 @@
       document.getElementById('f-name').value = spool?.name || '';
       document.getElementById('f-brand').value = spool?.brand || '';
       document.getElementById('f-tray-type').value = spool?.tray_type || '';
+      document.getElementById('f-package-type').value = spool?.package_type || 'full';
       document.getElementById('f-sub-brands').value = spool?.sub_brands || '';
       document.getElementById('f-color-name').value = spool?.color_name || '';
       document.getElementById('f-color-hex').value = spool?.color_hex || '';
@@ -1476,6 +1484,7 @@
         tray_uuid: document.getElementById('f-tray-uuid').value || null,
         tag_uid: document.getElementById('f-tag-uid').value || null,
         initial_remain: parseInt(document.getElementById('f-initial-remain').value) ?? 100,
+        package_type: document.getElementById('f-package-type').value || 'full',
       };
 
       // Sync AMS : uniquement en mode édition
