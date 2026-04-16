@@ -32,5 +32,9 @@ def t(key: str, **params) -> str:
     Fallback: langue courante -> fr -> cle brute. Substitution {var} via .format.
     """
     lang_dict = STRINGS.get(RESOLVED_LANGUAGE, STRINGS["fr"])
-    s = lang_dict.get(key) or STRINGS["fr"].get(key) or key
+    s = lang_dict.get(key)
+    if s is None:
+        s = STRINGS["fr"].get(key)
+    if s is None:
+        s = key
     return s.format(**params) if params else s
