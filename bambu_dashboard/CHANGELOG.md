@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.29 — 2026-04-16
+
+### Changements
+
+- **Conditionnement bobine** : nouveau champ « Bobine complète » /
+  « Recharge » dans l'édition d'une bobine. Les recharges sont
+  signalées par une icône `♻️` discrète dans l'inventaire (desktop,
+  mobile et archivées). Toutes les bobines existantes restent en
+  « Bobine complète » par défaut.
+
 ## 1.0.28 — 2026-04-13
 
 ### Corrections
