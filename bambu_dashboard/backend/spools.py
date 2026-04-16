@@ -67,6 +67,8 @@ def create_spool(db: sqlite3.Connection, data: dict) -> dict:
         values["initial_remain"] = 100
     if values["status"] is None:
         values["status"] = "active"
+    if values["package_type"] is None:
+        values["package_type"] = "full"
     cur = db.execute(
         f"INSERT INTO spools ({','.join(values.keys())}) VALUES ({','.join('?' * len(values))})",
         list(values.values())
