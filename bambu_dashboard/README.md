@@ -1,5 +1,7 @@
 # 🎨 Bambu Dashboard
 
+> 🇫🇷 Français · [🇬🇧 English](README.en.md)
+
 ![Supports amd64][amd64-shield]
 ![Supports aarch64][aarch64-shield]
 ![Supports armv7][armv7-shield]
