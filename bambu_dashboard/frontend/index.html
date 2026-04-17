@@ -1147,8 +1147,8 @@
       if (!ts) return '';
       try {
         const d = new Date(ts.replace(' ','T'));
-        return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) + ' ' +
-               d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+        return d.toLocaleDateString(currentLocale,{day:'numeric',month:'short'}) + ' ' +
+               d.toLocaleTimeString(currentLocale,{hour:'2-digit',minute:'2-digit'});
       } catch(e) { return ts; }
     }
 
@@ -1215,7 +1215,7 @@
         const badge = document.getElementById('status-badge');
         badge.className = `status-badge ${connected ? 'connected' : 'disconnected'}`;
         document.getElementById('status-text').textContent = connected ? t('header.status.connected') : t('header.status.disconnected');
-        document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString('fr-FR')}`;
+        document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString(currentLocale)}`;
 
         if (amsData.slots?.length > 0) {
           const amsCount = amsData.ams_count || 1;
