@@ -463,6 +463,24 @@
   <div class="tab-content" id="tab-settings">
     <div style="max-width:520px">
 
+      <div class="section-header"><span class="section-title" data-i18n="options.lang.section">Langue</span></div>
+      <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-lang" value="auto" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            <span data-i18n="options.lang.auto">Automatique</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-lang" value="fr" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            Français
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-lang" value="en" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            English
+          </label>
+        </div>
+      </div>
+
       <div class="section-header"><span class="section-title" data-i18n="options.section.autoadd">Ajout automatique NFC</span></div>
       <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
         <div style="display:flex;flex-direction:column;gap:14px">
@@ -1741,6 +1759,14 @@
       document.getElementById('opt-auto-flipper').checked = localStorage.getItem('bb_auto_add_flipper') === '1';
     }
 
+    function loadLangRadio() {
+      const stored = localStorage.getItem('bb_lang'); // 'fr' | 'en' | null (=auto)
+      const val = stored || 'auto';
+      document.querySelectorAll('input[name="bb-lang"]').forEach(r => {
+        r.checked = (r.value === val);
+      });
+    }
+
     async function _autoAddSpool(payload) {
       try {
         const r = await fetch('api/spools', {
@@ -1901,6 +1927,7 @@
 
     // ── Init ──────────────────────────────────────────────────────────────────
     loadAutoAddPrefs();
+    loadLangRadio();
     applyI18n();
     fetchAMS();
     setInterval(fetchAMS, 2500);
