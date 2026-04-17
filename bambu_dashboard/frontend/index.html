@@ -688,7 +688,6 @@
         'inventory.col.ams':           'AMS',
         'inventory.col.used':          'Consommé',
         'inventory.empty.title':       'Aucune bobine',
-        'inventory.empty.title_first': 'Aucune bobine enregistrée',
         'inventory.empty.sub':         "Ajoutez-en une ou enregistrez depuis l'AMS",
         'inventory.archived.toggle':   'Bobines archivées',
         'inventory.used_suffix':       '{g}g utilisés',
@@ -837,7 +836,6 @@
         'inventory.col.ams':           'AMS',
         'inventory.col.used':          'Used',
         'inventory.empty.title':       'No spools',
-        'inventory.empty.title_first': 'No spools registered',
         'inventory.empty.sub':         'Add one or register from the AMS',
         'inventory.archived.toggle':   'Archived spools',
         'inventory.used_suffix':       '{g}g used',
@@ -956,15 +954,19 @@
     let currentLocale;
 
     function resolveLang() {
-      const stored = localStorage.getItem('bb_lang');
+      // localStorage peut lever en navigation privée stricte — on retombe sur navigator.language.
+      let stored = null;
+      try { stored = localStorage.getItem('bb_lang'); } catch(_) {}
       if (stored === 'fr' || stored === 'en') return stored;
       return (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
     }
 
     function setLang(lang) {
       // lang attendu dans {'auto','fr','en'}. 'auto' supprime l'override.
-      if (lang === 'auto') localStorage.removeItem('bb_lang');
-      else localStorage.setItem('bb_lang', lang);
+      try {
+        if (lang === 'auto') localStorage.removeItem('bb_lang');
+        else localStorage.setItem('bb_lang', lang);
+      } catch(_) {}
       currentLang = resolveLang();
       currentLocale = currentLang === 'en' ? 'en-US' : 'fr-FR';
       document.documentElement.lang = currentLang;
