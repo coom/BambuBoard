@@ -1049,35 +1049,61 @@
       return (0.299*r + 0.587*g + 0.114*b) < 40;
     }
 
-    // Palette de couleurs communes (FR) pour deviner le nom a partir du hex.
-    // Utilise pour pre-remplir le champ "Couleur" depuis l'AMS qui ne fournit
-    // que le hex (pas le nom lisible). Distance euclidienne RGB — approximatif
-    // mais suffisant pour les teintes principales.
-    const COLOR_PALETTE = [
-      ['Noir',         [0x00, 0x00, 0x00]],
-      ['Blanc',        [0xFF, 0xFF, 0xFF]],
-      ['Ivoire',       [0xF7, 0xF3, 0xE0]],
-      ['Gris clair',   [0xC0, 0xC0, 0xC0]],
-      ['Gris',         [0x80, 0x80, 0x80]],
-      ['Gris fonce',   [0x40, 0x40, 0x40]],
-      ['Rouge',        [0xE4, 0x00, 0x2B]],
-      ['Bordeaux',     [0x80, 0x00, 0x20]],
-      ['Rose',         [0xFF, 0x69, 0xB4]],
-      ['Magenta',      [0xC7, 0x15, 0x85]],
-      ['Orange',       [0xFF, 0x66, 0x00]],
-      ['Jaune',        [0xFF, 0xD7, 0x00]],
-      ['Beige',        [0xE6, 0xD7, 0xB8]],
-      ['Marron',       [0x5C, 0x2E, 0x00]],
-      ['Vert clair',   [0x7C, 0xFC, 0x00]],
-      ['Vert',         [0x00, 0x8A, 0x3E]],
-      ['Vert fonce',   [0x00, 0x50, 0x1E]],
-      ['Turquoise',    [0x40, 0xE0, 0xD0]],
-      ['Cyan',         [0x00, 0xBF, 0xFF]],
-      ['Bleu clair',   [0x87, 0xCE, 0xEB]],
-      ['Bleu',         [0x00, 0x55, 0xA4]],
-      ['Bleu fonce',   [0x00, 0x20, 0x60]],
-      ['Violet',       [0x6B, 0x2F, 0xA5]],
-    ];
+    // Palette de couleurs communes (FR+EN) pour deviner le nom a partir du hex.
+    // Les RGB sont identiques entre langues — seuls les noms different.
+    // Certains noms restent identiques (Bordeaux, Magenta, Turquoise, Cyan, Beige).
+    const COLOR_PALETTE = {
+      fr: [
+        ['Noir',         [0x00, 0x00, 0x00]],
+        ['Blanc',        [0xFF, 0xFF, 0xFF]],
+        ['Ivoire',       [0xF7, 0xF3, 0xE0]],
+        ['Gris clair',   [0xC0, 0xC0, 0xC0]],
+        ['Gris',         [0x80, 0x80, 0x80]],
+        ['Gris fonce',   [0x40, 0x40, 0x40]],
+        ['Rouge',        [0xE4, 0x00, 0x2B]],
+        ['Bordeaux',     [0x80, 0x00, 0x20]],
+        ['Rose',         [0xFF, 0x69, 0xB4]],
+        ['Magenta',      [0xC7, 0x15, 0x85]],
+        ['Orange',       [0xFF, 0x66, 0x00]],
+        ['Jaune',        [0xFF, 0xD7, 0x00]],
+        ['Beige',        [0xE6, 0xD7, 0xB8]],
+        ['Marron',       [0x5C, 0x2E, 0x00]],
+        ['Vert clair',   [0x7C, 0xFC, 0x00]],
+        ['Vert',         [0x00, 0x8A, 0x3E]],
+        ['Vert fonce',   [0x00, 0x50, 0x1E]],
+        ['Turquoise',    [0x40, 0xE0, 0xD0]],
+        ['Cyan',         [0x00, 0xBF, 0xFF]],
+        ['Bleu clair',   [0x87, 0xCE, 0xEB]],
+        ['Bleu',         [0x00, 0x55, 0xA4]],
+        ['Bleu fonce',   [0x00, 0x20, 0x60]],
+        ['Violet',       [0x6B, 0x2F, 0xA5]],
+      ],
+      en: [
+        ['Black',        [0x00, 0x00, 0x00]],
+        ['White',        [0xFF, 0xFF, 0xFF]],
+        ['Ivory',        [0xF7, 0xF3, 0xE0]],
+        ['Light gray',   [0xC0, 0xC0, 0xC0]],
+        ['Gray',         [0x80, 0x80, 0x80]],
+        ['Dark gray',    [0x40, 0x40, 0x40]],
+        ['Red',          [0xE4, 0x00, 0x2B]],
+        ['Bordeaux',     [0x80, 0x00, 0x20]],
+        ['Pink',         [0xFF, 0x69, 0xB4]],
+        ['Magenta',      [0xC7, 0x15, 0x85]],
+        ['Orange',       [0xFF, 0x66, 0x00]],
+        ['Yellow',       [0xFF, 0xD7, 0x00]],
+        ['Beige',        [0xE6, 0xD7, 0xB8]],
+        ['Brown',        [0x5C, 0x2E, 0x00]],
+        ['Light green',  [0x7C, 0xFC, 0x00]],
+        ['Green',        [0x00, 0x8A, 0x3E]],
+        ['Dark green',   [0x00, 0x50, 0x1E]],
+        ['Turquoise',    [0x40, 0xE0, 0xD0]],
+        ['Cyan',         [0x00, 0xBF, 0xFF]],
+        ['Light blue',   [0x87, 0xCE, 0xEB]],
+        ['Blue',         [0x00, 0x55, 0xA4]],
+        ['Dark blue',    [0x00, 0x20, 0x60]],
+        ['Violet',       [0x6B, 0x2F, 0xA5]],
+      ]
+    };
 
     function guessColorName(hex) {
       if (!hex || hex.length < 7) return '';
@@ -1086,7 +1112,8 @@
       const b = parseInt(hex.slice(5,7), 16);
       if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) return '';
       let bestName = '', bestDist = Infinity;
-      for (const [name, rgb] of COLOR_PALETTE) {
+      const palette = COLOR_PALETTE[currentLang] || COLOR_PALETTE.fr;
+      for (const [name, rgb] of palette) {
         const dr = r - rgb[0], dg = g - rgb[1], db = b - rgb[2];
         const dist = dr*dr + dg*dg + db*db;
         if (dist < bestDist) { bestDist = dist; bestName = name; }
