@@ -1,5 +1,7 @@
 # 📖 Bambu Dashboard — Documentation
 
+> 🇫🇷 Français · [🇬🇧 English](https://github.com/coom/BambuBoard/blob/main/bambu_dashboard/DOCS.en.md)
+
 ---
 
 ## 📋 Prérequis

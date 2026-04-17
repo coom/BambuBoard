@@ -10,6 +10,7 @@ import spools as spool_service
 import kpis as kpi_service
 import config as cfg
 import time as _time
+from i18n import t
 
 # ── NFC scan pending store ────────────────────────────────────────────────────
 _pending_nfc_scan: dict | None = None
@@ -244,7 +245,7 @@ def match_spool(tray_uuid: str):
     try:
         spool = spool_service.find_by_tray_uuid(db, tray_uuid)
         if not spool:
-            raise HTTPException(status_code=404, detail="Bobine non trouvée")
+            raise HTTPException(status_code=404, detail=t("error.spool.not_found"))
         return spool
     finally:
         db.close()
@@ -253,7 +254,7 @@ def match_spool(tray_uuid: str):
 @app.post("/api/spools", status_code=201)
 def create_spool(data: dict):
     if not data.get("name"):
-        raise HTTPException(status_code=400, detail="Le champ 'name' est requis")
+        raise HTTPException(status_code=400, detail=t("error.spool.name_required"))
     db = get_db()
     try:
         return spool_service.create_spool(db, data)
@@ -268,7 +269,7 @@ def update_spool(spool_id: int, data: dict):
         manual_remain = data.pop("manual_remain", None)
         spool = spool_service.update_spool(db, spool_id, data)
         if not spool:
-            raise HTTPException(status_code=404, detail="Bobine non trouvée")
+            raise HTTPException(status_code=404, detail=t("error.spool.not_found"))
         # Si ams_sync=0 et manual_remain fourni, écrire la valeur calibrée
         if data.get("ams_sync") == 0 and manual_remain is not None:
             pct = max(0, min(100, int(manual_remain)))
@@ -289,12 +290,12 @@ def update_spool(spool_id: int, data: dict):
 def change_status(spool_id: int, data: dict):
     status = data.get("status")
     if not status:
-        raise HTTPException(status_code=400, detail="Le champ 'status' est requis")
+        raise HTTPException(status_code=400, detail=t("error.spool.status_required"))
     db = get_db()
     try:
         spool = spool_service.set_status(db, spool_id, status)
         if not spool:
-            raise HTTPException(status_code=400, detail="Statut invalide ou bobine non trouvée")
+            raise HTTPException(status_code=400, detail=t("error.spool.invalid_status"))
         return spool
     finally:
         db.close()
@@ -306,7 +307,7 @@ def delete_spool(spool_id: int):
     db = get_db()
     try:
         if not spool_service.delete_spool(db, spool_id):
-            raise HTTPException(status_code=404, detail="Bobine non trouvée")
+            raise HTTPException(status_code=404, detail=t("error.spool.not_found"))
     finally:
         db.close()
 
@@ -326,7 +327,7 @@ def snapshot_spool(spool_id: int):
     try:
         result = spool_service.snapshot_spool(db, spool_id)
         if not result:
-            raise HTTPException(status_code=404, detail="Bobine non trouvée")
+            raise HTTPException(status_code=404, detail=t("error.spool.not_found"))
         return result
     finally:
         db.close()
@@ -408,10 +409,10 @@ def nfc_push(data: dict, request: Request):
     if api_key:
         provided = request.headers.get("X-API-Key", "")
         if provided != api_key:
-            raise HTTPException(status_code=403, detail="Cle API invalide")
+            raise HTTPException(status_code=403, detail=t("error.nfc.api_key_invalid"))
     required = {"tag_uid", "tray_type"}
     if not required.issubset(data.keys()):
-        raise HTTPException(status_code=400, detail="Champs requis : tag_uid, tray_type")
+        raise HTTPException(status_code=400, detail=t("error.nfc.missing_fields"))
     _pending_nfc_scan = {"data": data, "ts": _time.time()}
     return {"ok": True}
 

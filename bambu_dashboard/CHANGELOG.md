@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.1.0 — 2026-04-17
+
+### Changements
+
+- **Interface bilingue FR/EN.** Le dashboard détecte automatiquement la
+  langue du navigateur (FR par défaut, EN si le navigateur est en
+  anglais). Un sélecteur **Automatique / Français / English** dans
+  l'onglet Options permet de forcer la langue manuellement — le choix
+  est persisté en `localStorage` (accès gardé par `try/catch` pour la
+  navigation privée stricte).
+- **Palette de couleurs bilingue** pour la déduction automatique du nom
+  de couleur lors de l'enregistrement d'une bobine depuis un slot AMS
+  (« Noir » en FR, « Black » en EN).
+- **Dates et heures localisées** selon la langue active (format FR
+  24 h vs EN 12 h AM/PM).
+- **Backend :** nouvelle option `language: auto|fr|en` dans la config
+  de l'add-on pour les messages d'erreur de l'API. `auto` se comporte
+  comme `fr` (le frontend a sa propre auto-détection via
+  `navigator.language`).
+- **Documentation bilingue :** versions anglaises `README.en.md` et
+  `DOCS.en.md` avec un bandeau de bascule FR/EN en tête de chaque
+  document.
+
 ## 1.0.29 — 2026-04-16
 
 ### Changements

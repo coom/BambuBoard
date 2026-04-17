@@ -371,24 +371,24 @@
       <span id="last-update"></span>
       <span id="status-badge" class="status-badge disconnected">
         <span class="status-dot"></span>
-        <span id="status-text">Connexion...</span>
+        <span id="status-text" data-i18n="header.status.connecting">Connexion...</span>
       </span>
     </div>
   </div>
 
   <!-- Tabs -->
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('ams')">AMS Live</div>
-    <div class="tab" onclick="switchTab('inventory')" id="tab-inv-btn">Inventaire<span class="tab-alert" id="inv-alert"></span></div>
-    <div class="tab" onclick="switchTab('kpis')">Statistiques</div>
-    <div class="tab" onclick="switchTab('settings')">Options</div>
+    <div class="tab active" onclick="switchTab('ams')" data-i18n="tabs.ams">AMS Live</div>
+    <div class="tab" onclick="switchTab('inventory')" id="tab-inv-btn"><span data-i18n="tabs.inventory">Inventaire</span><span class="tab-alert" id="inv-alert"></span></div>
+    <div class="tab" onclick="switchTab('kpis')" data-i18n="tabs.kpis">Statistiques</div>
+    <div class="tab" onclick="switchTab('settings')" data-i18n="tabs.settings">Options</div>
   </div>
 
   <!-- AMS Tab -->
   <div class="tab-content active" id="tab-ams">
     <div id="error-banner" class="error-banner"></div>
     <div class="section-header">
-      <span class="section-title">Filaments charges</span>
+      <span class="section-title" data-i18n="ams.section.loaded">Filaments charges</span>
     </div>
     <div id="ams-container">
       <div class="ams-grid">
@@ -403,12 +403,12 @@
   <!-- Inventory Tab -->
   <div class="tab-content" id="tab-inventory">
     <div class="section-header">
-      <span class="section-title">Stock de bobines</span>
+      <span class="section-title" data-i18n="inventory.section.title">Stock de bobines</span>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <input class="filter-input" id="inv-filter" placeholder="Filtrer..." oninput="filterInventory()" />
+        <input class="filter-input" id="inv-filter" placeholder="Filtrer..." oninput="filterInventory()" data-i18n-attr="placeholder:inventory.filter.placeholder" />
         <a class="btn btn-ghost btn-sm" href="api/spools/export.csv" download>CSV</a>
-        <button class="btn btn-ghost btn-sm" onclick="startNfcScan()" id="btn-nfc-scan">&#x1F4F6; Scan Flipper</button>
-        <button class="btn btn-primary btn-sm" onclick="openModal()">+ Ajouter</button>
+        <button class="btn btn-ghost btn-sm" onclick="startNfcScan()" id="btn-nfc-scan" data-i18n="inventory.btn.scan">&#x1F4F6; Scan Flipper</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal()" data-i18n="inventory.btn.add">+ Ajouter</button>
       </div>
     </div>
 
@@ -420,12 +420,12 @@
       <table class="bb-table">
         <thead>
           <tr>
-            <th class="sortable" onclick="setInvSort('name')">Bobine<span class="sort-arrow" id="sort-name"></span></th>
-            <th class="sortable" onclick="setInvSort('type')">Type<span class="sort-arrow" id="sort-type"></span></th>
-            <th class="sortable" onclick="setInvSort('status')">Statut<span class="sort-arrow" id="sort-status"></span></th>
-            <th class="sortable" onclick="setInvSort('remain')">Restant<span class="sort-arrow" id="sort-remain"></span></th>
-            <th class="sortable" onclick="setInvSort('weight')">Poids<span class="sort-arrow" id="sort-weight"></span></th>
-            <th class="sortable" onclick="setInvSort('ams')">AMS<span class="sort-arrow" id="sort-ams"></span></th>
+            <th class="sortable" onclick="setInvSort('name')"><span data-i18n="inventory.col.spool">Bobine</span><span class="sort-arrow" id="sort-name"></span></th>
+            <th class="sortable" onclick="setInvSort('type')"><span data-i18n="inventory.col.type">Type</span><span class="sort-arrow" id="sort-type"></span></th>
+            <th class="sortable" onclick="setInvSort('status')"><span data-i18n="inventory.col.status">Statut</span><span class="sort-arrow" id="sort-status"></span></th>
+            <th class="sortable" onclick="setInvSort('remain')"><span data-i18n="inventory.col.remain">Restant</span><span class="sort-arrow" id="sort-remain"></span></th>
+            <th class="sortable" onclick="setInvSort('weight')"><span data-i18n="inventory.col.weight">Poids</span><span class="sort-arrow" id="sort-weight"></span></th>
+            <th class="sortable" onclick="setInvSort('ams')"><span data-i18n="inventory.col.ams">AMS</span><span class="sort-arrow" id="sort-ams"></span></th>
             <th></th>
           </tr>
         </thead>
@@ -440,7 +440,7 @@
     <!-- Archived section (collapsible) -->
     <div class="archived-section" id="archived-section" style="display:none">
       <div class="archived-toggle" onclick="toggleArchived()">
-        <span>&#9660;</span> <span>Bobines archivees</span>
+        <span>&#9660;</span> <span data-i18n="inventory.archived.toggle">Bobines archivees</span>
         <span id="archived-count" class="chip-count" style="font-size:11px"></span>
       </div>
       <div class="archived-list" id="archived-list"></div>
@@ -450,8 +450,8 @@
   <!-- KPIs Tab -->
   <div class="tab-content" id="tab-kpis">
     <div class="section-header">
-      <span class="section-title">Vue d'ensemble</span>
-      <button class="btn btn-ghost btn-sm" onclick="loadKpis()">Actualiser</button>
+      <span class="section-title" data-i18n="kpis.section.title">Vue d'ensemble</span>
+      <button class="btn btn-ghost btn-sm" onclick="loadKpis()" data-i18n="kpis.btn.refresh">Actualiser</button>
     </div>
     <div class="kpi-grid" id="kpi-cards"></div>
     <div id="kpi-low-stock"></div>
@@ -463,44 +463,62 @@
   <div class="tab-content" id="tab-settings">
     <div style="max-width:520px">
 
-      <div class="section-header"><span class="section-title">Ajout automatique NFC</span></div>
+      <div class="section-header"><span class="section-title" data-i18n="options.lang.section">Langue</span></div>
+      <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-lang" value="auto" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            <span data-i18n="options.lang.auto">Automatique</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-lang" value="fr" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            Français
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-lang" value="en" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            English
+          </label>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-title" data-i18n="options.section.autoadd">Ajout automatique NFC</span></div>
       <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
         <div style="display:flex;flex-direction:column;gap:14px">
           <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
             <input type="checkbox" id="opt-auto-android" onchange="saveAutoAddPrefs()" style="width:18px;height:18px;accent-color:#00AE42;cursor:pointer;margin-top:2px;flex-shrink:0" />
             <div>
-              <div style="font-size:14px;font-weight:600">Auto add Android</div>
-              <div style="font-size:12px;color:var(--bb-text-muted);line-height:1.5">Ajoute automatiquement la bobine a l'inventaire lors d'un scan NFC depuis l'app Android, sans passer par le formulaire de confirmation.</div>
+              <div style="font-size:14px;font-weight:600" data-i18n="options.autoadd.android">Auto add Android</div>
+              <div style="font-size:12px;color:var(--bb-text-muted);line-height:1.5" data-i18n="options.autoadd.android.sub">Ajoute automatiquement la bobine a l'inventaire lors d'un scan NFC depuis l'app Android, sans passer par le formulaire de confirmation.</div>
             </div>
           </label>
           <div style="border-top:1px solid var(--bb-border-subtle);padding-top:14px">
             <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
               <input type="checkbox" id="opt-auto-flipper" onchange="saveAutoAddPrefs()" style="width:18px;height:18px;accent-color:#00AE42;cursor:pointer;margin-top:2px;flex-shrink:0" />
               <div>
-                <div style="font-size:14px;font-weight:600">Auto add Flipper Zero</div>
-                <div style="font-size:12px;color:var(--bb-text-muted);line-height:1.5">Ajoute automatiquement la bobine a l'inventaire lors d'un scan NFC depuis le Flipper Zero, sans passer par le formulaire de confirmation.</div>
+                <div style="font-size:14px;font-weight:600" data-i18n="options.autoadd.flipper">Auto add Flipper Zero</div>
+                <div style="font-size:12px;color:var(--bb-text-muted);line-height:1.5" data-i18n="options.autoadd.flipper.sub">Ajoute automatiquement la bobine a l'inventaire lors d'un scan NFC depuis le Flipper Zero, sans passer par le formulaire de confirmation.</div>
               </div>
             </label>
           </div>
         </div>
       </div>
 
-      <div class="section-header"><span class="section-title">Donnees</span></div>
+      <div class="section-header"><span class="section-title" data-i18n="options.section.data">Donnees</span></div>
       <div class="bb-table-wrap" style="padding:18px">
         <div style="display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
             <div>
-              <div style="font-size:14px;font-weight:600">Vider l'historique</div>
-              <div style="font-size:12px;color:var(--bb-text-muted)">Efface les logs — conserve les bobines</div>
+              <div style="font-size:14px;font-weight:600" data-i18n="options.data.clear">Vider l'historique</div>
+              <div style="font-size:12px;color:var(--bb-text-muted)" data-i18n="options.data.clear.sub">Efface les logs — conserve les bobines</div>
             </div>
-            <button class="btn btn-danger btn-sm" onclick="resetData()">Vider</button>
+            <button class="btn btn-danger btn-sm" onclick="resetData()" data-i18n="options.data.clear.btn">Vider</button>
           </div>
           <div style="border-top:1px solid var(--bb-border-subtle);padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
             <div>
-              <div style="font-size:14px;font-weight:600">Reset complet</div>
-              <div style="font-size:12px;color:var(--bb-text-muted)">Efface tout (bobines + historique)</div>
+              <div style="font-size:14px;font-weight:600" data-i18n="options.data.reset">Reset complet</div>
+              <div style="font-size:12px;color:var(--bb-text-muted)" data-i18n="options.data.reset.sub">Efface tout (bobines + historique)</div>
             </div>
-            <button class="btn btn-danger btn-sm" onclick="resetAll()">Reset total</button>
+            <button class="btn btn-danger btn-sm" onclick="resetAll()" data-i18n="options.data.reset.btn">Reset total</button>
           </div>
         </div>
       </div>
@@ -514,29 +532,29 @@
       <!-- Étape 1 : brancher le Flipper -->
       <div id="nfc-step-connect">
         <div class="nfc-icon">&#x1F50C;</div>
-        <div class="nfc-title">Connecter le Flipper Zero</div>
-        <div class="nfc-sub">Branchez le Flipper Zero en USB,<br>puis cliquez sur <strong>Connecter</strong>.</div>
+        <div class="nfc-title" data-i18n="nfc.connect.title">Connecter le Flipper Zero</div>
+        <div class="nfc-sub" data-i18n-html="nfc.connect.sub">Branchez le Flipper Zero en USB,<br>puis cliquez sur <strong>Connecter</strong>.</div>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="connectFlipper()">Connecter</button>
-          <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()">Annuler</button>
+          <button class="btn btn-primary btn-sm" onclick="connectFlipper()" data-i18n="nfc.connect.btn">Connecter</button>
+          <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()" data-i18n="nfc.connect.cancel">Annuler</button>
         </div>
       </div>
       <!-- Étape 2 : attente du scan -->
       <div id="nfc-step-scan" style="display:none">
         <div class="nfc-icon">&#x1F4F6;</div>
-        <div class="nfc-title">Flipper connecte</div>
-        <div class="nfc-sub">Lancez <strong>Bambu NFC</strong> sur le Flipper,<br>puis approchez une bobine.</div>
-        <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()">Annuler</button>
+        <div class="nfc-title" data-i18n="nfc.scan.title">Flipper connecte</div>
+        <div class="nfc-sub" data-i18n-html="nfc.scan.sub">Lancez <strong>Bambu NFC</strong> sur le Flipper,<br>puis approchez une bobine.</div>
+        <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()" data-i18n="nfc.connect.cancel">Annuler</button>
       </div>
       <!-- Navigateur non compatible -->
       <div id="nfc-step-unsupported" style="display:none">
         <div class="nfc-icon" style="animation:none">&#x26A0;&#xFE0F;</div>
-        <div class="nfc-title">Navigateur incompatible</div>
-        <div class="nfc-sub">
+        <div class="nfc-title" data-i18n="nfc.unsupported.title">Navigateur incompatible</div>
+        <div class="nfc-sub" data-i18n-html="nfc.unsupported.sub">
           Web Serial requiert <strong>Chrome</strong> ou <strong>Edge</strong>.<br><br>
           Accedez au dashboard via l'interface Home Assistant (ingress) ou copiez l'URL en <strong>https://</strong>.
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()">Fermer</button>
+        <button class="btn btn-ghost btn-sm" onclick="stopNfcScan()" data-i18n="nfc.unsupported.btn">Fermer</button>
       </div>
     </div>
   </div>
@@ -547,90 +565,454 @@
   <!-- Modal -->
   <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
     <div class="modal">
-      <div class="modal-title"><span id="modal-title-text">Ajouter une bobine</span></div>
+      <div class="modal-title"><span id="modal-title-text" data-i18n="modal.title.add">Ajouter une bobine</span></div>
       <form id="spool-form" onsubmit="submitSpool(event)">
         <input type="hidden" id="f-id" />
         <div class="form-grid">
           <div class="form-group full">
-            <label class="form-label">Nom *</label>
-            <input class="form-input" id="f-name" placeholder="Ex: PLA Rouge" required />
+            <label class="form-label" data-i18n="modal.field.name">Nom *</label>
+            <input class="form-input" id="f-name" placeholder="Ex: PLA Rouge" required data-i18n-attr="placeholder:modal.field.name.ph" />
           </div>
           <div class="form-group">
-            <label class="form-label">Marque</label>
-            <input class="form-input" id="f-brand" placeholder="Bambu Lab, eSUN..." />
+            <label class="form-label" data-i18n="modal.field.brand">Marque</label>
+            <input class="form-input" id="f-brand" placeholder="Bambu Lab, eSUN..." data-i18n-attr="placeholder:modal.field.brand.ph" />
           </div>
           <div class="form-group">
-            <label class="form-label">Type</label>
-            <input class="form-input" id="f-tray-type" placeholder="PLA, PETG, ABS..." />
+            <label class="form-label" data-i18n="modal.field.type">Type</label>
+            <input class="form-input" id="f-tray-type" placeholder="PLA, PETG, ABS..." data-i18n-attr="placeholder:modal.field.type.ph" />
           </div>
           <div class="form-group">
-            <label class="form-label">Conditionnement</label>
+            <label class="form-label" data-i18n="modal.field.package">Conditionnement</label>
             <select class="form-input" id="f-package-type">
-              <option value="full">Bobine complète</option>
-              <option value="refill">Recharge</option>
+              <option value="full" data-i18n="modal.field.package.full">Bobine complète</option>
+              <option value="refill" data-i18n="modal.field.package.refill">Recharge</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Sous-marque</label>
-            <input class="form-input" id="f-sub-brands" placeholder="PLA Basic..." />
+            <label class="form-label" data-i18n="modal.field.sub_brands">Sous-marque</label>
+            <input class="form-input" id="f-sub-brands" placeholder="PLA Basic..." data-i18n-attr="placeholder:modal.field.sub_brands.ph" />
           </div>
           <div class="form-group">
-            <label class="form-label">Code filament</label>
+            <label class="form-label" data-i18n="modal.field.code">Code filament</label>
             <input class="form-input" id="f-filament-code" placeholder="33101" />
           </div>
           <div class="form-group">
-            <label class="form-label">Couleur</label>
-            <input class="form-input" id="f-color-name" placeholder="Rouge, Gris..." />
+            <label class="form-label" data-i18n="modal.field.color_name">Couleur</label>
+            <input class="form-input" id="f-color-name" placeholder="Rouge, Gris..." data-i18n-attr="placeholder:modal.field.color_name.ph" />
           </div>
           <div class="form-group">
-            <label class="form-label">Couleur hex</label>
+            <label class="form-label" data-i18n="modal.field.color_hex">Couleur hex</label>
             <div style="display:flex;gap:8px;align-items:center">
               <input class="form-input" id="f-color-hex" placeholder="#C12E1F" style="flex:1" />
               <input type="color" id="f-color-picker" style="width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px" oninput="document.getElementById('f-color-hex').value=this.value" />
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Poids initial (g)</label>
+            <label class="form-label" data-i18n="modal.field.weight">Poids initial (g)</label>
             <input class="form-input" id="f-weight" type="number" placeholder="1000" value="1000" />
           </div>
           <div class="form-group">
-            <label class="form-label">Prix/kg (optionnel)</label>
+            <label class="form-label" data-i18n="modal.field.price">Prix/kg (optionnel)</label>
             <input class="form-input" id="f-price" type="number" step="0.01" placeholder="25.00" />
           </div>
           <div class="form-group">
-            <label class="form-label">% de depart</label>
+            <label class="form-label" data-i18n="modal.field.initial_remain">% de depart</label>
             <input class="form-input" id="f-initial-remain" type="number" min="0" max="100" placeholder="100" value="100" />
-            <span style="font-size:11px;color:var(--bb-text-muted)">Si bobine deja entamee</span>
+            <span style="font-size:11px;color:var(--bb-text-muted)" data-i18n="modal.field.initial_remain.hint">Si bobine deja entamee</span>
           </div>
           <div class="form-group full" id="ams-sync-group" style="display:none">
             <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
               <input type="checkbox" id="f-ams-sync" checked onchange="toggleAmsSync()" style="width:18px;height:18px;accent-color:var(--bb-orange);cursor:pointer" />
-              Synchroniser le restant avec l'AMS
+              <span data-i18n="modal.field.sync">Synchroniser le restant avec l'AMS</span>
             </label>
             <div id="manual-remain-group" style="display:none;margin-top:8px">
-              <label class="form-label">Restant manuel (%)</label>
-              <input class="form-input" id="f-manual-remain" type="number" min="0" max="100" placeholder="Ex: 45" />
-              <span style="font-size:11px;color:var(--bb-text-muted)">Cette valeur ne sera pas ecrasee par l'AMS</span>
+              <label class="form-label" data-i18n="modal.field.manual_remain">Restant manuel (%)</label>
+              <input class="form-input" id="f-manual-remain" type="number" min="0" max="100" placeholder="Ex: 45" data-i18n-attr="placeholder:modal.field.manual_remain.ph" />
+              <span style="font-size:11px;color:var(--bb-text-muted)" data-i18n="modal.field.manual_remain.hint">Cette valeur ne sera pas ecrasee par l'AMS</span>
             </div>
           </div>
           <div class="form-group full">
-            <label class="form-label">Tray UUID</label>
-            <input class="form-input" id="f-tray-uuid" placeholder="Pre-rempli depuis l'AMS" />
+            <label class="form-label" data-i18n="modal.field.tray_uuid">Tray UUID</label>
+            <input class="form-input" id="f-tray-uuid" placeholder="Pre-rempli depuis l'AMS" data-i18n-attr="placeholder:modal.field.tray_uuid.ph" />
           </div>
           <div class="form-group full">
-            <label class="form-label">Tag UID</label>
-            <input class="form-input" id="f-tag-uid" placeholder="Optionnel" />
+            <label class="form-label" data-i18n="modal.field.tag_uid">Tag UID</label>
+            <input class="form-input" id="f-tag-uid" placeholder="Optionnel" data-i18n-attr="placeholder:modal.field.tag_uid.ph" />
           </div>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary" id="modal-submit-btn">Enregistrer</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal()" data-i18n="modal.btn.cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="modal-submit-btn" data-i18n="modal.btn.save">Enregistrer</button>
         </div>
       </form>
     </div>
   </div>
 
   <script>
+    // ── i18n ──────────────────────────────────────────────────────────────────
+    const I18N = {
+      fr: {
+        // header
+        'header.status.connecting':     'Connexion...',
+        'header.status.connected':      'Connecté',
+        'header.status.disconnected':   'Déconnecté',
+        'header.error.backend':         'Backend inaccessible : {msg}',
+        'header.error.ams':             'Erreur : {msg}',
+
+        // tabs
+        'tabs.ams':         'AMS Live',
+        'tabs.inventory':   'Inventaire',
+        'tabs.kpis':        'Statistiques',
+        'tabs.settings':    'Options',
+
+        // AMS
+        'ams.section.loaded':   'Filaments chargés',
+        'ams.slot.empty':       'Vide',
+        'ams.badge.unknown':    'Bobine inconnue — Enregistrer',
+        'ams.group.label':      'AMS {n}',
+
+        // Inventory
+        'inventory.section.title':     'Stock de bobines',
+        'inventory.filter.placeholder':'Filtrer...',
+        'inventory.btn.scan':          '📶 Scan Flipper',
+        'inventory.btn.add':           '+ Ajouter',
+        'inventory.chip.all':          'Toutes',
+        'inventory.chip.active':       'Dans AMS',
+        'inventory.chip.idle':         'En stock',
+        'inventory.chip.empty':        'Vides',
+        'inventory.col.spool':         'Bobine',
+        'inventory.col.type':          'Type',
+        'inventory.col.status':        'Statut',
+        'inventory.col.remain':        'Restant',
+        'inventory.col.weight':        'Poids',
+        'inventory.col.ams':           'AMS',
+        'inventory.col.used':          'Consommé',
+        'inventory.empty.title':       'Aucune bobine',
+        'inventory.empty.sub':         "Ajoutez-en une ou enregistrez depuis l'AMS",
+        'inventory.archived.toggle':   'Bobines archivées',
+        'inventory.used_suffix':       '{g}g utilisés',
+        'inventory.btn.delete':        'Supprimer',
+        'inventory.status.active':     'Dans AMS',
+        'inventory.status.idle':       'En stock',
+        'inventory.status.empty':      'Vide',
+        'inventory.status.archived':   'Archivé',
+
+        // KPIs
+        'kpis.section.title':          "Vue d'ensemble",
+        'kpis.btn.refresh':            'Actualiser',
+        'kpis.card.total':             'Consommation totale',
+        'kpis.card.total.sub':         '{kg} kg utilisés',
+        'kpis.card.stock':             'Bobines en stock',
+        'kpis.card.stock.sub':         '{ams} dans AMS · {idle} rangées',
+        'kpis.card.empty':             'Bobines vides',
+        'kpis.card.empty.sub':         'à racheter ou archiver',
+        'kpis.card.cost':              'Coût consommé',
+        'kpis.card.cost.sub':          'estimation',
+        'kpis.card.low':               'Stocks faibles',
+        'kpis.card.low.sub':           'sous {pct}%',
+        'kpis.card.archived':          'Archivées',
+        'kpis.card.archived.sub':      'bobines consommées',
+        'kpis.table.by_type':          'Par type',
+        'kpis.table.by_brand':         'Par marque',
+        'kpis.col.brand':              'Marque',
+        'kpis.col.color':              'Couleur',
+        'kpis.col.used':               'Utilisé',
+        'kpis.sessions.title':         'Dernières impressions',
+        'kpis.sessions.empty.title':   'Pas encore de données',
+        'kpis.sessions.empty.sub':     'Les statistiques apparaîtront au fil des impressions',
+        'kpis.session.init':           'init',
+
+        // Settings / Options
+        'options.section.autoadd':     'Ajout automatique NFC',
+        'options.autoadd.android':     'Auto add Android',
+        'options.autoadd.android.sub': "Ajoute automatiquement la bobine à l'inventaire lors d'un scan NFC depuis l'app Android, sans passer par le formulaire de confirmation.",
+        'options.autoadd.flipper':     'Auto add Flipper Zero',
+        'options.autoadd.flipper.sub': "Ajoute automatiquement la bobine à l'inventaire lors d'un scan NFC depuis le Flipper Zero, sans passer par le formulaire de confirmation.",
+        'options.section.data':        'Données',
+        'options.data.clear':          "Vider l'historique",
+        'options.data.clear.sub':      'Efface les logs — conserve les bobines',
+        'options.data.clear.btn':      'Vider',
+        'options.data.reset':          'Reset complet',
+        'options.data.reset.sub':      'Efface tout (bobines + historique)',
+        'options.data.reset.btn':      'Reset total',
+        'options.lang.section':        'Langue',
+        'options.lang.auto':           'Automatique',
+
+        // Modal spool
+        'modal.title.add':             'Ajouter une bobine',
+        'modal.title.edit':            'Modifier la bobine',
+        'modal.btn.save':              'Enregistrer',
+        'modal.btn.update':            'Mettre à jour',
+        'modal.btn.cancel':            'Annuler',
+        'modal.field.name':            'Nom *',
+        'modal.field.name.ph':         'Ex: PLA Rouge',
+        'modal.field.brand':           'Marque',
+        'modal.field.brand.ph':        'Bambu Lab, eSUN...',
+        'modal.field.type':            'Type',
+        'modal.field.type.ph':         'PLA, PETG, ABS...',
+        'modal.field.package':         'Conditionnement',
+        'modal.field.package.full':    'Bobine complète',
+        'modal.field.package.refill':  'Recharge',
+        'modal.field.sub_brands':      'Sous-marque',
+        'modal.field.sub_brands.ph':   'PLA Basic...',
+        'modal.field.code':            'Code filament',
+        'modal.field.color_name':      'Couleur',
+        'modal.field.color_name.ph':   'Rouge, Gris...',
+        'modal.field.color_hex':       'Couleur hex',
+        'modal.field.weight':          'Poids initial (g)',
+        'modal.field.price':           'Prix/kg (optionnel)',
+        'modal.field.initial_remain':  '% de départ',
+        'modal.field.initial_remain.hint': 'Si bobine déjà entamée',
+        'modal.field.sync':            "Synchroniser le restant avec l'AMS",
+        'modal.field.manual_remain':   'Restant manuel (%)',
+        'modal.field.manual_remain.ph':'Ex: 45',
+        'modal.field.manual_remain.hint': "Cette valeur ne sera pas écrasée par l'AMS",
+        'modal.field.tray_uuid':       'Tray UUID',
+        'modal.field.tray_uuid.ph':    "Pré-rempli depuis l'AMS",
+        'modal.field.tag_uid':         'Tag UID',
+        'modal.field.tag_uid.ph':      'Optionnel',
+
+        // NFC overlay
+        'nfc.connect.title':           'Connecter le Flipper Zero',
+        'nfc.connect.sub':             'Branchez le Flipper Zero en USB,<br>puis cliquez sur <strong>Connecter</strong>.',
+        'nfc.connect.btn':             'Connecter',
+        'nfc.connect.cancel':          'Annuler',
+        'nfc.scan.title':              'Flipper connecté',
+        'nfc.scan.sub':                'Lancez <strong>Bambu NFC</strong> sur le Flipper,<br>puis approchez une bobine.',
+        'nfc.unsupported.title':       'Navigateur incompatible',
+        'nfc.unsupported.sub':         "Web Serial requiert <strong>Chrome</strong> ou <strong>Edge</strong>.<br><br>Accédez au dashboard via l'interface Home Assistant (ingress) ou copiez l'URL en <strong>https://</strong>.",
+        'nfc.unsupported.btn':         'Fermer',
+
+        // Toasts, confirms, alerts
+        'toast.nfc.connect_failed':    'Connexion échouée : {msg}',
+        'toast.nfc.already':           'Bobine déjà enregistrée : {name}',
+        'toast.nfc.prefilled':         'Formulaire pré-rempli depuis le tag NFC',
+        'toast.spool.auto_added':      'Bobine "{name}" ajoutée automatiquement',
+        'toast.spool.auto_add_error':  "Erreur lors de l'ajout automatique",
+        'confirm.spool.archive':       "Archiver cette bobine ? Elle sera masquée de l'inventaire actif.",
+        'confirm.spool.delete':        'Supprimer définitivement "{name}" et tout son historique ?',
+        'confirm.data.clear':          "Vider l'historique de consommation ? Les bobines sont conservées.",
+        'confirm.data.reset':          "Reset COMPLET — toutes les bobines et l'historique seront supprimés. Continuer ?",
+        'alert.data.cleared':          'Historique effacé.',
+        'alert.data.reset':            'Base réinitialisée.',
+        'alert.snapshot':              'Snapshot : {pct}% ({source})',
+        'snapshot.source.ams':         "depuis l'AMS",
+        'snapshot.source.last':        'dernier état connu',
+      },
+      en: {
+        // header
+        'header.status.connecting':     'Connecting...',
+        'header.status.connected':      'Connected',
+        'header.status.disconnected':   'Disconnected',
+        'header.error.backend':         'Backend unreachable: {msg}',
+        'header.error.ams':             'Error: {msg}',
+
+        // tabs
+        'tabs.ams':         'AMS Live',
+        'tabs.inventory':   'Inventory',
+        'tabs.kpis':        'Statistics',
+        'tabs.settings':    'Options',
+
+        // AMS
+        'ams.section.loaded':   'Loaded filaments',
+        'ams.slot.empty':       'Empty',
+        'ams.badge.unknown':    'Unknown spool — Register',
+        'ams.group.label':      'AMS {n}',
+
+        // Inventory
+        'inventory.section.title':     'Spool stock',
+        'inventory.filter.placeholder':'Filter...',
+        'inventory.btn.scan':          '📶 Scan Flipper',
+        'inventory.btn.add':           '+ Add',
+        'inventory.chip.all':          'All',
+        'inventory.chip.active':       'In AMS',
+        'inventory.chip.idle':         'In stock',
+        'inventory.chip.empty':        'Empty',
+        'inventory.col.spool':         'Spool',
+        'inventory.col.type':          'Type',
+        'inventory.col.status':        'Status',
+        'inventory.col.remain':        'Remaining',
+        'inventory.col.weight':        'Weight',
+        'inventory.col.ams':           'AMS',
+        'inventory.col.used':          'Used',
+        'inventory.empty.title':       'No spools',
+        'inventory.empty.sub':         'Add one or register from the AMS',
+        'inventory.archived.toggle':   'Archived spools',
+        'inventory.used_suffix':       '{g}g used',
+        'inventory.btn.delete':        'Delete',
+        'inventory.status.active':     'In AMS',
+        'inventory.status.idle':       'In stock',
+        'inventory.status.empty':      'Empty',
+        'inventory.status.archived':   'Archived',
+
+        // KPIs
+        'kpis.section.title':          'Overview',
+        'kpis.btn.refresh':            'Refresh',
+        'kpis.card.total':             'Total consumption',
+        'kpis.card.total.sub':         '{kg} kg used',
+        'kpis.card.stock':             'Spools in stock',
+        'kpis.card.stock.sub':         '{ams} in AMS · {idle} stored',
+        'kpis.card.empty':             'Empty spools',
+        'kpis.card.empty.sub':         'to rebuy or archive',
+        'kpis.card.cost':              'Cost consumed',
+        'kpis.card.cost.sub':          'estimate',
+        'kpis.card.low':               'Low stock',
+        'kpis.card.low.sub':           'under {pct}%',
+        'kpis.card.archived':          'Archived',
+        'kpis.card.archived.sub':      'consumed spools',
+        'kpis.table.by_type':          'By type',
+        'kpis.table.by_brand':         'By brand',
+        'kpis.col.brand':              'Brand',
+        'kpis.col.color':              'Color',
+        'kpis.col.used':               'Used',
+        'kpis.sessions.title':         'Recent prints',
+        'kpis.sessions.empty.title':   'No data yet',
+        'kpis.sessions.empty.sub':     'Statistics will appear as prints happen',
+        'kpis.session.init':           'init',
+
+        // Settings / Options
+        'options.section.autoadd':     'NFC auto-add',
+        'options.autoadd.android':     'Auto add Android',
+        'options.autoadd.android.sub': 'Automatically adds the spool to inventory on NFC scan from the Android app, skipping the confirmation form.',
+        'options.autoadd.flipper':     'Auto add Flipper Zero',
+        'options.autoadd.flipper.sub': 'Automatically adds the spool to inventory on NFC scan from the Flipper Zero, skipping the confirmation form.',
+        'options.section.data':        'Data',
+        'options.data.clear':          'Clear history',
+        'options.data.clear.sub':      'Erases logs — keeps spools',
+        'options.data.clear.btn':      'Clear',
+        'options.data.reset':          'Full reset',
+        'options.data.reset.sub':      'Erases everything (spools + history)',
+        'options.data.reset.btn':      'Total reset',
+        'options.lang.section':        'Language',
+        'options.lang.auto':           'Automatic',
+
+        // Modal spool
+        'modal.title.add':             'Add a spool',
+        'modal.title.edit':            'Edit spool',
+        'modal.btn.save':              'Save',
+        'modal.btn.update':            'Update',
+        'modal.btn.cancel':            'Cancel',
+        'modal.field.name':            'Name *',
+        'modal.field.name.ph':         'Ex: PLA Red',
+        'modal.field.brand':           'Brand',
+        'modal.field.brand.ph':        'Bambu Lab, eSUN...',
+        'modal.field.type':            'Type',
+        'modal.field.type.ph':         'PLA, PETG, ABS...',
+        'modal.field.package':         'Packaging',
+        'modal.field.package.full':    'Full spool',
+        'modal.field.package.refill':  'Refill',
+        'modal.field.sub_brands':      'Sub-brand',
+        'modal.field.sub_brands.ph':   'PLA Basic...',
+        'modal.field.code':            'Filament code',
+        'modal.field.color_name':      'Color',
+        'modal.field.color_name.ph':   'Red, Gray...',
+        'modal.field.color_hex':       'Color hex',
+        'modal.field.weight':          'Initial weight (g)',
+        'modal.field.price':           'Price/kg (optional)',
+        'modal.field.initial_remain':  'Starting %',
+        'modal.field.initial_remain.hint': 'If spool already used',
+        'modal.field.sync':            'Sync remaining with AMS',
+        'modal.field.manual_remain':   'Manual remaining (%)',
+        'modal.field.manual_remain.ph':'Ex: 45',
+        'modal.field.manual_remain.hint': 'This value will not be overwritten by the AMS',
+        'modal.field.tray_uuid':       'Tray UUID',
+        'modal.field.tray_uuid.ph':    'Pre-filled from AMS',
+        'modal.field.tag_uid':         'Tag UID',
+        'modal.field.tag_uid.ph':      'Optional',
+
+        // NFC overlay
+        'nfc.connect.title':           'Connect the Flipper Zero',
+        'nfc.connect.sub':             'Plug the Flipper Zero via USB,<br>then click <strong>Connect</strong>.',
+        'nfc.connect.btn':             'Connect',
+        'nfc.connect.cancel':          'Cancel',
+        'nfc.scan.title':              'Flipper connected',
+        'nfc.scan.sub':                'Launch <strong>Bambu NFC</strong> on the Flipper,<br>then bring a spool close.',
+        'nfc.unsupported.title':       'Incompatible browser',
+        'nfc.unsupported.sub':         'Web Serial requires <strong>Chrome</strong> or <strong>Edge</strong>.<br><br>Access the dashboard via Home Assistant (ingress) or copy the URL using <strong>https://</strong>.',
+        'nfc.unsupported.btn':         'Close',
+
+        // Toasts, confirms, alerts
+        'toast.nfc.connect_failed':    'Connection failed: {msg}',
+        'toast.nfc.already':           'Spool already registered: {name}',
+        'toast.nfc.prefilled':         'Form pre-filled from NFC tag',
+        'toast.spool.auto_added':      'Spool "{name}" automatically added',
+        'toast.spool.auto_add_error':  'Error during auto-add',
+        'confirm.spool.archive':       'Archive this spool? It will be hidden from active inventory.',
+        'confirm.spool.delete':        'Permanently delete "{name}" and all its history?',
+        'confirm.data.clear':          'Clear consumption history? Spools are kept.',
+        'confirm.data.reset':          'FULL RESET — all spools and history will be deleted. Continue?',
+        'alert.data.cleared':          'History cleared.',
+        'alert.data.reset':            'Database reset.',
+        'alert.snapshot':              'Snapshot: {pct}% ({source})',
+        'snapshot.source.ams':         'from the AMS',
+        'snapshot.source.last':        'last known state',
+      }
+    };
+
+    // Langue courante — resolvue au chargement depuis localStorage / navigator
+    let currentLang;
+    let currentLocale;
+
+    function resolveLang() {
+      // localStorage peut lever en navigation privée stricte — on retombe sur navigator.language.
+      let stored = null;
+      try { stored = localStorage.getItem('bb_lang'); } catch(_) {}
+      if (stored === 'fr' || stored === 'en') return stored;
+      return (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+    }
+
+    function setLang(lang) {
+      // lang attendu dans {'auto','fr','en'}. 'auto' supprime l'override.
+      try {
+        if (lang === 'auto') localStorage.removeItem('bb_lang');
+        else localStorage.setItem('bb_lang', lang);
+      } catch(_) {}
+      currentLang = resolveLang();
+      currentLocale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+      document.documentElement.lang = currentLang;
+      applyI18n();
+      // Refresh dynamique : on reconstruit tout ce qui est deja rendu
+      closeModal();
+      try { stopNfcScan(); } catch(_) {}
+      if (activeTab === 'inventory') loadInventory();
+      if (activeTab === 'kpis') loadKpis();
+      fetchAMS();
+    }
+
+    function t(key, params) {
+      const dict = I18N[currentLang] || I18N.fr;
+      let s = dict[key];
+      if (s === undefined) s = I18N.fr[key];
+      if (s === undefined) return key;
+      if (params) {
+        for (const k of Object.keys(params)) {
+          s = s.split('{' + k + '}').join(String(params[k]));
+        }
+      }
+      return s;
+    }
+
+    function applyI18n(root) {
+      root = root || document;
+      root.querySelectorAll('[data-i18n]').forEach(function(el) {
+        el.textContent = t(el.getAttribute('data-i18n'));
+      });
+      root.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+        el.innerHTML = t(el.getAttribute('data-i18n-html'));
+      });
+      root.querySelectorAll('[data-i18n-attr]').forEach(function(el) {
+        el.getAttribute('data-i18n-attr').split(',').forEach(function(pair) {
+          const parts = pair.trim().split(':');
+          if (parts.length === 2) el.setAttribute(parts[0], t(parts[1]));
+        });
+      });
+    }
+
+    // Init langue AVANT toute autre initialisation
+    currentLang = resolveLang();
+    currentLocale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+    document.documentElement.lang = currentLang;
+
     // ── State ─────────────────────────────────────────────────────────────────
     let amsData = { connected: false, slots: [] };
     let inventory = [];
@@ -669,35 +1051,61 @@
       return (0.299*r + 0.587*g + 0.114*b) < 40;
     }
 
-    // Palette de couleurs communes (FR) pour deviner le nom a partir du hex.
-    // Utilise pour pre-remplir le champ "Couleur" depuis l'AMS qui ne fournit
-    // que le hex (pas le nom lisible). Distance euclidienne RGB — approximatif
-    // mais suffisant pour les teintes principales.
-    const COLOR_PALETTE = [
-      ['Noir',         [0x00, 0x00, 0x00]],
-      ['Blanc',        [0xFF, 0xFF, 0xFF]],
-      ['Ivoire',       [0xF7, 0xF3, 0xE0]],
-      ['Gris clair',   [0xC0, 0xC0, 0xC0]],
-      ['Gris',         [0x80, 0x80, 0x80]],
-      ['Gris fonce',   [0x40, 0x40, 0x40]],
-      ['Rouge',        [0xE4, 0x00, 0x2B]],
-      ['Bordeaux',     [0x80, 0x00, 0x20]],
-      ['Rose',         [0xFF, 0x69, 0xB4]],
-      ['Magenta',      [0xC7, 0x15, 0x85]],
-      ['Orange',       [0xFF, 0x66, 0x00]],
-      ['Jaune',        [0xFF, 0xD7, 0x00]],
-      ['Beige',        [0xE6, 0xD7, 0xB8]],
-      ['Marron',       [0x5C, 0x2E, 0x00]],
-      ['Vert clair',   [0x7C, 0xFC, 0x00]],
-      ['Vert',         [0x00, 0x8A, 0x3E]],
-      ['Vert fonce',   [0x00, 0x50, 0x1E]],
-      ['Turquoise',    [0x40, 0xE0, 0xD0]],
-      ['Cyan',         [0x00, 0xBF, 0xFF]],
-      ['Bleu clair',   [0x87, 0xCE, 0xEB]],
-      ['Bleu',         [0x00, 0x55, 0xA4]],
-      ['Bleu fonce',   [0x00, 0x20, 0x60]],
-      ['Violet',       [0x6B, 0x2F, 0xA5]],
-    ];
+    // Palette de couleurs communes (FR+EN) pour deviner le nom a partir du hex.
+    // Les RGB sont identiques entre langues — seuls les noms different.
+    // Certains noms restent identiques (Bordeaux, Magenta, Turquoise, Cyan, Beige).
+    const COLOR_PALETTE = {
+      fr: [
+        ['Noir',         [0x00, 0x00, 0x00]],
+        ['Blanc',        [0xFF, 0xFF, 0xFF]],
+        ['Ivoire',       [0xF7, 0xF3, 0xE0]],
+        ['Gris clair',   [0xC0, 0xC0, 0xC0]],
+        ['Gris',         [0x80, 0x80, 0x80]],
+        ['Gris fonce',   [0x40, 0x40, 0x40]],
+        ['Rouge',        [0xE4, 0x00, 0x2B]],
+        ['Bordeaux',     [0x80, 0x00, 0x20]],
+        ['Rose',         [0xFF, 0x69, 0xB4]],
+        ['Magenta',      [0xC7, 0x15, 0x85]],
+        ['Orange',       [0xFF, 0x66, 0x00]],
+        ['Jaune',        [0xFF, 0xD7, 0x00]],
+        ['Beige',        [0xE6, 0xD7, 0xB8]],
+        ['Marron',       [0x5C, 0x2E, 0x00]],
+        ['Vert clair',   [0x7C, 0xFC, 0x00]],
+        ['Vert',         [0x00, 0x8A, 0x3E]],
+        ['Vert fonce',   [0x00, 0x50, 0x1E]],
+        ['Turquoise',    [0x40, 0xE0, 0xD0]],
+        ['Cyan',         [0x00, 0xBF, 0xFF]],
+        ['Bleu clair',   [0x87, 0xCE, 0xEB]],
+        ['Bleu',         [0x00, 0x55, 0xA4]],
+        ['Bleu fonce',   [0x00, 0x20, 0x60]],
+        ['Violet',       [0x6B, 0x2F, 0xA5]],
+      ],
+      en: [
+        ['Black',        [0x00, 0x00, 0x00]],
+        ['White',        [0xFF, 0xFF, 0xFF]],
+        ['Ivory',        [0xF7, 0xF3, 0xE0]],
+        ['Light gray',   [0xC0, 0xC0, 0xC0]],
+        ['Gray',         [0x80, 0x80, 0x80]],
+        ['Dark gray',    [0x40, 0x40, 0x40]],
+        ['Red',          [0xE4, 0x00, 0x2B]],
+        ['Bordeaux',     [0x80, 0x00, 0x20]],
+        ['Pink',         [0xFF, 0x69, 0xB4]],
+        ['Magenta',      [0xC7, 0x15, 0x85]],
+        ['Orange',       [0xFF, 0x66, 0x00]],
+        ['Yellow',       [0xFF, 0xD7, 0x00]],
+        ['Beige',        [0xE6, 0xD7, 0xB8]],
+        ['Brown',        [0x5C, 0x2E, 0x00]],
+        ['Light green',  [0x7C, 0xFC, 0x00]],
+        ['Green',        [0x00, 0x8A, 0x3E]],
+        ['Dark green',   [0x00, 0x50, 0x1E]],
+        ['Turquoise',    [0x40, 0xE0, 0xD0]],
+        ['Cyan',         [0x00, 0xBF, 0xFF]],
+        ['Light blue',   [0x87, 0xCE, 0xEB]],
+        ['Blue',         [0x00, 0x55, 0xA4]],
+        ['Dark blue',    [0x00, 0x20, 0x60]],
+        ['Violet',       [0x6B, 0x2F, 0xA5]],
+      ]
+    };
 
     function guessColorName(hex) {
       if (!hex || hex.length < 7) return '';
@@ -706,7 +1114,8 @@
       const b = parseInt(hex.slice(5,7), 16);
       if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) return '';
       let bestName = '', bestDist = Infinity;
-      for (const [name, rgb] of COLOR_PALETTE) {
+      const palette = COLOR_PALETTE[currentLang] || COLOR_PALETTE.fr;
+      for (const [name, rgb] of palette) {
         const dr = r - rgb[0], dg = g - rgb[1], db = b - rgb[2];
         const dist = dr*dr + dg*dg + db*db;
         if (dist < bestDist) { bestDist = dist; bestName = name; }
@@ -740,14 +1149,14 @@
       if (!ts) return '';
       try {
         const d = new Date(ts.replace(' ','T'));
-        return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) + ' ' +
-               d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+        return d.toLocaleDateString(currentLocale,{day:'numeric',month:'short'}) + ' ' +
+               d.toLocaleTimeString(currentLocale,{hour:'2-digit',minute:'2-digit'});
       } catch(e) { return ts; }
     }
 
     function statusBadge(status) {
-      const labels = { active: 'Dans AMS', idle: 'En stock', empty: 'Vide', archived: 'Archive' };
-      return `<span class="spool-status st-${status || 'active'}">${labels[status] || labels.active}</span>`;
+      const key = 'inventory.status.' + (status || 'active');
+      return `<span class="spool-status st-${status || 'active'}">${t(key)}</span>`;
     }
 
     // ── AMS ───────────────────────────────────────────────────────────────────
@@ -775,7 +1184,7 @@
         return `<div class="slot-card empty">
           <span class="slot-label">${label}</span>
           <div class="color-swatch"></div>
-          <div class="filament-type" style="color:var(--bb-text-muted)">Vide</div>
+          <div class="filament-type" style="color:var(--bb-text-muted)">${t('ams.slot.empty')}</div>
         </div>`;
       }
 
@@ -783,7 +1192,7 @@
       if (slot.spool) {
         stockBadge = `<div><span class="stock-badge known">${slot.spool.name}</span></div>`;
       } else if (slot.tray_uuid) {
-        stockBadge = `<div><span class="stock-badge unknown" onclick="openModalFromSlot(${JSON.stringify(slot).replace(/"/g,'&quot;')})">Bobine inconnue — Enregistrer</span></div>`;
+        stockBadge = `<div><span class="stock-badge unknown" onclick="openModalFromSlot(${JSON.stringify(slot).replace(/"/g,'&quot;')})">${t('ams.badge.unknown')}</span></div>`;
       }
 
       return `<div class="slot-card active">
@@ -807,8 +1216,8 @@
         const connected = amsData.connected;
         const badge = document.getElementById('status-badge');
         badge.className = `status-badge ${connected ? 'connected' : 'disconnected'}`;
-        document.getElementById('status-text').textContent = connected ? 'Connecte' : 'Deconnecte';
-        document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString('fr-FR')}`;
+        document.getElementById('status-text').textContent = connected ? t('header.status.connected') : t('header.status.disconnected');
+        document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString(currentLocale)}`;
 
         if (amsData.slots?.length > 0) {
           const amsCount = amsData.ams_count || 1;
@@ -822,20 +1231,20 @@
               (groups[aid] = groups[aid] || []).push(sl);
             });
             container.innerHTML = Object.keys(groups).sort().map(aid =>
-              `<h3 style="margin:${aid > 0 ? '24px' : '0'} 0 10px;font-size:15px;color:var(--bb-text-muted);font-weight:600">AMS ${Number(aid)+1}</h3>
+              `<h3 style="margin:${aid > 0 ? '24px' : '0'} 0 10px;font-size:15px;color:var(--bb-text-muted);font-weight:600">${t('ams.group.label', {n: Number(aid)+1})}</h3>
                <div class="ams-grid">${groups[aid].map(renderSlot).join('')}</div>`
             ).join('');
           }
         }
         if (amsData.error) {
           const b = document.getElementById('error-banner');
-          b.textContent = `Erreur : ${amsData.error}`; b.style.display = 'block';
+          b.textContent = t('header.error.ams', {msg: amsData.error}); b.style.display = 'block';
         }
       } catch (err) {
         document.getElementById('status-badge').className = 'status-badge disconnected';
-        document.getElementById('status-text').textContent = 'Deconnecte';
+        document.getElementById('status-text').textContent = t('header.status.disconnected');
         const b = document.getElementById('error-banner');
-        b.textContent = `Backend inaccessible : ${err.message}`; b.style.display = 'block';
+        b.textContent = t('header.error.backend', {msg: err.message}); b.style.display = 'block';
       }
     }
 
@@ -864,10 +1273,10 @@
       const total = inventory.length;
 
       const chips = [
-        { key: null, label: 'Toutes', count: total },
-        { key: 'active', label: 'Dans AMS', count: counts.active },
-        { key: 'idle', label: 'En stock', count: counts.idle },
-        { key: 'empty', label: 'Vides', count: counts.empty },
+        { key: null,     label: t('inventory.chip.all'),    count: total },
+        { key: 'active', label: t('inventory.chip.active'), count: counts.active },
+        { key: 'idle',   label: t('inventory.chip.idle'),   count: counts.idle },
+        { key: 'empty',  label: t('inventory.chip.empty'),  count: counts.empty },
       ];
 
       document.getElementById('inv-chips').innerHTML = chips.map(c =>
@@ -950,8 +1359,8 @@
       const mobile = document.getElementById('inv-mobile');
       updateSortArrows();
       if (!spools.length) {
-        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div><div class="empty-state-sub">Ajoutez-en une ou enregistrez depuis l'AMS</div></div></td></tr>`;
-        mobile.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div></div>`;
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">${t('inventory.empty.title')}</div><div class="empty-state-sub">${t('inventory.empty.sub')}</div></div></td></tr>`;
+        mobile.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">${t('inventory.empty.title')}</div></div>`;
         return;
       }
       // Desktop
@@ -1021,7 +1430,7 @@
       document.getElementById('archived-list').innerHTML = `
         <div class="bb-table-wrap">
           <table class="bb-table">
-            <thead><tr><th>Bobine</th><th>Type</th><th>Consomme</th><th></th></tr></thead>
+            <thead><tr><th>${t('inventory.col.spool')}</th><th>${t('inventory.col.type')}</th><th>${t('inventory.col.used')}</th><th></th></tr></thead>
             <tbody>
               ${archivedSpools.map(s => {
                 const remain = s.current_remain ?? 0;
@@ -1030,9 +1439,9 @@
                 return `<tr style="opacity:0.6">
                   <td>${colorDot(s.color_hex)}<strong>${s.name}</strong>${s.package_type === 'refill' ? ' <span title="Recharge">♻️</span>' : ''}</td>
                   <td>${s.tray_type || '—'}</td>
-                  <td>${weightUsed}g utilises</td>
+                  <td>${t('inventory.used_suffix', {g: weightUsed})}</td>
                   <td>
-                    <button class="btn btn-danger btn-sm" onclick="deleteSpool(${s.id}, '${s.name.replace(/'/g,"\\'")}')">Supprimer</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteSpool(${s.id}, '${s.name.replace(/'/g,"\\'")}')">${t('inventory.btn.delete')}</button>
                   </td>
                 </tr>`;
               }).join('')}
@@ -1051,7 +1460,7 @@
 
     // ── Spool actions ────────────────────────────────────────────────────────
     async function archiveSpool(id) {
-      if (!confirm('Archiver cette bobine ? Elle sera masquee de l\'inventaire actif.')) return;
+      if (!confirm(t('confirm.spool.archive'))) return;
       await fetch(`api/spools/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1079,41 +1488,41 @@
 
       let cards = `
         <div class="kpi-card">
-          <div class="kpi-label">Consommation totale</div>
+          <div class="kpi-label">${t('kpis.card.total')}</div>
           <div class="kpi-value">${Math.round(totalGrams)}g</div>
-          <div class="kpi-sub">${(totalGrams/1000).toFixed(1)} kg utilises</div>
+          <div class="kpi-sub">${t('kpis.card.total.sub', {kg: (totalGrams/1000).toFixed(1)})}</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-label">Bobines en stock</div>
+          <div class="kpi-label">${t('kpis.card.stock')}</div>
           <div class="kpi-value">${kpis.spool_count || 0}</div>
-          <div class="kpi-sub">${kpis.in_ams || 0} dans AMS · ${kpis.in_stock || 0} rangées</div>
+          <div class="kpi-sub">${t('kpis.card.stock.sub', {ams: kpis.in_ams || 0, idle: kpis.in_stock || 0})}</div>
         </div>`;
       if ((stock.empty || 0) > 0) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Bobines vides</div>
+          <div class="kpi-label">${t('kpis.card.empty')}</div>
           <div class="kpi-value" style="color:var(--bb-red)">${stock.empty}</div>
-          <div class="kpi-sub">a racheter ou archiver</div>
+          <div class="kpi-sub">${t('kpis.card.empty.sub')}</div>
         </div>`;
       }
       if (kpis.total_cost > 0) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Cout consomme</div>
+          <div class="kpi-label">${t('kpis.card.cost')}</div>
           <div class="kpi-value">${kpis.total_cost.toFixed(2)}€</div>
-          <div class="kpi-sub">estimation</div>
+          <div class="kpi-sub">${t('kpis.card.cost.sub')}</div>
         </div>`;
       }
       if (kpis.low_stock?.length) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Stocks faibles</div>
+          <div class="kpi-label">${t('kpis.card.low')}</div>
           <div class="kpi-value" style="color:var(--bb-red)">${kpis.low_stock.length}</div>
-          <div class="kpi-sub">sous ${lowStockThreshold}%</div>
+          <div class="kpi-sub">${t('kpis.card.low.sub', {pct: lowStockThreshold})}</div>
         </div>`;
       }
       if ((stock.archived || 0) > 0) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Archivees</div>
+          <div class="kpi-label">${t('kpis.card.archived')}</div>
           <div class="kpi-value" style="color:var(--bb-text-muted)">${stock.archived}</div>
-          <div class="kpi-sub">bobines consommees</div>
+          <div class="kpi-sub">${t('kpis.card.archived.sub')}</div>
         </div>`;
       }
       document.getElementById('kpi-cards').innerHTML = cards;
@@ -1127,9 +1536,9 @@
       // Tables by_type + by_brand
       const typeTable = kpis.by_type?.length ? `
         <div class="bb-table-wrap">
-          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">Par type</div>
+          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">${t('kpis.table.by_type')}</div>
           <table class="bb-table">
-            <thead><tr><th>Type</th><th>Couleur</th><th>Utilise</th></tr></thead>
+            <thead><tr><th>${t('inventory.col.type')}</th><th>${t('kpis.col.color')}</th><th>${t('kpis.col.used')}</th></tr></thead>
             <tbody>${kpis.by_type.map(r => {
               const label = r.sub_brands || r.tray_type || '—';
               const colorLabel = r.color_name || '—';
@@ -1144,9 +1553,9 @@
 
       const brandTable = kpis.by_brand?.length ? `
         <div class="bb-table-wrap">
-          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">Par marque</div>
+          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">${t('kpis.table.by_brand')}</div>
           <table class="bb-table">
-            <thead><tr><th>Marque</th><th>Utilise</th></tr></thead>
+            <thead><tr><th>${t('kpis.col.brand')}</th><th>${t('kpis.col.used')}</th></tr></thead>
             <tbody>${kpis.by_brand.map(r => `<tr><td><strong>${r.brand}</strong></td><td style="font-weight:600">${Math.round(r.grams_used || 0)}g</td></tr>`).join('')}</tbody>
           </table>
         </div>` : '<div></div>';
@@ -1157,7 +1566,7 @@
       const sessions = kpis.sessions || [];
       if (sessions.length) {
         document.getElementById('kpi-sessions').innerHTML = `
-          <div class="section-header" style="margin-top:6px"><span class="section-title">Dernieres impressions</span></div>
+          <div class="section-header" style="margin-top:6px"><span class="section-title">${t('kpis.sessions.title')}</span></div>
           <div style="display:flex;flex-direction:column;gap:10px">
             ${sessions.map(s => `
               <div class="session-card">
@@ -1172,7 +1581,7 @@
                 </div>
                 <div class="session-consumed">
                   <div class="session-consumed-value">${s.consumed_pct > 0 ? '-' + s.consumed_grams + 'g' : '—'}</div>
-                  <div class="session-consumed-sub">${s.consumed_pct > 0 ? '-' + s.consumed_pct + '%' : 'init'}</div>
+                  <div class="session-consumed-sub">${s.consumed_pct > 0 ? '-' + s.consumed_pct + '%' : t('kpis.session.init')}</div>
                 </div>
               </div>
             `).join('')}
@@ -1181,8 +1590,8 @@
         document.getElementById('kpi-sessions').innerHTML = `
           <div class="empty-state" style="padding:30px">
             <div class="empty-state-icon">📊</div>
-            <div class="empty-state-title">Pas encore de donnees</div>
-            <div class="empty-state-sub">Les statistiques apparaitront au fil des impressions</div>
+            <div class="empty-state-title">${t('kpis.sessions.empty.title')}</div>
+            <div class="empty-state-sub">${t('kpis.sessions.empty.sub')}</div>
           </div>`;
       }
     }
@@ -1192,8 +1601,8 @@
       // Distinction creation/modification basee sur l'existence d'un id en DB,
       // pas sur la presence de spool : openModalFromSlot passe un objet
       // pre-rempli sans id (nouvelle bobine).
-      document.getElementById('modal-title-text').textContent = spool?.id ? 'Modifier la bobine' : 'Ajouter une bobine';
-      document.getElementById('modal-submit-btn').textContent = spool?.id ? 'Mettre a jour' : 'Enregistrer';
+      document.getElementById('modal-title-text').textContent = spool?.id ? t('modal.title.edit') : t('modal.title.add');
+      document.getElementById('modal-submit-btn').textContent = spool?.id ? t('modal.btn.update') : t('modal.btn.save');
       document.getElementById('f-id').value = spool?.id || '';
       document.getElementById('f-name').value = spool?.name || '';
       document.getElementById('f-brand').value = spool?.brand || '';
@@ -1312,7 +1721,7 @@
         _readSerialLines();
       } catch (e) {
         if (e.name !== 'NotAllowedError') {
-          showToast('Connexion echouee : ' + e.message, 'warn');
+          showToast(t('toast.nfc.connect_failed', {msg: e.message}), 'warn');
         }
         // Si refus utilisateur, on reste sur l'overlay step connect
       }
@@ -1379,6 +1788,14 @@
       document.getElementById('opt-auto-flipper').checked = localStorage.getItem('bb_auto_add_flipper') === '1';
     }
 
+    function loadLangRadio() {
+      const stored = localStorage.getItem('bb_lang'); // 'fr' | 'en' | null (=auto)
+      const val = stored || 'auto';
+      document.querySelectorAll('input[name="bb-lang"]').forEach(r => {
+        r.checked = (r.value === val);
+      });
+    }
+
     async function _autoAddSpool(payload) {
       try {
         const r = await fetch('api/spools', {
@@ -1387,13 +1804,13 @@
           body: JSON.stringify(payload),
         });
         if (r.ok) {
-          showToast(`Bobine "${payload.name}" ajoutee automatiquement`, 'ok');
+          showToast(t('toast.spool.auto_added', {name: payload.name}), 'ok');
           loadInventory();
         } else {
-          showToast("Erreur lors de l'ajout automatique", 'warn');
+          showToast(t('toast.spool.auto_add_error'), 'warn');
         }
       } catch (_) {
-        showToast("Erreur lors de l'ajout automatique", 'warn');
+        showToast(t('toast.spool.auto_add_error'), 'warn');
       }
     }
 
@@ -1413,7 +1830,7 @@
         // Enrichir avec les données NFC si absentes en base
         if (trayUuid && !existing.tray_uuid) existing.tray_uuid = trayUuid;
         if (tagUid && !existing.tag_uid) existing.tag_uid = tagUid;
-        showToast(`Bobine deja enregistree : ${existing.name}`, 'warn');
+        showToast(t('toast.nfc.already', {name: existing.name}), 'warn');
         openModal(existing);
         return;
       }
@@ -1453,7 +1870,7 @@
       }
 
       openModal(spool);
-      showToast('Formulaire pre-rempli depuis le tag NFC', 'ok');
+      showToast(t('toast.nfc.prefilled'), 'ok');
     }
 
     // Poll /api/nfc/pending toutes les 3s pour capter les scans
@@ -1506,7 +1923,7 @@
     }
 
     async function deleteSpool(id, name) {
-      if (!confirm(`Supprimer definitivement "${name}" et tout son historique ?`)) return;
+      if (!confirm(t('confirm.spool.delete', {name}))) return;
       await fetch(`api/spools/${id}`, { method: 'DELETE' });
       loadInventory();
     }
@@ -1514,31 +1931,33 @@
     async function snapshotSpool(id) {
       const res = await fetch(`api/spools/${id}/snapshot`, { method: 'POST' });
       const data = await res.json();
-      const source = data.source === 'ams' ? 'depuis l\'AMS' : 'dernier etat connu';
-      alert(`Snapshot : ${data.remain_pct}% (${source})`);
+      const source = data.source === 'ams' ? t('snapshot.source.ams') : t('snapshot.source.last');
+      alert(t('alert.snapshot', {pct: data.remain_pct, source}));
       loadInventory();
     }
 
 
     async function resetData() {
-      if (!confirm('Vider l\'historique de consommation ? Les bobines sont conservees.')) return;
+      if (!confirm(t('confirm.data.clear'))) return;
       await fetch('api/admin/reset-data', { method: 'POST' });
-      alert('Historique efface.');
+      alert(t('alert.data.cleared'));
       if (activeTab === 'kpis') loadKpis();
     }
 
     async function resetAll() {
-      if (!confirm('Reset COMPLET — toutes les bobines et l\'historique seront supprimes. Continuer ?')) return;
+      if (!confirm(t('confirm.data.reset'))) return;
       await fetch('api/admin/reset-all', { method: 'POST' });
       inventory = [];
       archivedSpools = [];
-      alert('Base reinitialisee.');
+      alert(t('alert.data.reset'));
       if (activeTab === 'inventory') loadInventory();
       if (activeTab === 'kpis') loadKpis();
     }
 
     // ── Init ──────────────────────────────────────────────────────────────────
     loadAutoAddPrefs();
+    loadLangRadio();
+    applyI18n();
     fetchAMS();
     setInterval(fetchAMS, 2500);
   </script>
