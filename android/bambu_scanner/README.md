@@ -14,6 +14,7 @@ Scanne les tags NFC des bobines Bambu Lab avec votre téléphone et les enregist
 - Envoi en un tap vers Bambu Dashboard
 - Authentification par clé API configurable
 - Fonctionne en réseau local (Wi-Fi), sans cloud
+- **Interface bilingue FR / EN** — suit la locale système Android par défaut, avec un sélecteur **Auto / Français / English** dans la carte de configuration pour forcer la langue
 
 ---
 
