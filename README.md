@@ -1,5 +1,7 @@
 <div align="center">
 
+> 🇫🇷 Français · [🇬🇧 English](README.en.md)
+
 # 🎨 Bambu Dashboard
 
 ### *Dépôt d'add-ons Home Assistant pour suivre, inventorier et optimiser tes bobines Bambu Lab*
@@ -54,7 +56,7 @@
 
 | Add-on | Description | Version |
 |---|---|:---:|
-| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.0.23](https://img.shields.io/badge/v1.0.23-latest-success?style=flat-square) |
+| 🎨 [**Bambu Dashboard**](./bambu_dashboard/) | Dashboard complet : AMS, inventaire, KPIs, scan NFC | ![v1.1.0](https://img.shields.io/badge/v1.1.0-latest-success?style=flat-square) |
 
 ---
 
