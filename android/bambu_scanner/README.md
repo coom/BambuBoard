@@ -1,5 +1,7 @@
 # Bambu Scanner — Application Android
 
+> 🇫🇷 Français · [🇬🇧 English](README.en.md)
+
 Application compagnon pour **Bambu Dashboard** (add-on Home Assistant).
 Scanne les tags NFC des bobines Bambu Lab avec votre téléphone et les enregistre directement dans le dashboard.
 
