@@ -1126,8 +1126,8 @@
     }
 
     function statusBadge(status) {
-      const labels = { active: 'Dans AMS', idle: 'En stock', empty: 'Vide', archived: 'Archive' };
-      return `<span class="spool-status st-${status || 'active'}">${labels[status] || labels.active}</span>`;
+      const key = 'inventory.status.' + (status || 'active');
+      return `<span class="spool-status st-${status || 'active'}">${t(key)}</span>`;
     }
 
     // ── AMS ───────────────────────────────────────────────────────────────────
@@ -1155,7 +1155,7 @@
         return `<div class="slot-card empty">
           <span class="slot-label">${label}</span>
           <div class="color-swatch"></div>
-          <div class="filament-type" style="color:var(--bb-text-muted)">Vide</div>
+          <div class="filament-type" style="color:var(--bb-text-muted)">${t('ams.slot.empty')}</div>
         </div>`;
       }
 
@@ -1163,7 +1163,7 @@
       if (slot.spool) {
         stockBadge = `<div><span class="stock-badge known">${slot.spool.name}</span></div>`;
       } else if (slot.tray_uuid) {
-        stockBadge = `<div><span class="stock-badge unknown" onclick="openModalFromSlot(${JSON.stringify(slot).replace(/"/g,'&quot;')})">Bobine inconnue — Enregistrer</span></div>`;
+        stockBadge = `<div><span class="stock-badge unknown" onclick="openModalFromSlot(${JSON.stringify(slot).replace(/"/g,'&quot;')})">${t('ams.badge.unknown')}</span></div>`;
       }
 
       return `<div class="slot-card active">
@@ -1187,7 +1187,7 @@
         const connected = amsData.connected;
         const badge = document.getElementById('status-badge');
         badge.className = `status-badge ${connected ? 'connected' : 'disconnected'}`;
-        document.getElementById('status-text').textContent = connected ? 'Connecte' : 'Deconnecte';
+        document.getElementById('status-text').textContent = connected ? t('header.status.connected') : t('header.status.disconnected');
         document.getElementById('last-update').textContent = `${new Date().toLocaleTimeString('fr-FR')}`;
 
         if (amsData.slots?.length > 0) {
@@ -1202,20 +1202,20 @@
               (groups[aid] = groups[aid] || []).push(sl);
             });
             container.innerHTML = Object.keys(groups).sort().map(aid =>
-              `<h3 style="margin:${aid > 0 ? '24px' : '0'} 0 10px;font-size:15px;color:var(--bb-text-muted);font-weight:600">AMS ${Number(aid)+1}</h3>
+              `<h3 style="margin:${aid > 0 ? '24px' : '0'} 0 10px;font-size:15px;color:var(--bb-text-muted);font-weight:600">${t('ams.group.label', {n: Number(aid)+1})}</h3>
                <div class="ams-grid">${groups[aid].map(renderSlot).join('')}</div>`
             ).join('');
           }
         }
         if (amsData.error) {
           const b = document.getElementById('error-banner');
-          b.textContent = `Erreur : ${amsData.error}`; b.style.display = 'block';
+          b.textContent = t('header.error.ams', {msg: amsData.error}); b.style.display = 'block';
         }
       } catch (err) {
         document.getElementById('status-badge').className = 'status-badge disconnected';
-        document.getElementById('status-text').textContent = 'Deconnecte';
+        document.getElementById('status-text').textContent = t('header.status.disconnected');
         const b = document.getElementById('error-banner');
-        b.textContent = `Backend inaccessible : ${err.message}`; b.style.display = 'block';
+        b.textContent = t('header.error.backend', {msg: err.message}); b.style.display = 'block';
       }
     }
 
@@ -1244,10 +1244,10 @@
       const total = inventory.length;
 
       const chips = [
-        { key: null, label: 'Toutes', count: total },
-        { key: 'active', label: 'Dans AMS', count: counts.active },
-        { key: 'idle', label: 'En stock', count: counts.idle },
-        { key: 'empty', label: 'Vides', count: counts.empty },
+        { key: null,     label: t('inventory.chip.all'),    count: total },
+        { key: 'active', label: t('inventory.chip.active'), count: counts.active },
+        { key: 'idle',   label: t('inventory.chip.idle'),   count: counts.idle },
+        { key: 'empty',  label: t('inventory.chip.empty'),  count: counts.empty },
       ];
 
       document.getElementById('inv-chips').innerHTML = chips.map(c =>
@@ -1330,8 +1330,8 @@
       const mobile = document.getElementById('inv-mobile');
       updateSortArrows();
       if (!spools.length) {
-        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div><div class="empty-state-sub">Ajoutez-en une ou enregistrez depuis l'AMS</div></div></td></tr>`;
-        mobile.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">Aucune bobine</div></div>`;
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">${t('inventory.empty.title')}</div><div class="empty-state-sub">${t('inventory.empty.sub')}</div></div></td></tr>`;
+        mobile.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">${t('inventory.empty.title')}</div></div>`;
         return;
       }
       // Desktop
@@ -1401,7 +1401,7 @@
       document.getElementById('archived-list').innerHTML = `
         <div class="bb-table-wrap">
           <table class="bb-table">
-            <thead><tr><th>Bobine</th><th>Type</th><th>Consomme</th><th></th></tr></thead>
+            <thead><tr><th>${t('inventory.col.spool')}</th><th>${t('inventory.col.type')}</th><th>${t('inventory.col.used')}</th><th></th></tr></thead>
             <tbody>
               ${archivedSpools.map(s => {
                 const remain = s.current_remain ?? 0;
@@ -1410,9 +1410,9 @@
                 return `<tr style="opacity:0.6">
                   <td>${colorDot(s.color_hex)}<strong>${s.name}</strong>${s.package_type === 'refill' ? ' <span title="Recharge">♻️</span>' : ''}</td>
                   <td>${s.tray_type || '—'}</td>
-                  <td>${weightUsed}g utilises</td>
+                  <td>${t('inventory.used_suffix', {g: weightUsed})}</td>
                   <td>
-                    <button class="btn btn-danger btn-sm" onclick="deleteSpool(${s.id}, '${s.name.replace(/'/g,"\\'")}')">Supprimer</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteSpool(${s.id}, '${s.name.replace(/'/g,"\\'")}')"> ${t('inventory.btn.delete')}</button>
                   </td>
                 </tr>`;
               }).join('')}
@@ -1431,7 +1431,7 @@
 
     // ── Spool actions ────────────────────────────────────────────────────────
     async function archiveSpool(id) {
-      if (!confirm('Archiver cette bobine ? Elle sera masquee de l\'inventaire actif.')) return;
+      if (!confirm(t('confirm.spool.archive'))) return;
       await fetch(`api/spools/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1459,41 +1459,41 @@
 
       let cards = `
         <div class="kpi-card">
-          <div class="kpi-label">Consommation totale</div>
+          <div class="kpi-label">${t('kpis.card.total')}</div>
           <div class="kpi-value">${Math.round(totalGrams)}g</div>
-          <div class="kpi-sub">${(totalGrams/1000).toFixed(1)} kg utilises</div>
+          <div class="kpi-sub">${t('kpis.card.total.sub', {kg: (totalGrams/1000).toFixed(1)})}</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-label">Bobines en stock</div>
+          <div class="kpi-label">${t('kpis.card.stock')}</div>
           <div class="kpi-value">${kpis.spool_count || 0}</div>
-          <div class="kpi-sub">${kpis.in_ams || 0} dans AMS · ${kpis.in_stock || 0} rangées</div>
+          <div class="kpi-sub">${t('kpis.card.stock.sub', {ams: kpis.in_ams || 0, idle: kpis.in_stock || 0})}</div>
         </div>`;
       if ((stock.empty || 0) > 0) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Bobines vides</div>
+          <div class="kpi-label">${t('kpis.card.empty')}</div>
           <div class="kpi-value" style="color:var(--bb-red)">${stock.empty}</div>
-          <div class="kpi-sub">a racheter ou archiver</div>
+          <div class="kpi-sub">${t('kpis.card.empty.sub')}</div>
         </div>`;
       }
       if (kpis.total_cost > 0) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Cout consomme</div>
+          <div class="kpi-label">${t('kpis.card.cost')}</div>
           <div class="kpi-value">${kpis.total_cost.toFixed(2)}€</div>
-          <div class="kpi-sub">estimation</div>
+          <div class="kpi-sub">${t('kpis.card.cost.sub')}</div>
         </div>`;
       }
       if (kpis.low_stock?.length) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Stocks faibles</div>
+          <div class="kpi-label">${t('kpis.card.low')}</div>
           <div class="kpi-value" style="color:var(--bb-red)">${kpis.low_stock.length}</div>
-          <div class="kpi-sub">sous ${lowStockThreshold}%</div>
+          <div class="kpi-sub">${t('kpis.card.low.sub', {pct: lowStockThreshold})}</div>
         </div>`;
       }
       if ((stock.archived || 0) > 0) {
         cards += `<div class="kpi-card">
-          <div class="kpi-label">Archivees</div>
+          <div class="kpi-label">${t('kpis.card.archived')}</div>
           <div class="kpi-value" style="color:var(--bb-text-muted)">${stock.archived}</div>
-          <div class="kpi-sub">bobines consommees</div>
+          <div class="kpi-sub">${t('kpis.card.archived.sub')}</div>
         </div>`;
       }
       document.getElementById('kpi-cards').innerHTML = cards;
@@ -1507,9 +1507,9 @@
       // Tables by_type + by_brand
       const typeTable = kpis.by_type?.length ? `
         <div class="bb-table-wrap">
-          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">Par type</div>
+          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">${t('kpis.table.by_type')}</div>
           <table class="bb-table">
-            <thead><tr><th>Type</th><th>Couleur</th><th>Utilise</th></tr></thead>
+            <thead><tr><th>${t('inventory.col.type')}</th><th>${t('kpis.col.color')}</th><th>${t('kpis.col.used')}</th></tr></thead>
             <tbody>${kpis.by_type.map(r => {
               const label = r.sub_brands || r.tray_type || '—';
               const colorLabel = r.color_name || '—';
@@ -1524,9 +1524,9 @@
 
       const brandTable = kpis.by_brand?.length ? `
         <div class="bb-table-wrap">
-          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">Par marque</div>
+          <div style="padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--bb-text-muted);letter-spacing:0.5px;text-transform:uppercase">${t('kpis.table.by_brand')}</div>
           <table class="bb-table">
-            <thead><tr><th>Marque</th><th>Utilise</th></tr></thead>
+            <thead><tr><th>${t('kpis.col.brand')}</th><th>${t('kpis.col.used')}</th></tr></thead>
             <tbody>${kpis.by_brand.map(r => `<tr><td><strong>${r.brand}</strong></td><td style="font-weight:600">${Math.round(r.grams_used || 0)}g</td></tr>`).join('')}</tbody>
           </table>
         </div>` : '<div></div>';
@@ -1537,7 +1537,7 @@
       const sessions = kpis.sessions || [];
       if (sessions.length) {
         document.getElementById('kpi-sessions').innerHTML = `
-          <div class="section-header" style="margin-top:6px"><span class="section-title">Dernieres impressions</span></div>
+          <div class="section-header" style="margin-top:6px"><span class="section-title">${t('kpis.sessions.title')}</span></div>
           <div style="display:flex;flex-direction:column;gap:10px">
             ${sessions.map(s => `
               <div class="session-card">
@@ -1552,7 +1552,7 @@
                 </div>
                 <div class="session-consumed">
                   <div class="session-consumed-value">${s.consumed_pct > 0 ? '-' + s.consumed_grams + 'g' : '—'}</div>
-                  <div class="session-consumed-sub">${s.consumed_pct > 0 ? '-' + s.consumed_pct + '%' : 'init'}</div>
+                  <div class="session-consumed-sub">${s.consumed_pct > 0 ? '-' + s.consumed_pct + '%' : t('kpis.session.init')}</div>
                 </div>
               </div>
             `).join('')}
@@ -1561,8 +1561,8 @@
         document.getElementById('kpi-sessions').innerHTML = `
           <div class="empty-state" style="padding:30px">
             <div class="empty-state-icon">📊</div>
-            <div class="empty-state-title">Pas encore de donnees</div>
-            <div class="empty-state-sub">Les statistiques apparaitront au fil des impressions</div>
+            <div class="empty-state-title">${t('kpis.sessions.empty.title')}</div>
+            <div class="empty-state-sub">${t('kpis.sessions.empty.sub')}</div>
           </div>`;
       }
     }
@@ -1572,8 +1572,8 @@
       // Distinction creation/modification basee sur l'existence d'un id en DB,
       // pas sur la presence de spool : openModalFromSlot passe un objet
       // pre-rempli sans id (nouvelle bobine).
-      document.getElementById('modal-title-text').textContent = spool?.id ? 'Modifier la bobine' : 'Ajouter une bobine';
-      document.getElementById('modal-submit-btn').textContent = spool?.id ? 'Mettre a jour' : 'Enregistrer';
+      document.getElementById('modal-title-text').textContent = spool?.id ? t('modal.title.edit') : t('modal.title.add');
+      document.getElementById('modal-submit-btn').textContent = spool?.id ? t('modal.btn.update') : t('modal.btn.save');
       document.getElementById('f-id').value = spool?.id || '';
       document.getElementById('f-name').value = spool?.name || '';
       document.getElementById('f-brand').value = spool?.brand || '';
@@ -1692,7 +1692,7 @@
         _readSerialLines();
       } catch (e) {
         if (e.name !== 'NotAllowedError') {
-          showToast('Connexion echouee : ' + e.message, 'warn');
+          showToast(t('toast.nfc.connect_failed', {msg: e.message}), 'warn');
         }
         // Si refus utilisateur, on reste sur l'overlay step connect
       }
@@ -1775,10 +1775,10 @@
           body: JSON.stringify(payload),
         });
         if (r.ok) {
-          showToast(`Bobine "${payload.name}" ajoutee automatiquement`, 'ok');
+          showToast(t('toast.spool.auto_added', {name: payload.name}), 'ok');
           loadInventory();
         } else {
-          showToast("Erreur lors de l'ajout automatique", 'warn');
+          showToast(t('toast.spool.auto_add_error'), 'warn');
         }
       } catch (_) {
         showToast("Erreur lors de l'ajout automatique", 'warn');
@@ -1801,7 +1801,7 @@
         // Enrichir avec les données NFC si absentes en base
         if (trayUuid && !existing.tray_uuid) existing.tray_uuid = trayUuid;
         if (tagUid && !existing.tag_uid) existing.tag_uid = tagUid;
-        showToast(`Bobine deja enregistree : ${existing.name}`, 'warn');
+        showToast(t('toast.nfc.already', {name: existing.name}), 'warn');
         openModal(existing);
         return;
       }
@@ -1841,7 +1841,7 @@
       }
 
       openModal(spool);
-      showToast('Formulaire pre-rempli depuis le tag NFC', 'ok');
+      showToast(t('toast.nfc.prefilled'), 'ok');
     }
 
     // Poll /api/nfc/pending toutes les 3s pour capter les scans
@@ -1894,7 +1894,7 @@
     }
 
     async function deleteSpool(id, name) {
-      if (!confirm(`Supprimer definitivement "${name}" et tout son historique ?`)) return;
+      if (!confirm(t('confirm.spool.delete', {name}))) return;
       await fetch(`api/spools/${id}`, { method: 'DELETE' });
       loadInventory();
     }
@@ -1902,25 +1902,25 @@
     async function snapshotSpool(id) {
       const res = await fetch(`api/spools/${id}/snapshot`, { method: 'POST' });
       const data = await res.json();
-      const source = data.source === 'ams' ? 'depuis l\'AMS' : 'dernier etat connu';
-      alert(`Snapshot : ${data.remain_pct}% (${source})`);
+      const source = data.source === 'ams' ? t('snapshot.source.ams') : t('snapshot.source.last');
+      alert(t('alert.snapshot', {pct: data.remain_pct, source}));
       loadInventory();
     }
 
 
     async function resetData() {
-      if (!confirm('Vider l\'historique de consommation ? Les bobines sont conservees.')) return;
+      if (!confirm(t('confirm.data.clear'))) return;
       await fetch('api/admin/reset-data', { method: 'POST' });
-      alert('Historique efface.');
+      alert(t('alert.data.cleared'));
       if (activeTab === 'kpis') loadKpis();
     }
 
     async function resetAll() {
-      if (!confirm('Reset COMPLET — toutes les bobines et l\'historique seront supprimes. Continuer ?')) return;
+      if (!confirm(t('confirm.data.reset'))) return;
       await fetch('api/admin/reset-all', { method: 'POST' });
       inventory = [];
       archivedSpools = [];
-      alert('Base reinitialisee.');
+      alert(t('alert.data.reset'));
       if (activeTab === 'inventory') loadInventory();
       if (activeTab === 'kpis') loadKpis();
     }
