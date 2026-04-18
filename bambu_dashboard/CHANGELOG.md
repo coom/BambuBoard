@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0 — 2026-04-18
+
+### Changements
+
+- **Sélecteur de thème Clair / Sombre / Automatique** dans l'onglet
+  Options. En mode **Automatique** (défaut), le dashboard suit le thème
+  de Home Assistant (détecté via le parent iframe sous ingress) et
+  bascule en direct quand l'utilisateur change le thème HA ; hors
+  ingress, il retombe sur la préférence navigateur
+  (`prefers-color-scheme`). Le choix explicite est persisté en
+  `localStorage` (`bb_theme`), accès gardé par `try/catch` pour la
+  navigation privée stricte. Libellés disponibles en FR et EN.
+- **Palette claire** propre au dashboard (fonds `#f3f4f6` / `#ffffff`,
+  texte `#111827`), avec conservation des accents Bambu (vert, rouge,
+  bleu, jaune) dans les deux thèmes.
+
 ## 1.1.0 — 2026-04-17
 
 ### Changements

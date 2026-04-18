@@ -23,9 +23,43 @@
       --bb-border-light: rgba(255,255,255,0.1);
       --bb-shadow-md: 0 4px 20px rgba(0,0,0,0.5);
       --bb-shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
+      --bb-hover-bg: rgba(255,255,255,0.04);
+      --bb-row-hover-bg: rgba(255,255,255,0.02);
+      --bb-chip-bg: rgba(255,255,255,0.06);
+      --bb-chip-bg-hover: rgba(255,255,255,0.1);
+      --bb-track-bg: rgba(255,255,255,0.1);
+      --bb-swatch-border: rgba(255,255,255,0.1);
+      --bb-dot-border: rgba(255,255,255,0.15);
+      --bb-swatch-fallback: #2a2a2a;
+      --bb-modal-overlay-bg: rgba(0,0,0,0.7);
+      --bb-nfc-overlay-bg: rgba(0,0,0,0.75);
+      --bb-on-accent: #fff;
       --bb-radius-lg: 20px;
       --bb-radius-sm: 12px;
       --bb-transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    html[data-theme="light"] {
+      --bb-bg-primary: #f3f4f6;
+      --bb-bg-secondary: #ffffff;
+      --bb-bg-tertiary: #e5e7eb;
+      --bb-bg-card: #ffffff;
+      --bb-text-primary: #111827;
+      --bb-text-secondary: rgba(0,0,0,0.7);
+      --bb-text-muted: rgba(0,0,0,0.5);
+      --bb-border-subtle: rgba(0,0,0,0.06);
+      --bb-border-light: rgba(0,0,0,0.14);
+      --bb-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+      --bb-shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+      --bb-hover-bg: rgba(0,0,0,0.04);
+      --bb-row-hover-bg: rgba(0,0,0,0.03);
+      --bb-chip-bg: rgba(0,0,0,0.05);
+      --bb-chip-bg-hover: rgba(0,0,0,0.08);
+      --bb-track-bg: rgba(0,0,0,0.08);
+      --bb-swatch-border: rgba(0,0,0,0.12);
+      --bb-dot-border: rgba(0,0,0,0.18);
+      --bb-swatch-fallback: #e5e7eb;
+      --bb-modal-overlay-bg: rgba(0,0,0,0.45);
+      --bb-nfc-overlay-bg: rgba(0,0,0,0.5);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -57,7 +91,7 @@
       border: 1px solid transparent; border-bottom: none; position: relative;
       white-space: nowrap; flex-shrink: 0;
     }
-    .tab:hover { color: var(--bb-text-primary); background: rgba(255,255,255,0.04); }
+    .tab:hover { color: var(--bb-text-primary); background: var(--bb-hover-bg); }
     .tab.active {
       color: var(--bb-orange); background: var(--bb-bg-secondary);
       border-color: var(--bb-border-subtle);
@@ -103,7 +137,7 @@
       padding: 3px 9px; border-radius: 20px;
       background: rgba(0,174,66,0.15); color: var(--bb-orange); border: 1px solid rgba(0,174,66,0.3);
     }
-    .color-swatch { width: 44px; height: 44px; border-radius: var(--bb-radius-sm); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); background: #2a2a2a; }
+    .color-swatch { width: 44px; height: 44px; border-radius: var(--bb-radius-sm); margin-bottom: 12px; border: 1px solid var(--bb-swatch-border); background: var(--bb-swatch-fallback); }
     .filament-type { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
     .filament-brand { font-size: 12px; color: var(--bb-text-muted); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .temp-badge {
@@ -112,7 +146,7 @@
       background: rgba(0,176,255,0.1); color: var(--bb-blue); border: 1px solid rgba(0,176,255,0.25);
     }
     .remain-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-    .remain-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .remain-bar { flex: 1; height: 6px; background: var(--bb-track-bg); border-radius: 3px; overflow: hidden; }
     .remain-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
     .remain-label { font-size: 12px; font-weight: 600; min-width: 36px; text-align: right; }
 
@@ -134,22 +168,22 @@
     .spool-status.st-active { background: rgba(76,175,80,0.15); color: var(--bb-green); border: 1px solid rgba(76,175,80,0.3); }
     .spool-status.st-idle { background: rgba(0,176,255,0.15); color: var(--bb-blue); border: 1px solid rgba(0,176,255,0.3); }
     .spool-status.st-empty { background: rgba(255,61,0,0.15); color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); }
-    .spool-status.st-archived { background: rgba(255,255,255,0.06); color: var(--bb-text-muted); border: 1px solid var(--bb-border-light); }
+    .spool-status.st-archived { background: var(--bb-chip-bg); color: var(--bb-text-muted); border: 1px solid var(--bb-border-light); }
 
     /* ── Inventory filter chips ── */
     .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
     .filter-chip {
       padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
       cursor: pointer; transition: var(--bb-transition);
-      background: rgba(255,255,255,0.06); color: var(--bb-text-muted);
+      background: var(--bb-chip-bg); color: var(--bb-text-muted);
       border: 1px solid var(--bb-border-light);
     }
-    .filter-chip:hover { background: rgba(255,255,255,0.1); color: var(--bb-text-primary); }
+    .filter-chip:hover { background: var(--bb-chip-bg-hover); color: var(--bb-text-primary); }
     .filter-chip.active { background: rgba(0,174,66,0.15); color: var(--bb-orange); border-color: rgba(0,174,66,0.3); }
     .filter-chip .chip-count {
       display: inline-flex; align-items: center; justify-content: center;
       min-width: 18px; height: 18px; border-radius: 9px; font-size: 10px; font-weight: 700;
-      background: rgba(255,255,255,0.1); margin-left: 4px; padding: 0 5px;
+      background: var(--bb-track-bg); margin-left: 4px; padding: 0 5px;
     }
     .filter-chip.active .chip-count { background: rgba(0,174,66,0.3); }
 
@@ -174,10 +208,10 @@
       border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
       border: none; transition: var(--bb-transition);
     }
-    .btn-primary { background: var(--bb-orange); color: #fff; }
+    .btn-primary { background: var(--bb-orange); color: var(--bb-on-accent); }
     .btn-primary:hover { background: var(--bb-orange-light); }
-    .btn-ghost { background: rgba(255,255,255,0.06); color: var(--bb-text-secondary); border: 1px solid var(--bb-border-light); }
-    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: var(--bb-text-primary); }
+    .btn-ghost { background: var(--bb-chip-bg); color: var(--bb-text-secondary); border: 1px solid var(--bb-border-light); }
+    .btn-ghost:hover { background: var(--bb-chip-bg-hover); color: var(--bb-text-primary); }
     .btn-danger { background: rgba(255,61,0,0.15); color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); }
     .btn-danger:hover { background: rgba(255,61,0,0.25); }
     .btn-success { background: rgba(76,175,80,0.15); color: var(--bb-green); border: 1px solid rgba(76,175,80,0.3); }
@@ -202,7 +236,7 @@
     }
     .bb-table td { padding: 12px 14px; border-bottom: 1px solid var(--bb-border-subtle); vertical-align: middle; }
     .bb-table tr:last-child td { border-bottom: none; }
-    .bb-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .bb-table tr:hover td { background: var(--bb-row-hover-bg); }
     .bb-table-wrap { background: var(--bb-bg-card); border-radius: var(--bb-radius-lg); border: 1px solid var(--bb-border-subtle); overflow: hidden; box-shadow: var(--bb-shadow-md); }
 
     .bb-table th.sortable { cursor: pointer; user-select: none; }
@@ -212,10 +246,10 @@
     .btn-delete { background: transparent; color: var(--bb-red); border: 1px solid rgba(255,61,0,0.3); border-radius: 8px; padding: 4px 8px; font-size: 14px; cursor: pointer; line-height: 1; }
     .btn-delete:hover { background: rgba(255,61,0,0.15); }
 
-    .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); vertical-align: middle; margin-right: 6px; }
+    .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--bb-dot-border); vertical-align: middle; margin-right: 6px; }
     .ams-slot-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; background: rgba(0,174,66,0.15); color: var(--bb-orange); border: 1px solid rgba(0,174,66,0.3); }
     .remain-mini { display: flex; align-items: center; gap: 6px; }
-    .remain-bar-mini { width: 60px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .remain-bar-mini { width: 60px; height: 4px; background: var(--bb-track-bg); border-radius: 2px; overflow: hidden; }
     .remain-fill-mini { height: 100%; border-radius: 2px; }
 
     /* ── KPI cards ── */
@@ -232,7 +266,7 @@
       border: 1px solid var(--bb-border-subtle); padding: 14px 16px;
       display: flex; align-items: center; gap: 14px;
     }
-    .session-swatch { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
+    .session-swatch { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; border: 1px solid var(--bb-swatch-border); }
     .session-info { flex: 1; min-width: 0; }
     .session-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .session-detail { font-size: 12px; color: var(--bb-text-muted); margin-top: 2px; }
@@ -248,7 +282,7 @@
 
     /* ── Modal ── */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+      position: fixed; inset: 0; background: var(--bb-modal-overlay-bg); z-index: 100;
       display: none; align-items: center; justify-content: center; padding: 12px;
     }
     .modal-overlay.open { display: flex; }
@@ -312,7 +346,7 @@
       border: 1px solid var(--bb-border-subtle); padding: 14px 16px;
       display: flex; align-items: center; gap: 12px;
     }
-    .inv-card-swatch { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
+    .inv-card-swatch { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; border: 1px solid var(--bb-swatch-border); }
     .inv-card-info { flex: 1; min-width: 0; }
     .inv-card-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .inv-card-sub { font-size: 12px; color: var(--bb-text-muted); margin-top: 2px; }
@@ -332,7 +366,7 @@
 
     /* ── NFC Scan modal ── */
     .nfc-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200;
+      position: fixed; inset: 0; background: var(--bb-nfc-overlay-bg); z-index: 200;
       display: none; align-items: center; justify-content: center; padding: 20px;
     }
     .nfc-overlay.open { display: flex; }
@@ -477,6 +511,24 @@
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
             <input type="radio" name="bb-lang" value="en" onchange="setLang(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
             English
+          </label>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-title" data-i18n="options.theme.section">Thème</span></div>
+      <div class="bb-table-wrap" style="padding:18px;margin-bottom:20px">
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-theme" value="auto" onchange="setTheme(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            <span data-i18n="options.theme.auto">Automatique</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-theme" value="light" onchange="setTheme(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            <span data-i18n="options.theme.light">Clair</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="bb-theme" value="dark" onchange="setTheme(this.value)" style="accent-color:var(--bb-orange);cursor:pointer" />
+            <span data-i18n="options.theme.dark">Sombre</span>
           </label>
         </div>
       </div>
@@ -737,6 +789,10 @@
         'options.data.reset.btn':      'Reset total',
         'options.lang.section':        'Langue',
         'options.lang.auto':           'Automatique',
+        'options.theme.section':       'Thème',
+        'options.theme.auto':          'Automatique',
+        'options.theme.light':         'Clair',
+        'options.theme.dark':          'Sombre',
 
         // Modal spool
         'modal.title.add':             'Ajouter une bobine',
@@ -885,6 +941,10 @@
         'options.data.reset.btn':      'Total reset',
         'options.lang.section':        'Language',
         'options.lang.auto':           'Automatic',
+        'options.theme.section':       'Theme',
+        'options.theme.auto':          'Automatic',
+        'options.theme.light':         'Light',
+        'options.theme.dark':          'Dark',
 
         // Modal spool
         'modal.title.add':             'Add a spool',
@@ -1007,6 +1067,92 @@
         });
       });
     }
+
+    // ── Thème ──────────────────────────────────────────────────────────────────
+    // Trois modes : 'auto' (defaut), 'light', 'dark'. En auto, on suit d'abord
+    // Home Assistant via le parent iframe (meme origine sous ingress), sinon la
+    // preference navigateur. Persistance dans localStorage['bb_theme'].
+    let currentTheme;
+
+    function _luminanceOf(css) {
+      if (!css) return null;
+      css = String(css).trim();
+      let r, g, b;
+      const hex = css.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+      if (hex) {
+        let h = hex[1];
+        if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+        r = parseInt(h.slice(0,2), 16);
+        g = parseInt(h.slice(2,4), 16);
+        b = parseInt(h.slice(4,6), 16);
+      } else {
+        const m = css.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i);
+        if (!m) return null;
+        r = +m[1]; g = +m[2]; b = +m[3];
+      }
+      return (0.2126*r + 0.7152*g + 0.0722*b) / 255;
+    }
+
+    function resolveTheme() {
+      let stored = null;
+      try { stored = localStorage.getItem('bb_theme'); } catch(_) {}
+      if (stored === 'light' || stored === 'dark') return stored;
+
+      // Home Assistant (parent iframe) — meme origine sous ingress
+      try {
+        const pd = window.parent && window.parent.document;
+        if (pd && pd !== document) {
+          const bg = getComputedStyle(pd.documentElement)
+            .getPropertyValue('--primary-background-color');
+          const lum = _luminanceOf(bg);
+          if (lum !== null) return lum > 0.5 ? 'light' : 'dark';
+        }
+      } catch(_) { /* cross-origin : on retombe */ }
+
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        return 'light';
+      }
+      return 'dark';
+    }
+
+    function applyTheme() {
+      currentTheme = resolveTheme();
+      document.documentElement.dataset.theme = currentTheme;
+    }
+
+    function setTheme(value) {
+      try {
+        if (value === 'auto') localStorage.removeItem('bb_theme');
+        else if (value === 'light' || value === 'dark') localStorage.setItem('bb_theme', value);
+      } catch(_) {}
+      applyTheme();
+    }
+
+    function _hasExplicitTheme() {
+      try {
+        const v = localStorage.getItem('bb_theme');
+        return v === 'light' || v === 'dark';
+      } catch(_) { return false; }
+    }
+
+    // Reactivite : en mode auto, suivre OS + HA + autres onglets
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = () => { if (!_hasExplicitTheme()) applyTheme(); };
+      if (mq.addEventListener) mq.addEventListener('change', handler);
+      else if (mq.addListener) mq.addListener(handler);
+    }
+    try {
+      const pd = window.parent && window.parent.document;
+      if (pd && pd !== document) {
+        new MutationObserver(() => { if (!_hasExplicitTheme()) applyTheme(); })
+          .observe(pd.documentElement, { attributes: true, attributeFilter: ['class', 'style'] });
+      }
+    } catch(_) {}
+    window.addEventListener('storage', (e) => { if (e.key === 'bb_theme') applyTheme(); });
+
+    // Init theme AVANT tout rendu pour eviter le flash
+    applyTheme();
 
     // Init langue AVANT toute autre initialisation
     currentLang = resolveLang();
@@ -1796,6 +1942,15 @@
       });
     }
 
+    function loadThemeRadio() {
+      let stored = null;
+      try { stored = localStorage.getItem('bb_theme'); } catch(_) {}
+      const val = (stored === 'light' || stored === 'dark') ? stored : 'auto';
+      document.querySelectorAll('input[name="bb-theme"]').forEach(r => {
+        r.checked = (r.value === val);
+      });
+    }
+
     async function _autoAddSpool(payload) {
       try {
         const r = await fetch('api/spools', {
@@ -1957,6 +2112,7 @@
     // ── Init ──────────────────────────────────────────────────────────────────
     loadAutoAddPrefs();
     loadLangRadio();
+    loadThemeRadio();
     applyI18n();
     fetchAMS();
     setInterval(fetchAMS, 2500);

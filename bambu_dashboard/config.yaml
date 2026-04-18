@@ -1,5 +1,5 @@
 name: Bambu Dashboard
-version: "1.1.0"
+version: "1.2.0"
 slug: bambu_dashboard
 description: Dashboard AMS Bambu Lab — suivi de bobines et KPIs
 url: https://github.com/coom/BambuBoard
